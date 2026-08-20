@@ -115,10 +115,13 @@ by itself.
 
 ### Step 7 — Docker Compose  ·  CP 10, CP 11
 
-- [ ] Five services: `api`, `client`, `postgres`, `redis`, `adminer`.
-- [ ] `.env.example`, named volumes, healthchecks.
+- [x] Infrastructure services: `postgres`, `redis`, `adminer` — running and verified.
+- [x] `.env.example`, named volumes, healthchecks on postgres and redis.
+- [ ] `api` and `client` services — added at step 11, once there is code to containerise.
 
 **Done when:** `docker compose up` gives a working empty stack from a clean clone.
+*Partially met: the three infrastructure services do, the two application services do not exist
+yet. An application cannot be containerised before it is written.*
 
 ### Step 8 — Prisma schema and first migration
 

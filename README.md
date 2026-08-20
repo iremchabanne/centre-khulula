@@ -30,6 +30,32 @@ Voir `PROGRESS.md` pour l'état détaillé et `PLAN.md` pour les étapes restant
 | Base clé/valeur | Redis |
 | Conteneurs | Docker Compose |
 
+## Démarrer l'environnement de développement
+
+Prérequis : **Docker Desktop** installé et lancé.
+
+```bash
+cp .env.example .env     # puis remplacer les mots de passe
+docker compose up -d     # démarre postgres, redis et adminer
+docker compose ps        # vérifier que tout est "healthy"
+```
+
+| Service | Accès | Rôle |
+|---|---|---|
+| `postgres` | `localhost:5432` | Base de données relationnelle |
+| `redis` | `localhost:6379` | Sessions, cache, rate limiting |
+| `adminer` | http://localhost:8080 | Interface web pour inspecter la base |
+
+Pour se connecter depuis Adminer : système **PostgreSQL**, serveur `postgres`, et les
+identifiants du fichier `.env`.
+
+```bash
+docker compose down      # arrêter
+docker compose down -v   # arrêter et supprimer les données
+```
+
+> Les services `api` et `client` seront ajoutés à l'étape 11, quand il y aura du code à exécuter.
+
 ## Organisation du dépôt
 
 | Chemin | Contenu |

@@ -15,8 +15,10 @@
   charte graphique, data model, screen flow, 13 mockup screens.
 - **The technology watch system is in place** (step 5), with its first three entries.
 - **The repository exists** (step 6) — https://github.com/iremchabanne/centre-khulula
-- **No application code yet.** No `package.json`, no Docker.
-- **Next:** step 7, Docker Compose. The Figma maquettes (step 4) are done last.
+- **The Docker infrastructure runs** (step 7): `postgres`, `redis`, `adminer`, all verified.
+  `api` and `client` join it at step 11, when there is code to containerise.
+- **No application code yet.** No `package.json`, no Prisma schema.
+- **Next:** step 8, the Prisma schema translated from the MPD. The Figma maquettes (step 4) last.
 
 ---
 
