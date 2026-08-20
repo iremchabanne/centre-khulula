@@ -1,22 +1,22 @@
 # Progress — Dossier Professionnel CDA
 
-**Last session:** 20 August 2026 — *session 3*
+**Updated:** 20 August 2026
 **Deadline:** DP filled in by **31 August 2026** · exam **October 2026**
-**Status:** conception finished through Step 3 · **no code written yet**
+**Status:** conception complete · repository in place · **no application code yet**
 
-> Read this first when resuming. `PLAN.md` has the ordered list of remaining steps.
-> Design decisions are **not** repeated here — they live in the documents themselves.
+> `PLAN.md` holds the ordered list of remaining steps. Design decisions are **not** repeated
+> here — they live in the design documents themselves.
 
 ---
 
 ## 1. Where we are
 
-- **Conception is done through Step 3 of `PLAN.md`**: cahier des charges, charte graphique, screen
-  flow, 13 mockup screens, the data model, and the assembled dossier de conception.
-- **No code yet.** No repo, no `package.json`, no Docker.
-- **Step 5 (veille) is set up**, and three entries are written. Irem still has to create the
-  Feedly account, switch on GitHub *Watch → Releases*, and pick the weekly day.
-- **Next:** Step 6 — the repository. Step 4 (Figma) is Irem's, done last.
+- **Conception is complete** (steps 1–3 of `PLAN.md`): cahier des charges, dossier de conception,
+  charte graphique, data model, screen flow, 13 mockup screens.
+- **The technology watch system is in place** (step 5), with its first three entries.
+- **The repository exists** (step 6) — https://github.com/iremchabanne/centre-khulula
+- **No application code yet.** No `package.json`, no Docker.
+- **Next:** step 7, Docker Compose. The Figma maquettes (step 4) are done last.
 
 ---
 
@@ -59,7 +59,7 @@ These are the ones easy to break by accident. Everything else is in the document
 
 | Decision | Blocks |
 |---|---|
-| Project-management tool for CP 4 | Step 6 |
+| Project-management tool for CP 4 (GitHub Projects?) | Step 6 |
 | Code-quality tool (SonarCloud?) | Step 26 |
 | Deployment target | Step 29 |
 | Acceptance tests on a solo project | Step 24 |
@@ -69,22 +69,14 @@ These are the ones easy to break by accident. Everything else is in the document
 
 ---
 
-## 5. How we work
-
-- **One task at a time**, then a checkpoint. Wait for validation before the next step.
-- **No time estimates, no calendar planning.** Irem sets the pace.
-- Documents stay **short**. If Irem cannot explain a line to a jury, it does not belong there.
-- Chat in English; Turkish when Irem asks.
-
----
-
-## 6. Things not to forget
+## 5. Things not to forget
 
 - **CP 4 artefacts cannot be reconstructed later.** The *Difficultés rencontrées* table and the
   *comptes rendus de réunion* must be written **the day the problem happens**.
-- **Veille technologique is graded in six CPs.** The system exists now — what is left is the
-  habit. One entry a week, written the week it happens.
+- **Veille technologique is graded in six CPs.** The system exists — what is left is the habit.
+  An entry written the week it happens cannot be reconstructed afterwards.
 - **Backup and restore must be demonstrated**, not merely scripted.
 - Load testing, fuzzing and acceptance tests are three separate CP 9 items.
 - Éco-conception (CP 6), RGAA (CP 2, CP 5) and RGPD (CP 2, CP 5, CP 7) are graded and easy to skip.
-- **Git history is graded (CP 4)** — the repository does not exist yet (Step 6).
+- **Dependabot alerts are still switched off** on the repository — the third source of the watch
+  system does not actually run until they are enabled.

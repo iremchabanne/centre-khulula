@@ -93,7 +93,10 @@ by itself.
 - [x] First three entries written.
 - [ ] **Irem:** create the Feedly account, add the feeds, and turn on GitHub *Watch → Releases*
       on the seven repositories. Dependabot comes with Step 6.
-- [ ] **Irem:** pick the weekly day and keep it.
+- [ ] **Ongoing:** one entry in `journal.md` per week worked on the project. Irem raises it at the
+      start of a session, from the sources listed in `veille-technologique.md`.
+      A weekly automation was attempted and abandoned - the setup was not
+      straightforward, and the automation adds nothing the jury can see.
 
 **Done when:** there is a dated log with entries in it, not just an intention.
 
@@ -103,8 +106,11 @@ by itself.
 
 ### Step 6 — Repository
 
-- [ ] `git init`, GitHub remote, `.gitignore`, `README.md`.
-- [ ] Branch and commit conventions written down — **git history is graded (CP 4)**.
+- [x] `git init`, GitHub remote (SSH), `.gitignore`, `README.md`.
+      → https://github.com/iremchabanne/centre-khulula
+- [x] Commit conventions written down — `README.md`.
+- [ ] **Irem:** switch on Dependabot alerts (Settings → Advanced Security → Dependabot alerts).
+      It is the third source of the veille system.
 - [ ] Decide the project-management tool for CP 4 (GitHub Projects?) and create the first tickets.
 
 ### Step 7 — Docker Compose  ·  CP 10, CP 11

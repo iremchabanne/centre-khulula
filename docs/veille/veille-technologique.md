@@ -80,8 +80,9 @@ Uniquement les briques que nous utilisons vraiment.
 
 ## 4. Méthode
 
-**Rythme : une session par semaine**, à jour fixe. Le jour est choisi par la maîtrise d'œuvre et
-ne change pas — une veille irrégulière n'est pas un système.
+**Rythme : une session par semaine travaillée.** La veille est faite au début d'une session de
+travail, avant de coder — les alertes de sécurité peuvent changer ce qu'on est sur le point
+d'écrire.
 
 Trois étapes :
 
