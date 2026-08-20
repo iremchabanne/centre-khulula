@@ -1,0 +1,1299 @@
+<title>Khulula — Maquettes</title>
+<style>
+  :root {
+    --bg:          #FAF7F2;
+    --surface:     #FFFFFF;
+    --surface-alt: #F3EEE5;
+    --ink:         #16211C;
+    --body:        #3D453F;
+    --muted:       #646B62;
+    --line:        #E4DCD0;
+    --line-strong: #D3C7B6;
+    --primary:     #1F4436;
+    --primary-h:   #163227;
+    --accent:      #A85128;
+    --accent-soft: #F6E9DD;
+    --scrim:       rgba(22, 33, 28, 0.55);
+
+    --st-admitted-fg:   #4A5D6E;  --st-admitted-bg:   #E8EDF1;
+    --st-incare-fg:     #8A5A12;  --st-incare-bg:     #F7EBD7;
+    --st-recovering-fg: #14605F;  --st-recovering-bg: #DCEBEA;
+    --st-released-fg:   #2F6B33;  --st-released-bg:   #E3EFE1;
+    --st-deceased-fg:   #5B5B5B;  --st-deceased-bg:   #ECEAE7;
+
+    --r-sm: 6px;  --r-md: 10px;  --r-lg: 16px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --serif: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--body);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 { font-family: var(--serif); color: var(--ink); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img, svg { max-width: 100%; }
+
+  .eyebrow {
+    font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted); font-family: var(--sans);
+  }
+
+  /* ---------- prototype chrome (not part of the product) ---------- */
+  .proto { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+  .proto-nav {
+    background: var(--ink); color: #C9D2CC; padding: 24px 18px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .proto-nav h4 { color: #FFF; font-size: 1.05rem; margin-bottom: 2px; }
+  .proto-nav .sub { font-size: 0.75rem; color: #8FA096; margin-bottom: 24px; }
+  .proto-nav .grp { font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: #7C8E83; margin: 20px 0 8px; }
+  .proto-nav button {
+    display: block; width: 100%; text-align: left; background: none; border: 0;
+    color: #C9D2CC; font: inherit; font-size: 0.875rem; padding: 7px 10px;
+    border-radius: var(--r-sm); cursor: pointer;
+  }
+  .proto-nav button:hover { background: rgba(255,255,255,.07); color: #FFF; }
+  .proto-nav button[aria-current="true"] { background: var(--primary); color: #FFF; font-weight: 500; }
+
+  .proto-main { padding: 28px 32px 80px; overflow-x: hidden; }
+  .proto-head { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  .proto-head h2 { font-size: 1.35rem; }
+  .proto-head p { font-size: 0.875rem; color: var(--muted); margin-top: 4px; }
+
+  .screen { display: none; }
+  .screen.on { display: block; }
+
+  .frame {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); overflow: hidden; max-width: 1100px;
+    position: relative; /* anchors the modal inside the mocked screen, not the whole page */
+  }
+
+  /* ---------- product: mission statement on the home page ---------- */
+  .mission { max-width: 44ch; margin: 0 auto; text-align: center; }
+  .mission .mission-text {
+    font-family: var(--serif); font-size: clamp(1.45rem, 3.1vw, 2.05rem);
+    line-height: 1.3; letter-spacing: -0.02em; color: var(--ink); margin-top: 14px;
+  }
+  .mission .mission-text em { font-style: italic; color: var(--accent); }
+  .mission .mission-sub { margin-top: 18px; font-size: 0.9375rem; color: var(--muted); }
+
+  /* ---------- product: pagination ---------- */
+  .pager { display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-top: 18px; }
+  .pager .count { font-size: 0.8125rem; color: var(--muted); margin-right: 8px; }
+  .pager.pager-center { justify-content: center; margin-top: 30px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ---------- product: tabs ---------- */
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
+  .tabs button {
+    background: none; border: 0; border-bottom: 2px solid transparent; cursor: pointer;
+    font-family: var(--sans); font-size: 0.9375rem; color: var(--muted); padding: 10px 16px;
+  }
+  .tabs button[aria-selected="true"] { color: var(--ink); font-weight: 500; border-bottom-color: var(--primary); }
+
+  .state-label {
+    font-family: var(--sans); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--muted); margin: 26px 0 10px;
+  }
+
+  /* ---------- product: modal dialog ---------- */
+  .modal { display: none; position: absolute; inset: 0; z-index: 5;
+           background: var(--scrim); padding: 34px 20px; overflow-y: auto; }
+  .modal.on { display: block; }
+  /* .shown documents a dialog state in the prototype; the JS never touches it */
+  .modal.shown { display: block; }
+  .modal-box { background: var(--surface); border-radius: var(--r-md); max-width: 620px;
+               margin: 0 auto; padding: 24px 26px; box-shadow: 0 18px 50px rgba(0,0,0,.28); }
+  .modal-head { display: flex; align-items: flex-start; justify-content: space-between;
+                gap: 16px; margin-bottom: 18px; }
+  .modal-head h3 { font-size: 1.1rem; }
+  .modal-head p { font-size: 0.8125rem; color: var(--muted); margin-top: 4px; }
+  .modal-head .x { background: none; border: 0; cursor: pointer; font-family: var(--sans);
+                   font-size: 1.5rem; line-height: 1; color: var(--muted); padding: 0 4px; }
+
+  /* ---------- product: public site ---------- */
+  .site-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; padding: 18px 32px; border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--primary); display: grid; place-items: center;
+    color: #FFF; font-family: var(--serif); font-size: 0.9rem; font-weight: 600;
+  }
+  .brand .name { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); font-weight: 600; letter-spacing: -0.01em; }
+  .brand .tag { font-size: 0.625rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .site-nav { display: flex; gap: 26px; font-size: 0.875rem; }
+  .site-nav a { text-decoration: none; color: var(--body); padding: 2px 0; border-bottom: 1px solid transparent; }
+  .site-nav a:hover { border-bottom-color: var(--line-strong); }
+  .site-nav a[aria-current="page"] { color: var(--ink); font-weight: 500; border-bottom-color: var(--accent); }
+
+  /* Visible focus indicator — RGAA 10.7, never removed */
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .btn {
+    display: inline-block; padding: 11px 20px; border-radius: var(--r-sm);
+    font-size: 0.875rem; font-weight: 500; border: 1px solid transparent; cursor: pointer;
+    font-family: var(--sans);
+  }
+  .btn-primary { background: var(--primary); color: #FFF; }
+  .btn-accent  { background: var(--accent); color: #FFF; }
+  .btn-ghost   { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+  .btn-sm      { padding: 7px 14px; font-size: 0.8125rem; }
+
+  .hero { padding: 76px 32px 68px; text-align: center; background: var(--surface); }
+  .hero .display {
+    font-family: var(--serif); font-size: clamp(2.4rem, 5.5vw, 3.9rem);
+    color: var(--ink); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05;
+    max-width: 15ch; margin: 14px auto 0;
+  }
+  .hero .lede { max-width: 52ch; margin: 20px auto 0; color: var(--body); font-size: 1.0625rem; }
+  .hero .cta { display: flex; gap: 12px; justify-content: center; margin-top: 30px; }
+
+  .photo {
+    background:
+      radial-gradient(120% 90% at 18% 12%, #476B54 0%, transparent 55%),
+      radial-gradient(110% 80% at 85% 78%, #B98246 0%, transparent 52%),
+      linear-gradient(150deg, #2C4A3B 0%, #6E7B58 55%, #C29A63 100%);
+    position: relative; display: grid; place-items: center;
+  }
+  .photo::after {
+    content: attr(data-label);
+    font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,.85); font-family: var(--sans); font-weight: 500;
+    background: rgba(0,0,0,.28); padding: 5px 11px; border-radius: 999px;
+    backdrop-filter: blur(2px);
+  }
+  .photo-hero { height: 340px; }
+  .photo-card { height: 168px; }
+  .photo-wide { height: 260px; }
+  .photo-thumb { height: 108px; }
+
+  .band { padding: 60px 32px; border-top: 1px solid var(--line); }
+  .band-alt { background: var(--surface-alt); }
+  .band h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); }
+  .band-head { max-width: 60ch; margin-bottom: 30px; }
+  .band-head p { margin-top: 10px; color: var(--muted); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; }
+  .stat { border-top: 2px solid var(--accent); padding-top: 14px; }
+  .stat .n { font-family: var(--serif); font-size: 2.4rem; color: var(--ink); line-height: 1; font-weight: 600; }
+  .stat .l { font-size: 0.8125rem; color: var(--muted); margin-top: 6px; }
+
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+  .card-body { padding: 16px 18px 18px; }
+  .card h3 { font-size: 1.05rem; }
+  .card .latin { font-style: italic; color: var(--muted); font-size: 0.8125rem; margin-top: 2px; }
+  .card p { font-size: 0.875rem; color: var(--muted); margin-top: 8px; }
+
+  .pill {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.04em;
+  }
+  .p-admitted   { background: var(--st-admitted-bg);   color: var(--st-admitted-fg); }
+  .p-incare     { background: var(--st-incare-bg);     color: var(--st-incare-fg); }
+  .p-recovering { background: var(--st-recovering-bg); color: var(--st-recovering-fg); }
+  .p-released   { background: var(--st-released-bg);   color: var(--st-released-fg); }
+  .p-deceased   { background: var(--st-deceased-bg);   color: var(--st-deceased-fg); }
+  .p-outline    { background: transparent; color: var(--muted); border: 1px solid var(--line-strong); }
+
+  .site-foot { background: var(--ink); color: #A9B5AD; padding: 44px 32px 32px; font-size: 0.8125rem; }
+  .site-foot .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
+  .site-foot h4 { color: #FFF; font-size: 0.9375rem; margin-bottom: 10px; }
+  .site-foot ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; }
+  .site-foot .legal { border-top: 1px solid rgba(255,255,255,.12); margin-top: 30px; padding-top: 16px; display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.75rem; }
+
+  /* ---------- product: forms ---------- */
+  .form { display: grid; gap: 18px; }
+  .field { display: grid; gap: 6px; }
+  .field label { font-size: 0.8125rem; font-weight: 500; color: var(--ink); }
+  .field .hint { font-size: 0.75rem; color: var(--muted); }
+  .control {
+    padding: 11px 13px; border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+    background: var(--surface); font: inherit; font-size: 0.9375rem; color: var(--body);
+  }
+  .control.ph { color: #9AA096; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .err { font-size: 0.75rem; color: #A32020; }
+  .control.bad { border-color: #A32020; }
+
+  .amounts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .amt {
+    padding: 12px 20px; border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+    background: var(--surface); font-size: 0.9375rem; cursor: pointer; font-family: var(--sans); color: var(--body);
+  }
+  .amt.sel { border-color: var(--primary); background: var(--primary); color: #FFF; font-weight: 500; }
+
+  .notice {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 14px 16px; border-radius: 0 var(--r-sm) var(--r-sm) 0; font-size: 0.875rem;
+  }
+
+  /* ---------- product: staff app ---------- */
+  .app { display: grid; grid-template-columns: 216px 1fr; min-height: 620px; }
+  .app-side { background: var(--ink); padding: 22px 14px; color: #C9D2CC; }
+  .app-side .grp { font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase; color: #7C8E83; margin: 22px 0 8px 10px; }
+  .app-side .item { padding: 8px 11px; border-radius: var(--r-sm); font-size: 0.875rem; }
+  .app-side .item.on { background: var(--primary); color: #FFF; font-weight: 500; }
+  .app-side .who { border-top: 1px solid rgba(255,255,255,.12); margin-top: 26px; padding: 14px 10px 0; font-size: 0.8125rem; }
+  .app-side .who .role { font-size: 0.6875rem; color: #8FA096; letter-spacing: 0.08em; text-transform: uppercase; }
+  .app-side .who .out { margin-top: 12px; font-size: 0.8125rem; color: #C9D2CC; text-decoration: underline; }
+
+  .app-main { background: var(--bg); padding: 26px 28px; }
+  .app-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+  .app-head h2 { font-size: 1.5rem; }
+  .app-head p { font-size: 0.875rem; color: var(--muted); margin-top: 3px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 26px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 15px 17px; }
+  .kpi .n { font-family: var(--serif); font-size: 1.85rem; color: var(--ink); line-height: 1; font-weight: 600; }
+  .kpi .l { font-size: 0.75rem; color: var(--muted); margin-top: 5px; }
+
+  .pens { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .pen { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 13px 14px; }
+  .pen .code { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); font-weight: 600; }
+  .pen .occ { font-size: 0.8125rem; margin-top: 6px; }
+  .pen.free   { border-color: #BBD3BE; background: #F2F8F2; }
+  .pen.busy   { border-color: #E4C9AE; background: #FDF6EF; }
+  .pen.maint  { border-color: var(--line-strong); background: var(--surface-alt); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot.g { background: #3F8A4B; } .dot.o { background: var(--accent); } .dot.n { background: #9AA096; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface); }
+  .tablewrap { border: 1px solid var(--line); border-radius: var(--r-md); overflow: auto; }
+  th {
+    text-align: left; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; padding: 11px 14px; border-bottom: 1px solid var(--line);
+    background: var(--surface-alt); white-space: nowrap;
+  }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 0.875rem; }
+  tr:last-child td { border-bottom: 0; }
+  td .nm { color: var(--ink); font-weight: 500; }
+  td .sub { font-size: 0.75rem; color: var(--muted); font-style: italic; }
+
+  .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .toolbar .control { padding: 8px 12px; font-size: 0.8125rem; }
+
+  .timeline { display: grid; gap: 0; }
+  .tl { display: grid; grid-template-columns: 92px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .tl:last-child { border-bottom: 0; }
+  .tl .when { font-size: 0.75rem; color: var(--muted); padding-top: 2px; }
+  .tl .what { font-size: 0.875rem; }
+  .tl .what strong { color: var(--ink); font-weight: 600; }
+  .tl .who { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 20px 22px; }
+  .panel h3 { font-size: 1.05rem; margin-bottom: 14px; }
+
+  .dl { display: grid; grid-template-columns: 130px 1fr; gap: 9px 16px; font-size: 0.875rem; }
+  .dl dt { color: var(--muted); }
+  .dl dd { margin: 0; color: var(--ink); }
+
+  .login { display: grid; place-items: center; padding: 70px 20px; background: var(--surface-alt); }
+  .login .box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 34px; width: 100%; max-width: 400px; }
+
+  .note { font-size: 0.8125rem; color: var(--muted); margin-top: 14px; max-width: 1100px; }
+  .note code { background: var(--surface-alt); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+
+  @media (max-width: 820px) {
+    .proto { grid-template-columns: 1fr; }
+    .proto-nav { position: static; height: auto; }
+    .app { grid-template-columns: 1fr; }
+    .site-foot .cols { grid-template-columns: 1fr; }
+    .row-2 { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="proto">
+  <nav class="proto-nav">
+    <h4>Khulula</h4>
+    <div class="sub">Maquettes — v1.6</div>
+
+    <div class="grp">Site public</div>
+    <button data-s="s1" aria-current="true">1 · Accueil</button>
+    <button data-s="s2">2 · Les espèces</button>
+    <button data-s="s3">3 · Fiche espèce</button>
+    <button data-s="s4">4 · Nos animaux</button>
+    <button data-s="s5">5 · Faire un don</button>
+    <button data-s="s6">6 · Mentions légales</button>
+
+    <div class="grp">Espace personnel</div>
+    <button data-s="s7">7 · Connexion</button>
+    <button data-s="s8">8 · Enclos — bord, parc, admission</button>
+    <button data-s="s9">9 · Liste des animaux</button>
+    <button data-s="s10">10 · Fiche animal</button>
+
+    <div class="grp">Administrateur</div>
+    <button data-s="s11">11 · Liste des dons</button>
+    <button data-s="s12">12 · Comptes du personnel</button>
+
+    <div class="grp">Transverse</div>
+    <button data-s="s13">13 · Accès refusé</button>
+  </nav>
+
+  <main class="proto-main">
+
+    <!-- 1 -->
+    <section class="screen on" id="s1">
+      <div class="proto-head"><h2>1 · Accueil</h2><p>Page publique. Point d'entrée du visiteur (V1). Objectif : comprendre la mission en dix secondes, puis agir.</p></div>
+      <div class="frame">
+        <header class="site-head">
+          <div class="brand"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Wildlife Rehabilitation</div></div></div>
+          <nav class="site-nav" aria-label="Main"><a href="#" aria-current="page">Home</a><a href="#">Species</a><a href="#">Our animals</a></nav>
+          <button class="btn btn-accent btn-sm">Donate</button>
+        </header>
+        <div class="hero">
+          <div class="eyebrow">Limpopo · South Africa</div>
+          <h1 class="display">Every animal we treat is meant to go home.</h1>
+          <p class="lede">Khulula takes in injured and orphaned wildlife, gives it the time and care it needs, and returns it to the wild. <em>Khulula</em> means “to set free” in isiZulu.</p>
+          <div class="cta"><button class="btn btn-primary">Support our work</button></div>
+        </div>
+        <div class="photo photo-hero" data-label="Photographie — animal en convalescence"></div>
+        <div class="band">
+          <div class="stats">
+            <div class="stat"><div class="n">248</div><div class="l">Animals admitted</div></div>
+            <div class="stat"><div class="n">186</div><div class="l">Released back to the wild</div></div>
+            <div class="stat"><div class="n">31</div><div class="l">Species treated</div></div>
+            <div class="stat"><div class="n">18</div><div class="l">Enclosures</div></div>
+          </div>
+        </div>
+        <div class="band">
+          <div class="mission">
+            <div class="eyebrow">Our mission</div>
+            <p class="mission-text">We take in wildlife that is <em>injured</em>, <em>orphaned</em> or <em>confiscated</em> — and we give it back to the wild.</p>
+            <p class="mission-sub">Eighteen enclosures, and one destination for every animal that arrives: the place it came from. An animal leaves only on the veterinarian's decision, and is released as close as possible to where it was found.</p>
+          </div>
+        </div>
+        <div class="band band-alt">
+          <div class="band-head"><div class="eyebrow">In our care right now</div><h2>Currently recovering</h2><p>Ces animaux sont actuellement soignés au centre. Aucune donnée nominative du personnel n'apparaît ici (RG11).</p></div>
+          <div class="grid-3">
+            <article class="card"><div class="photo photo-card" data-label="Serval"></div><div class="card-body"><span class="pill p-recovering">Recovering</span><h3 style="margin-top:9px">Nala</h3><div class="latin">Leptailurus serval</div><p>Admitted 12 June — road trauma. Feeding well.</p></div></article>
+            <article class="card"><div class="photo photo-card" data-label="Vautour"></div><div class="card-body"><span class="pill p-incare">In care</span><h3 style="margin-top:9px">Sipho</h3><div class="latin">Gyps africanus</div><p>Admitted 28 June — wing fracture.</p></div></article>
+            <article class="card"><div class="photo photo-card" data-label="Pangolin"></div><div class="card-body"><span class="pill p-incare">In care</span><h3 style="margin-top:9px">Themba</h3><div class="latin">Smutsia temminckii</div><p>Admitted 2 July — confiscated, malnourished.</p></div></article>
+          </div>
+        </div>
+        <footer class="site-foot">
+          <div class="cols">
+            <div><h4>Khulula</h4><p>A wildlife rehabilitation centre in Limpopo, South Africa. We treat, we heal, we release.</p></div>
+            <div><h4>Explore</h4><ul><li>Species</li><li>Our animals</li></ul></div>
+            <div><h4>Support</h4><ul><li>Donate</li><li>Contact</li><li>Staff login</li></ul></div>
+          </div>
+          <div class="legal"><span>Mentions légales</span><span>Politique de confidentialité</span><span>Accessibilité : partiellement conforme</span><span>© 2026 Centre Khulula</span></div>
+        </footer>
+      </div>
+      <p class="note"><strong>Notes.</strong> Le lien « Accessibilité » en pied de page est une obligation RGAA. Les compteurs proviennent de la fonction stockée d'occupation (CP 8) et sont mis en cache Redis.</p>
+    </section>
+
+    <!-- 2 -->
+    <section class="screen" id="s2">
+      <div class="proto-head"><h2>2 · Les espèces</h2><p>V2 — liste paginée des fiches espèces. Contenu « animal facts ». Pagination obligatoire (éco-conception, §6.4).</p></div>
+      <div class="frame">
+        <header class="site-head">
+          <div class="brand"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Wildlife Rehabilitation</div></div></div>
+          <nav class="site-nav" aria-label="Main"><a href="#">Home</a><a href="#" aria-current="page">Species</a><a href="#">Our animals</a></nav>
+          <button class="btn btn-accent btn-sm">Donate</button>
+        </header>
+        <div class="band" style="border-top:0">
+          <div class="band-head"><div class="eyebrow">Reference</div><h2>Species we treat</h2><p>Thirty-one species have passed through the centre. Each sheet explains what the animal is, where it lives, and why it usually reaches us.</p></div>
+          <div class="toolbar"><input class="control ph" value="Search a species…" style="min-width:230px"><select class="control"><option>All conservation statuses</option></select></div>
+          <div class="grid-3">
+            <article class="card"><div class="photo photo-card" data-label="Serval"></div><div class="card-body"><h3>Serval</h3><div class="latin">Leptailurus serval</div><span class="pill p-outline" style="margin-top:9px">Least concern</span></div></article>
+            <article class="card"><div class="photo photo-card" data-label="Pangolin de Temminck"></div><div class="card-body"><h3>Temminck's pangolin</h3><div class="latin">Smutsia temminckii</div><span class="pill p-incare" style="margin-top:9px">Vulnerable</span></div></article>
+            <article class="card"><div class="photo photo-card" data-label="Vautour africain"></div><div class="card-body"><h3>White-backed vulture</h3><div class="latin">Gyps africanus</div><span class="pill p-deceased" style="margin-top:9px;background:#F6DDDD;color:#9A2222">Critically endangered</span></div></article>
+            <article class="card"><div class="photo photo-card" data-label="Céphalophe"></div><div class="card-body"><h3>Common duiker</h3><div class="latin">Sylvicapra grimmia</div><span class="pill p-outline" style="margin-top:9px">Least concern</span></div></article>
+            <article class="card"><div class="photo photo-card" data-label="Mangouste"></div><div class="card-body"><h3>Banded mongoose</h3><div class="latin">Mungos mungo</div><span class="pill p-outline" style="margin-top:9px">Least concern</span></div></article>
+            <article class="card"><div class="photo photo-card" data-label="Tortue léopard"></div><div class="card-body"><h3>Leopard tortoise</h3><div class="latin">Stigmochelys pardalis</div><span class="pill p-outline" style="margin-top:9px">Least concern</span></div></article>
+          </div>
+          <div class="pager pager-center">
+            <span class="count">1&ndash;8 of 31 species</span>
+            <button class="btn btn-ghost btn-sm">Previous</button>
+            <button class="btn btn-ghost btn-sm">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="screen" id="s3">
+      <div class="proto-head"><h2>3 · Fiche espèce</h2><p>V2 — détail d'une espèce, plus les animaux de cette espèce passés par le centre.</p></div>
+      <div class="frame">
+        <header class="site-head">
+          <div class="brand"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Wildlife Rehabilitation</div></div></div>
+          <nav class="site-nav" aria-label="Main"><a href="#">Home</a><a href="#" aria-current="page">Species</a><a href="#">Our animals</a></nav>
+          <button class="btn btn-accent btn-sm">Donate</button>
+        </header>
+        <div class="photo photo-wide" data-label="Photographie — Pangolin de Temminck"></div>
+        <div class="band" style="border-top:0">
+          <div style="font-size:0.8125rem;color:var(--muted);margin-bottom:14px">Species <span style="margin:0 6px">›</span> Temminck's pangolin</div>
+          <div class="grid-2" style="align-items:start">
+            <div>
+              <span class="pill p-incare">Vulnerable</span>
+              <h2 style="margin-top:11px">Temminck's pangolin</h2>
+              <div class="latin" style="font-style:italic;color:var(--muted);margin-top:3px">Smutsia temminckii</div>
+              <p style="margin-top:18px;font-size:0.9375rem">The most trafficked mammal in the world. Nocturnal, solitary, and entirely dependent on ants and termites. When threatened it rolls into a ball — which protects it from predators, and makes it trivially easy for poachers to pick up.</p>
+              <p style="margin-top:14px;font-size:0.9375rem;color:var(--muted)">Most pangolins reach us after confiscation from the illegal trade, severely dehydrated and malnourished. Rehabilitation is slow and rarely straightforward.</p>
+            </div>
+            <div class="panel">
+              <h3>At a glance</h3>
+              <dl class="dl">
+                <dt>Habitat</dt><dd>Savanna, woodland</dd>
+                <dt>Diet</dt><dd>Ants, termites</dd>
+                <dt>Activity</dt><dd>Nocturnal</dd>
+                <dt>IUCN status</dt><dd>Vulnerable</dd>
+                <dt>Treated here</dt><dd>7 animals</dd>
+                <dt>Released</dt><dd>4 animals</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="band band-alt">
+          <div class="band-head"><h2 style="font-size:1.5rem">Pangolins we have cared for</h2></div>
+          <div class="grid-3">
+            <article class="card"><div class="photo photo-thumb" data-label="Themba"></div><div class="card-body"><span class="pill p-incare">In care</span><h3 style="margin-top:8px;font-size:0.9375rem">Themba</h3><p>Admitted 2 July 2026</p></div></article>
+            <article class="card"><div class="photo photo-thumb" data-label="Lerato"></div><div class="card-body"><span class="pill p-released">Released</span><h3 style="margin-top:8px;font-size:0.9375rem">Lerato</h3><p>Released 14 March 2026</p></div></article>
+            <article class="card"><div class="photo photo-thumb" data-label="Kabelo"></div><div class="card-body"><span class="pill p-released">Released</span><h3 style="margin-top:8px;font-size:0.9375rem">Kabelo</h3><p>Released 2 December 2025</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="screen" id="s4">
+      <div class="proto-head"><h2>4 · Nos animaux</h2><p>V3 et V4 sur un seul écran. Même liste, même requête, un seul filtre de statut qui change — deux pages distinctes auraient dupliqué le composant pour rien.</p></div>
+      <div class="frame">
+        <header class="site-head">
+          <div class="brand"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Wildlife Rehabilitation</div></div></div>
+          <nav class="site-nav" aria-label="Main"><a href="#">Home</a><a href="#">Species</a><a href="#" aria-current="page">Our animals</a></nav>
+          <button class="btn btn-accent btn-sm">Donate</button>
+        </header>
+        <div class="band" style="border-top:0">
+          <div class="band-head"><div class="eyebrow">The centre's work</div><h2>Our animals</h2><p>Who we are treating today, and who has already gone home. No staff name ever appears on these pages (RG11).</p></div>
+
+          <div class="tabs" role="tablist" aria-label="Animal status">
+            <button role="tab" aria-selected="true" data-tab-target="care">In our care · 12</button>
+            <button role="tab" aria-selected="false" data-tab-target="released">Released · 186</button>
+          </div>
+
+          <div data-tab="care">
+            <div class="grid-3">
+              <article class="card"><div class="photo photo-card" data-label="Serval"></div><div class="card-body"><span class="pill p-recovering">Recovering</span><h3 style="margin-top:9px">Nala</h3><div class="latin">Serval</div><p>Admitted 12 June 2026 · road trauma</p></div></article>
+              <article class="card"><div class="photo photo-card" data-label="Vautour"></div><div class="card-body"><span class="pill p-incare">In care</span><h3 style="margin-top:9px">Sipho</h3><div class="latin">White-backed vulture</div><p>Admitted 28 June 2026 · wing fracture</p></div></article>
+              <article class="card"><div class="photo photo-card" data-label="Pangolin"></div><div class="card-body"><span class="pill p-incare">In care</span><h3 style="margin-top:9px">Themba</h3><div class="latin">Temminck's pangolin</div><p>Admitted 2 July 2026 · confiscation</p></div></article>
+              <article class="card"><div class="photo photo-card" data-label="Céphalophe"></div><div class="card-body"><span class="pill p-admitted">Admitted</span><h3 style="margin-top:9px">Ayanda</h3><div class="latin">Common duiker</div><p>Admitted 6 August 2026 · snare injury</p></div></article>
+              <article class="card"><div class="photo photo-card" data-label="Mangouste"></div><div class="card-body"><span class="pill p-recovering">Recovering</span><h3 style="margin-top:9px">Zola</h3><div class="latin">Banded mongoose</div><p>Admitted 21 May 2026 · orphaned</p></div></article>
+              <article class="card"><div class="photo photo-card" data-label="Tortue"></div><div class="card-body"><span class="pill p-incare">In care</span><h3 style="margin-top:9px">Mandla</h3><div class="latin">Leopard tortoise</div><p>Admitted 19 July 2026 · shell fracture</p></div></article>
+            </div>
+            <div class="pager pager-center">
+              <span class="count">1&ndash;6 of 12 in our care</span>
+              <button class="btn btn-ghost btn-sm">Previous</button>
+              <button class="btn btn-ghost btn-sm">Next</button>
+            </div>
+          </div>
+
+          <div data-tab="released" hidden>
+            <div class="grid-3">
+              <article class="card"><div class="photo photo-card" data-label="Lerato"></div><div class="card-body"><span class="pill p-released">Released</span><h3 style="margin-top:9px">Lerato</h3><div class="latin">Temminck's pangolin</div><p>94 days in care · released 14 March 2026</p></div></article>
+              <article class="card"><div class="photo photo-card" data-label="Bongani"></div><div class="card-body"><span class="pill p-released">Released</span><h3 style="margin-top:9px">Bongani</h3><div class="latin">Serval</div><p>41 days in care · released 2 February 2026</p></div></article>
+              <article class="card"><div class="photo photo-card" data-label="Naledi"></div><div class="card-body"><span class="pill p-released">Released</span><h3 style="margin-top:9px">Naledi</h3><div class="latin">Banded mongoose</div><p>63 days in care · released 18 January 2026</p></div></article>
+            </div>
+            <div class="pager pager-center">
+              <span class="count">1&ndash;3 of 186 released</span>
+              <button class="btn btn-ghost btn-sm">Previous</button>
+              <button class="btn btn-ghost btn-sm">Next</button>
+            </div>
+          </div>
+        </div>
+        <div class="band band-alt" style="text-align:center">
+          <h2 style="font-size:1.7rem">Help us reach the next one.</h2>
+          <p style="margin-top:10px;color:var(--muted);max-width:48ch;margin-left:auto;margin-right:auto">Feeding, medication and enclosure upkeep are paid for entirely by donations.</p>
+          <button class="btn btn-accent" style="margin-top:22px">Make a donation</button>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> Fusion assumée de deux besoins (V3, V4) sur un seul écran : la requête est la même à un filtre de statut près. Un besoin fonctionnel n'impose pas une page — c'est la couverture du besoin qui est évaluée, pas le nombre d'écrans. Argument d'éco-conception également (§6.4) : un composant, une route, un seul jeu de requêtes. Les onglets sont de vrais <code>role="tab"</code> navigables au clavier (RGAA).</p>
+    </section>
+
+    <!-- 5 -->
+    <section class="screen" id="s5">
+      <div class="proto-head"><h2>5 · Faire un don</h2><p>V5 — formulaire de don anonyme, en deux états. <strong>Aucun paiement réel</strong> (§2.2). Champs nom et e-mail facultatifs, avec consentement explicite (RGPD).</p></div>
+      <div class="frame">
+        <header class="site-head">
+          <div class="brand"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Wildlife Rehabilitation</div></div></div>
+          <nav class="site-nav" aria-label="Main"><a href="#">Home</a><a href="#">Species</a><a href="#">Our animals</a></nav>
+          <button class="btn btn-accent btn-sm">Donate</button>
+        </header>
+        <div class="band" style="border-top:0">
+          <div class="grid-2" style="align-items:start;gap:46px">
+            <div>
+              <div class="eyebrow">Support Khulula</div>
+              <h2 style="margin-top:8px">Make a donation</h2>
+              <p style="margin-top:14px;font-size:0.9375rem;color:var(--muted)">Every donation goes directly into food, medication and enclosure upkeep.</p>
+              <div class="notice" style="margin-top:22px"><strong>Registering an intention.</strong> This form records your intention to give. No card details are collected here and no payment is taken — the centre will contact you, or you can transfer directly using the details we send.</div>
+              <div class="panel" style="margin-top:22px;background:var(--surface-alt)">
+                <h3 style="font-size:0.9375rem">What your gift covers</h3>
+                <dl class="dl" style="grid-template-columns:70px 1fr">
+                  <dt>R 250</dt><dd>One week of food for a mongoose</dd>
+                  <dt>R 500</dt><dd>Medication for a fractured wing</dd>
+                  <dt>R 1 000</dt><dd>One month of enclosure upkeep</dd>
+                </dl>
+              </div>
+            </div>
+            <div class="panel">
+              <form class="form">
+                <div class="field">
+                  <label for="amt">Amount (ZAR) <span style="color:#A32020">*</span></label>
+                  <div class="amounts">
+                    <button type="button" class="amt">R 250</button>
+                    <button type="button" class="amt sel">R 500</button>
+                    <button type="button" class="amt">R 1 000</button>
+                    <button type="button" class="amt">Other</button>
+                  </div>
+                  <div class="hint">Between R 1 and R 10 000 (RG9).</div>
+                </div>
+                <div class="field"><label for="nm">Your name <span style="font-weight:400;color:var(--muted)">— optional</span></label><input id="nm" class="control ph" value="Leave empty to give anonymously"></div>
+                <div class="field"><label for="em">Email <span style="font-weight:400;color:var(--muted)">— optional</span></label><input id="em" class="control ph" value="you@example.com"><div class="hint">Only used to send you a receipt. Never shared.</div></div>
+                <div class="field"><label for="ms">Message <span style="font-weight:400;color:var(--muted)">— optional</span></label><textarea id="ms" class="control ph" rows="3">A few words, if you'd like</textarea></div>
+                <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.8125rem;color:var(--muted)">
+                  <input type="checkbox" style="margin-top:4px">
+                  <label style="font-weight:400;font-size:0.8125rem">I agree that Khulula may store my name and email for the purpose of this donation. <span style="text-decoration:underline">Privacy policy</span></label>
+                </div>
+                <button class="btn btn-accent" type="button">Confirm my donation</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3 class="state-label">État 2 — après enregistrement du don</h3>
+      <div class="frame">
+        <header class="site-head">
+          <div class="brand"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Wildlife Rehabilitation</div></div></div>
+          <nav class="site-nav" aria-label="Main"><a href="#">Home</a><a href="#">Species</a><a href="#">Our animals</a></nav>
+          <button class="btn btn-accent btn-sm">Donate</button>
+        </header>
+        <div class="band" style="border-top:0;text-align:center;padding-top:66px;padding-bottom:66px">
+          <div style="width:56px;height:56px;border-radius:50%;background:var(--st-released-bg);color:var(--st-released-fg);display:grid;place-items:center;margin:0 auto 20px;font-size:1.5rem">&#10003;</div>
+          <h2>Thank you.</h2>
+          <p style="margin-top:12px;max-width:46ch;margin-left:auto;margin-right:auto;color:var(--muted)">Your intention to give <strong style="color:var(--ink)">R 500</strong> has been recorded. We will be in touch shortly with transfer details.</p>
+          <div class="notice" style="max-width:46ch;margin:24px auto 0;text-align:left">No payment has been taken. Nothing has been charged to any card or account.</div>
+          <div style="margin-top:28px;display:flex;gap:12px;justify-content:center"><button class="btn btn-ghost">Back to home</button><button class="btn btn-primary">See who we're caring for</button></div>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> La case de consentement n'est requise que si le nom ou l'e-mail est renseigné — un don totalement anonyme n'a pas de base légale à recueillir (RG10, §6.3). Formulaire soumis à limitation de débit via Redis (§6.1). L'état 2 n'est pas une page distincte : c'est le retour de la même route après enregistrement, et il porte le rappel explicite qu'aucun paiement n'a eu lieu (§2.2).</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="screen" id="s6">
+      <div class="proto-head"><h2>6 · Mentions légales / confidentialité</h2><p>V6 — obligation RGPD et RGAA. Page souvent oubliée, mais explicitement notée dans les critères.</p></div>
+      <div class="frame">
+        <header class="site-head">
+          <div class="brand"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Wildlife Rehabilitation</div></div></div>
+          <nav class="site-nav" aria-label="Main"><a href="#">Home</a><a href="#">Species</a><a href="#">Our animals</a></nav>
+          <button class="btn btn-accent btn-sm">Donate</button>
+        </header>
+        <div class="band" style="border-top:0">
+          <div style="max-width:70ch">
+            <div class="eyebrow">Legal</div>
+            <h2 style="margin-top:8px">Legal notice &amp; privacy policy</h2>
+            <h3 style="margin-top:30px;font-size:1.1rem">Publisher</h3>
+            <p style="margin-top:8px;font-size:0.9375rem;color:var(--muted)">Centre Khulula — fictional organisation created for an educational project. Limpopo, South Africa.</p>
+            <h3 style="margin-top:26px;font-size:1.1rem">What we collect</h3>
+            <p style="margin-top:8px;font-size:0.9375rem;color:var(--muted)">Only what a donation requires: an amount, and — if you choose to provide them — a name, an email address and a message. Donating anonymously is the default. We do not use tracking cookies and we do not profile visitors.</p>
+            <h3 style="margin-top:26px;font-size:1.1rem">Why, and for how long</h3>
+            <p style="margin-top:8px;font-size:0.9375rem;color:var(--muted)">Contact details are kept solely to acknowledge your donation, on the basis of your explicit consent, and are erased after 3 years.</p>
+            <h3 style="margin-top:26px;font-size:1.1rem">Your rights</h3>
+            <p style="margin-top:8px;font-size:0.9375rem;color:var(--muted)">You may ask to access, correct or delete your data at any time by writing to privacy@khulula.example.</p>
+            <h3 style="margin-top:26px;font-size:1.1rem">Accessibility</h3>
+            <p style="margin-top:8px;font-size:0.9375rem;color:var(--muted)">This site aims to meet RGAA level AA. Current status: partially compliant. Known limitations are listed below.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="screen" id="s7">
+      <div class="proto-head"><h2>7 · Connexion</h2><p>S1 — accès personnel uniquement. Pas d'inscription publique : les comptes sont créés par un administrateur (§2.2).</p></div>
+      <div class="frame">
+        <div class="login">
+          <div class="box">
+            <div class="brand" style="justify-content:center;margin-bottom:26px"><div class="mark">K</div><div><div class="name">Khulula</div><div class="tag">Staff area</div></div></div>
+            <form class="form">
+              <div class="field"><label for="lem">Email</label><input id="lem" class="control ph" value="you@khulula.example"></div>
+              <div class="field"><label for="lpw">Password</label><input id="lpw" class="control" type="password" value="••••••••••"></div>
+              <button class="btn btn-primary" type="button">Sign in</button>
+            </form>
+            <p style="margin-top:20px;font-size:0.75rem;color:var(--muted);text-align:center">Accounts are created by the centre administrator. There is no public sign-up.</p>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> Message d'erreur volontairement générique (« Email or password is incorrect ») pour ne pas révéler l'existence d'un compte. Limitation de débit sur les tentatives (§6.1).</p>
+    </section>
+
+    <!-- 8 -->
+    <section class="screen" id="s8">
+      <div class="proto-head"><h2>8 · Enclos — tableau de bord, parc et admission</h2><p>S2, S3, S4 et A2 sur un seul écran. Onglet <em>Overview</em> : tout le personnel, répond à RG1/RG2 — peut-on accueillir un animal ? Onglet <em>Manage the park</em> : <strong>administrateurs seuls</strong>.</p></div>
+      <div class="frame">
+        <div class="app">
+          <aside class="app-side">
+            <div class="brand" style="margin-bottom:6px"><div class="mark">K</div><div><div class="name" style="color:#FFF;font-size:1rem">Khulula</div><div class="tag" style="color:#8FA096">Staff</div></div></div>
+            <div class="grp">Care</div>
+            <div class="item on">Enclosures</div>
+            <div class="item">Animals</div>
+            <div class="grp">Administration</div>
+            <div class="item">Donations</div>
+            <div class="item">Staff accounts</div>
+            <div class="who"><div>Thandi Mokoena</div><div class="role">Veterinarian &middot; Administrator</div><div class="out">&#8617; Sign out</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-head">
+              <div><h2>Enclosures</h2><p>Live occupancy. Status is derived automatically from current stays (RG3).</p></div>
+              <button class="btn btn-primary btn-sm" data-open="m8adm">Admit an animal</button>
+            </div>
+            <div class="tabs" role="tablist" aria-label="Enclosure views">
+              <button role="tab" aria-selected="true" data-tab-target="overview">Overview</button>
+              <button role="tab" aria-selected="false" data-tab-target="manage">Manage the park &middot; admin</button>
+            </div>
+
+            <div data-tab="overview">
+            <div class="kpis">
+              <div class="kpi"><div class="n">12</div><div class="l">Occupied</div></div>
+              <div class="kpi"><div class="n">5</div><div class="l">Free</div></div>
+              <div class="kpi"><div class="n">1</div><div class="l">Maintenance</div></div>
+              <div class="kpi"><div class="n">67%</div><div class="l">Occupancy rate</div></div>
+              <div class="kpi"><div class="n">48 d</div><div class="l">Average stay</div></div>
+            </div>
+            <div class="pens">
+              <div class="pen busy"><div class="code">E-01</div><div class="occ"><span class="dot o"></span>Nala · Serval</div></div>
+              <div class="pen busy"><div class="code">E-02</div><div class="occ"><span class="dot o"></span>Sipho · Vulture</div></div>
+              <div class="pen free"><div class="code">E-03</div><div class="occ"><span class="dot g"></span>Free</div></div>
+              <div class="pen busy"><div class="code">E-04</div><div class="occ"><span class="dot o"></span>Themba · Pangolin</div></div>
+              <div class="pen free"><div class="code">E-05</div><div class="occ"><span class="dot g"></span>Free</div></div>
+              <div class="pen maint"><div class="code">E-06</div><div class="occ"><span class="dot n"></span>Maintenance</div></div>
+              <div class="pen busy"><div class="code">E-07</div><div class="occ"><span class="dot o"></span>Ayanda · Duiker</div></div>
+              <div class="pen free"><div class="code">E-08</div><div class="occ"><span class="dot g"></span>Free</div></div>
+              <div class="pen busy"><div class="code">E-09</div><div class="occ"><span class="dot o"></span>Zola · Mongoose</div></div>
+              <div class="pen busy"><div class="code">E-10</div><div class="occ"><span class="dot o"></span>Mandla · Tortoise</div></div>
+              <div class="pen free"><div class="code">E-11</div><div class="occ"><span class="dot g"></span>Free</div></div>
+              <div class="pen free"><div class="code">E-12</div><div class="occ"><span class="dot g"></span>Free</div></div>
+            </div>
+            </div>
+
+            <div data-tab="manage" hidden>
+              <div class="toolbar">
+                <input class="control ph" value="Search by code&hellip;" style="min-width:180px">
+                <select class="control"><option>All statuses</option><option>Free</option><option>Occupied</option><option>In maintenance</option></select>
+                <select class="control"><option>All types</option><option>Large mammal</option><option>Small mammal</option><option>Aviary</option><option>Reptile</option></select>
+                <button class="btn btn-primary btn-sm" data-open="m8" style="margin-left:auto">New enclosure</button>
+              </div>
+            <div class="tablewrap">
+              <table>
+                <thead><tr><th>Code</th><th>Type</th><th>Status</th><th>Current occupant</th><th>Stays to date</th><th><span class="eyebrow">Actions</span></th></tr></thead>
+                <tbody>
+                  <tr><td><span class="nm">E-01</span></td><td>Large mammal</td><td><span class="pill p-incare">Occupied</span></td><td>Nala · Serval</td><td>23</td><td><button class="btn btn-ghost btn-sm" disabled style="opacity:.45">Maintenance</button></td></tr>
+                  <tr><td><span class="nm">E-03</span></td><td>Small mammal</td><td><span class="pill p-released">Free</span></td><td>—</td><td>31</td><td><button class="btn btn-ghost btn-sm">Maintenance</button></td></tr>
+                  <tr><td><span class="nm">E-04</span></td><td>Small mammal</td><td><span class="pill p-incare">Occupied</span></td><td>Themba · Pangolin</td><td>19</td><td><button class="btn btn-ghost btn-sm" disabled style="opacity:.45">Maintenance</button></td></tr>
+                  <tr><td><span class="nm">E-06</span></td><td>Aviary</td><td><span class="pill p-deceased">Maintenance</span></td><td>—</td><td>12</td><td><button class="btn btn-ghost btn-sm">Return to service</button></td></tr>
+                  <tr><td><span class="nm">E-08</span></td><td>Reptile</td><td><span class="pill p-released">Free</span></td><td>—</td><td>7</td><td><button class="btn btn-ghost btn-sm">Maintenance</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+              <div class="pager">
+                <span class="count">1&ndash;12 of 18 enclosures</span>
+                <button class="btn btn-ghost btn-sm">Previous</button>
+                <button class="btn btn-ghost btn-sm">Next</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal" id="m8adm" role="dialog" aria-modal="true" aria-labelledby="m8admt">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3 id="m8admt">Admit an animal</h3>
+                  <p>5 enclosures are free right now.</p>
+                </div>
+                <button class="x" type="button" data-close aria-label="Close">&times;</button>
+              </div>
+              <form class="form">
+                <div class="row-2">
+                  <div class="field"><label for="an">Name <span style="color:#A32020">*</span></label><input id="an" class="control ph" value="e.g. Nala"></div>
+                  <div class="field"><label for="asp">Species <span style="color:#A32020">*</span></label><select id="asp" class="control"><option>Select a species&hellip;</option></select></div>
+                </div>
+                <div class="row-2">
+                  <div class="field"><label for="asx">Sex</label><select id="asx" class="control"><option>Unknown</option></select></div>
+                  <div class="field"><label for="aag">Estimated age</label><select id="aag" class="control"><option>Adult</option></select></div>
+                </div>
+                <div class="field"><label for="afd">Found near</label><input id="afd" class="control ph" value="Place name &mdash; no GPS coordinates"></div>
+                <div class="field"><label for="arn">Reason for admission <span style="color:#A32020">*</span></label><textarea id="arn" class="control ph" rows="3">Road trauma, snare injury, orphaned, confiscation&hellip;</textarea></div>
+                <div class="field">
+                  <label for="aen">Enclosure <span style="color:#A32020">*</span></label>
+                  <select id="aen" class="control"><option>E-03 &mdash; free</option></select>
+                  <div class="hint">Only free enclosures are listed. Occupied and maintenance enclosures cannot be selected (RG1, RG2).</div>
+                </div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Admit animal</button><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+              </form>
+            </div>
+          </div>
+
+          <div class="modal" id="m8" role="dialog" aria-modal="true" aria-labelledby="m8t">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3 id="m8t">New enclosure</h3>
+                  <p>A new enclosure starts free. Its status is never set by hand (RG3).</p>
+                </div>
+                <button class="x" type="button" data-close aria-label="Close">&times;</button>
+              </div>
+              <form class="form">
+                <div class="row-2">
+                  <div class="field"><label for="en1">Code <span style="color:#A32020">*</span></label><input id="en1" class="control ph" value="e.g. E-19"><div class="hint">Must be unique.</div></div>
+                  <div class="field"><label for="en2">Type <span style="color:#A32020">*</span></label><select id="en2" class="control"><option>Small mammal</option><option>Large mammal</option><option>Aviary</option><option>Reptile</option></select></div>
+                </div>
+                <div class="field"><label for="en3">Notes</label><input id="en3" class="control ph" value="Optional — location, particularities"></div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Create</button><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> Les compteurs « occupancy rate » et « average stay » viennent des fonctions stockées PL/pgSQL (CP 8, T4). La liste des enclos libres est mise en cache Redis et invalidée à chaque admission ou sortie.</p>
+      <h3 class="state-label">&Eacute;tat 2 &mdash; l'enclos a &eacute;t&eacute; pris entre-temps (CP 8)</h3>
+      <div class="frame">
+        <div class="app">
+          <aside class="app-side">
+            <div class="brand" style="margin-bottom:6px"><div class="mark">K</div><div><div class="name" style="color:#FFF;font-size:1rem">Khulula</div><div class="tag" style="color:#8FA096">Staff</div></div></div>
+            <div class="grp">Care</div>
+            <div class="item on">Enclosures</div>
+            <div class="item">Animals</div>
+            <div class="who"><div>Sipho Dlamini</div><div class="role">Keeper</div><div class="out">&#8617; Sign out</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-head">
+              <div><h2>Enclosures</h2><p>Live occupancy. Status is derived automatically from current stays (RG3).</p></div>
+              <button class="btn btn-primary btn-sm">Admit an animal</button>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><div class="n">17</div><div class="l">Occupied</div></div>
+              <div class="kpi"><div class="n">0</div><div class="l">Free</div></div>
+              <div class="kpi"><div class="n">1</div><div class="l">Maintenance</div></div>
+              <div class="kpi"><div class="n">94%</div><div class="l">Occupancy rate</div></div>
+              <div class="kpi"><div class="n">48 d</div><div class="l">Average stay</div></div>
+            </div>
+          </div>
+
+          <div class="modal shown" role="dialog" aria-modal="true" aria-label="Admit an animal">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3>Admit an animal</h3>
+                  <p>0 enclosures are free right now.</p>
+                </div>
+                <button class="x" type="button" aria-label="Close">&times;</button>
+              </div>
+              <div class="notice" style="background:#F9E4E4;border-color:#A32020;margin-bottom:18px">
+                <strong>Enclosure E-03 is no longer available.</strong><br>
+                Another member of staff admitted an animal to it a moment ago. Nothing has been saved. Please choose another enclosure.
+              </div>
+              <form class="form">
+                <div class="row-2">
+                  <div class="field"><label>Name <span style="color:#A32020">*</span></label><input class="control" value="Ayanda"></div>
+                  <div class="field"><label>Species <span style="color:#A32020">*</span></label><select class="control"><option>Common duiker</option></select></div>
+                </div>
+                <div class="field"><label>Reason for admission <span style="color:#A32020">*</span></label><textarea class="control" rows="2">Snare injury, right foreleg</textarea></div>
+                <div class="field">
+                  <label>Enclosure <span style="color:#A32020">*</span></label>
+                  <select class="control bad"><option>No enclosure selected</option></select>
+                  <div class="err">This enclosure was taken. Select a free one &mdash; 0 currently available.</div>
+                </div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Admit animal</button><button class="btn btn-ghost" type="button">Cancel</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>C'est la capture &agrave; faire pour le DP.</strong> Deux soigneurs, un seul enclos libre. Entre l'ouverture de la bo&icirc;te de dialogue et sa soumission, l'autre soigneur a pris E-03. &Agrave; la soumission, une transaction unique verrouille la ligne de l'enclos (<code>SELECT &hellip; FOR UPDATE</code>), constate qu'il n'est plus libre, et annule tout : aucun animal, aucun s&eacute;jour, aucune modification d'enclos (RG2, RG8). <strong>Les donn&eacute;es saisies restent dans le formulaire</strong> &mdash; la bo&icirc;te de dialogue ne se ferme pas, l'utilisateur ne perd pas son travail. Le compteur « Free » est pass&eacute; &agrave; 0 derri&egrave;re la bo&icirc;te : c'est ce qui rend la capture lisible d'un coup d'&oelig;il.</p>
+      <p class="note"><strong>Fusion du tableau de bord et du parc d'enclos.</strong> Les deux écrans portaient la même ressource pour deux usages : consulter l'occupation (tout le personnel, plusieurs fois par jour) et gérer l'inventaire (administrateurs, rarement). Les réunir sous deux onglets évite de dupliquer la ressource sans alourdir l'écran quotidien : <strong>un soigneur ne voit aucun onglet</strong> — la barre n'est pas rendue quand un seul onglet lui est accessible — et retrouve exactement la vue ci-dessus. L'onglet <em>Manage the park</em> n'est rendu que pour un compte administrateur, et la route qui l'alimente refuse l'appel côté serveur pour tous les autres. Le bouton « Maintenance » est désactivé sur un enclos occupé (RG16) : on ne met pas hors service un enclos où vit un animal. Un enclos n'est jamais supprimé, il conserve l'historique de ses séjours.</p>
+    </section>
+
+    <!-- 9 -->
+    <section class="screen" id="s9">
+      <div class="proto-head"><h2>9 · Liste des animaux</h2><p>S7 — vue tableau, filtrable et paginée.</p></div>
+      <div class="frame">
+        <div class="app">
+          <aside class="app-side">
+            <div class="brand" style="margin-bottom:6px"><div class="mark">K</div><div><div class="name" style="color:#FFF;font-size:1rem">Khulula</div><div class="tag" style="color:#8FA096">Staff</div></div></div>
+            <div class="grp">Care</div>
+            <div class="item">Enclosures</div>
+            <div class="item on">Animals</div>
+            <div class="who"><div>Sipho Dlamini</div><div class="role">Keeper</div><div class="out">&#8617; Sign out</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-head"><div><h2>Animals</h2><p>248 records · 12 currently in care</p></div><button class="btn btn-primary btn-sm" data-open="m9adm">Admit an animal</button></div>
+            <div class="toolbar">
+              <input class="control ph" value="Search by name…" style="min-width:200px">
+              <select class="control"><option>All statuses</option></select>
+              <select class="control"><option>All species</option></select>
+            </div>
+            <div class="tablewrap">
+              <table>
+                <thead><tr><th>Name</th><th>Species</th><th>Status</th><th>Enclosure</th><th>Admitted</th><th>Days</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="nm">Nala</span></td><td>Serval<div class="sub">Leptailurus serval</div></td><td><span class="pill p-recovering">Recovering</span></td><td>E-01</td><td>12 Jun 2026</td><td>57</td></tr>
+                  <tr><td><span class="nm">Sipho</span></td><td>White-backed vulture<div class="sub">Gyps africanus</div></td><td><span class="pill p-incare">In care</span></td><td>E-02</td><td>28 Jun 2026</td><td>41</td></tr>
+                  <tr><td><span class="nm">Themba</span></td><td>Temminck's pangolin<div class="sub">Smutsia temminckii</div></td><td><span class="pill p-incare">In care</span></td><td>E-04</td><td>2 Jul 2026</td><td>37</td></tr>
+                  <tr><td><span class="nm">Ayanda</span></td><td>Common duiker<div class="sub">Sylvicapra grimmia</div></td><td><span class="pill p-admitted">Admitted</span></td><td>E-07</td><td>6 Aug 2026</td><td>2</td></tr>
+                  <tr><td><span class="nm">Zola</span></td><td>Banded mongoose<div class="sub">Mungos mungo</div></td><td><span class="pill p-recovering">Recovering</span></td><td>E-09</td><td>21 May 2026</td><td>79</td></tr>
+                  <tr><td><span class="nm">Lerato</span></td><td>Temminck's pangolin<div class="sub">Smutsia temminckii</div></td><td><span class="pill p-released">Released</span></td><td>—</td><td>10 Dec 2025</td><td>94</td></tr>
+                  <tr><td><span class="nm">Bongani</span></td><td>Serval<div class="sub">Leptailurus serval</div></td><td><span class="pill p-deceased">Deceased</span></td><td>—</td><td>3 Jan 2026</td><td>12</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pager">
+              <span class="count">1&ndash;7 of 248 animals</span>
+              <button class="btn btn-ghost btn-sm">Previous</button>
+              <button class="btn btn-ghost btn-sm">Next</button>
+            </div>
+          </div>
+
+          <div class="modal" id="m9adm" role="dialog" aria-modal="true" aria-labelledby="m9admt">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3 id="m9admt">Admit an animal</h3>
+                  <p>5 enclosures are free right now.</p>
+                </div>
+                <button class="x" type="button" data-close aria-label="Close">&times;</button>
+              </div>
+              <form class="form">
+                <div class="row-2">
+                  <div class="field"><label for="an2">Name <span style="color:#A32020">*</span></label><input id="an2" class="control ph" value="e.g. Nala"></div>
+                  <div class="field"><label for="asp2">Species <span style="color:#A32020">*</span></label><select id="asp2" class="control"><option>Select a species&hellip;</option></select></div>
+                </div>
+                <div class="row-2">
+                  <div class="field"><label for="asx2">Sex</label><select id="asx2" class="control"><option>Unknown</option></select></div>
+                  <div class="field"><label for="aag2">Estimated age</label><select id="aag2" class="control"><option>Adult</option></select></div>
+                </div>
+                <div class="field"><label for="afd2">Found near</label><input id="afd2" class="control ph" value="Place name &mdash; no GPS coordinates"></div>
+                <div class="field"><label for="arn2">Reason for admission <span style="color:#A32020">*</span></label><textarea id="arn2" class="control ph" rows="3">Road trauma, snare injury, orphaned, confiscation&hellip;</textarea></div>
+                <div class="field">
+                  <label for="aen2">Enclosure <span style="color:#A32020">*</span></label>
+                  <select id="aen2" class="control"><option>E-03 &mdash; free</option></select>
+                  <div class="hint">Only free enclosures are listed. Occupied and maintenance enclosures cannot be selected (RG1, RG2).</div>
+                </div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Admit animal</button><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="screen" id="s10">
+      <div class="proto-head"><h2>10 · Fiche animal</h2><p>S5, S7, T1 — historique complet, changement de statut, sortie. Les boutons visibles dépendent du rôle.</p></div>
+      <div class="frame">
+        <div class="app">
+          <aside class="app-side">
+            <div class="brand" style="margin-bottom:6px"><div class="mark">K</div><div><div class="name" style="color:#FFF;font-size:1rem">Khulula</div><div class="tag" style="color:#8FA096">Staff</div></div></div>
+            <div class="grp">Care</div>
+            <div class="item">Enclosures</div>
+            <div class="item on">Animals</div>
+            <div class="grp">Administration</div>
+            <div class="item">Donations</div>
+            <div class="item">Staff accounts</div>
+            <div class="who"><div>Thandi Mokoena</div><div class="role">Veterinarian &middot; Administrator</div><div class="out">&#8617; Sign out</div></div>
+          </aside>
+          <div class="app-main">
+            <div style="font-size:0.8125rem;color:var(--muted);margin-bottom:12px">Animals <span style="margin:0 6px">›</span> Nala</div>
+            <div class="app-head">
+              <div><h2>Nala <span class="pill p-recovering" style="vertical-align:middle;margin-left:8px">Recovering</span></h2><p>Serval · <em>Leptailurus serval</em> · enclosure E-01 · day 57</p></div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost btn-sm" type="button" data-open="m10mov">Move enclosure</button>
+                <button class="btn btn-ghost btn-sm" type="button" data-open="m10obs">Add observation</button>
+                <button class="btn btn-primary btn-sm" type="button" data-open="m10out">Record outcome</button>
+              </div>
+            </div>
+            <div class="grid-2" style="align-items:start">
+              <div class="panel">
+                <h3>History</h3>
+                <div class="timeline">
+                  <div class="tl"><div class="when">6 Aug 2026</div><div class="what">Observation added — <strong>eating unaided, full weight-bearing on left hind leg</strong><div class="who">Sipho Dlamini · Keeper</div></div></div>
+                  <div class="tl"><div class="when">24 Jul 2026</div><div class="what">Status changed to <strong>Recovering</strong><div class="who">Thandi Mokoena · Veterinarian</div></div></div>
+                  <div class="tl"><div class="when">9 Jul 2026</div><div class="what">Moved from <strong>E-05</strong> to <strong>E-01</strong> — larger enclosure<div class="who">Sipho Dlamini · Keeper</div></div></div>
+                  <div class="tl"><div class="when">15 Jun 2026</div><div class="what">Status changed to <strong>In care</strong><div class="who">Thandi Mokoena · Veterinarian</div></div></div>
+                  <div class="tl"><div class="when">12 Jun 2026</div><div class="what">Admitted to <strong>E-05</strong> — road trauma, left hind leg<div class="who">Sipho Dlamini · Keeper</div></div></div>
+                </div>
+              </div>
+              <div style="display:grid;gap:16px">
+                <div class="panel">
+                  <h3>Details</h3>
+                  <dl class="dl">
+                    <dt>Species</dt><dd>Serval</dd>
+                    <dt>Sex</dt><dd>Female</dd>
+                    <dt>Estimated age</dt><dd>Adult</dd>
+                    <dt>Found near</dt><dd>Tzaneen road, R71</dd>
+                    <dt>Reason</dt><dd>Road trauma</dd>
+                    <dt>Admitted</dt><dd>12 June 2026</dd>
+                    <dt>Enclosure</dt><dd>E-01</dd>
+                  </dl>
+                </div>
+                <div class="notice" style="background:var(--st-recovering-bg);border-color:var(--st-recovering-fg)"><strong>Outcome is final.</strong> Recording a release or a death closes this animal's record permanently and frees its enclosure (RG5, RG7). Only a veterinarian can do this.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal" id="m10mov" role="dialog" aria-modal="true" aria-labelledby="m10movt">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3 id="m10movt">Move enclosure</h3>
+                  <p>Nala &middot; currently in E-01.</p>
+                </div>
+                <button class="x" type="button" data-close aria-label="Close">&times;</button>
+              </div>
+              <form class="form">
+                <div class="row-2">
+                  <div class="field"><label for="mv1">Current enclosure</label><input id="mv1" class="control" value="E-01" readonly><div class="hint">Freed automatically once the move is saved.</div></div>
+                  <div class="field"><label for="mv2">New enclosure <span style="color:#A32020">*</span></label><select id="mv2" class="control"><option>Select a free enclosure&hellip;</option><option>E-07 &mdash; free</option><option>E-12 &mdash; free</option></select><div class="hint">Only free enclosures are listed (RG1).</div></div>
+                </div>
+                <div class="field"><label for="mv3">Reason <span style="color:#A32020">*</span></label><input id="mv3" class="control ph" value="e.g. larger enclosure for pre-release conditioning"><div class="hint">Recorded in the animal's history with your name and the date.</div></div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Move animal</button><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+              </form>
+            </div>
+          </div>
+
+          <div class="modal" id="m10obs" role="dialog" aria-modal="true" aria-labelledby="m10obst">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3 id="m10obst">Add observation</h3>
+                  <p>Nala &middot; day 57 &middot; recovering.</p>
+                </div>
+                <button class="x" type="button" data-close aria-label="Close">&times;</button>
+              </div>
+              <form class="form">
+                <div class="field"><label for="ob1">Observation <span style="color:#A32020">*</span></label><textarea id="ob1" class="control ph" rows="4">Feeding, mobility, wound, behaviour&hellip;</textarea></div>
+                <div class="field"><label for="ob2">Status after this observation</label><select id="ob2" class="control"><option>Unchanged &mdash; Recovering</option><option>In care</option><option>Recovering</option></select><div class="hint">A keeper may move an animal between <em>in care</em> and <em>recovering</em>. Released and deceased are outcomes, not statuses, and are recorded by a veterinarian (RG6).</div></div>
+                <div class="notice"><strong>An observation is never edited or deleted.</strong> It is stamped with your name and the date, and stays in the history &mdash; that is what makes the record trustworthy. A mistake is corrected by adding a new observation.</div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Add observation</button><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+              </form>
+            </div>
+          </div>
+
+          <div class="modal" id="m10out" role="dialog" aria-modal="true" aria-labelledby="m10outt">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3 id="m10outt">Record outcome</h3>
+                  <p>Nala &middot; admitted 12 June 2026 &middot; day 57.</p>
+                </div>
+                <button class="x" type="button" data-close aria-label="Close">&times;</button>
+              </div>
+              <div class="notice" style="background:#F9E4E4;border-color:#A32020;margin-bottom:18px">
+                <strong>This cannot be undone.</strong> The stay is closed, enclosure E-01 becomes free, and the record becomes read-only (RG5, RG7).
+              </div>
+              <form class="form">
+                <div class="row-2">
+                  <div class="field"><label for="ou1">Outcome <span style="color:#A32020">*</span></label><select id="ou1" class="control"><option>Select an outcome&hellip;</option><option>Released</option><option>Died</option></select></div>
+                  <div class="field"><label for="ou2">Date <span style="color:#A32020">*</span></label><input id="ou2" class="control" value="20/08/2026"><div class="hint">Cannot be before the admission date.</div></div>
+                </div>
+                <div class="field"><label for="ou3">Release site or cause <span style="color:#A32020">*</span></label><input id="ou3" class="control ph" value="Release site, or cause of death"><div class="hint">A release site is never shown publicly &mdash; poaching risk (RG11).</div></div>
+                <div class="field"><label for="ou4">Closing note</label><textarea id="ou4" class="control ph" rows="2">Optional &mdash; final condition, follow-up</textarea></div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Record outcome</button><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> Le bouton « Record outcome » n'apparaît pas pour un soigneur (RG6). Le contrôle est fait côté serveur, pas seulement masqué dans l'interface (§6.1).</p>
+      <p class="note"><strong>Les trois bo&icirc;tes de dialogue.</strong> <em>Move enclosure</em> est la seconde d&eacute;monstration de CP 8 : lib&eacute;rer l'ancien enclos, occuper le nouveau et journaliser le d&eacute;placement forment <strong>une seule transaction</strong>, avec le m&ecirc;me verrou de ligne (<code>SELECT &hellip; FOR UPDATE</code>) et le m&ecirc;me cas de concurrence que l'admission &mdash; l'enclos cible peut &ecirc;tre pris entre l'ouverture de la bo&icirc;te et la soumission (RG8). <em>Add observation</em> est en <strong>ajout seul</strong> : rien n'est modifi&eacute; ni supprim&eacute; dans l'historique, ce qui donne une piste d'audit exploitable devant le jury. <em>Record outcome</em> est <strong>terminale et r&eacute;serv&eacute;e au v&eacute;t&eacute;rinaire</strong> : elle ferme le s&eacute;jour, d&eacute;clenche le trigger qui rend l'enclos libre (RG7) et rend la fiche en lecture seule.</p>
+    </section>
+
+    <!-- 11 -->
+    <section class="screen" id="s11">
+      <div class="proto-head"><h2>11 · Liste des dons</h2><p>A3 — <strong>réservé aux comptes administrateurs</strong>. Écran le plus sensible du point de vue RGPD : c'est ici que vivent les seules données personnelles de visiteurs.</p></div>
+      <div class="frame">
+        <div class="app">
+          <aside class="app-side">
+            <div class="brand" style="margin-bottom:6px"><div class="mark">K</div><div><div class="name" style="color:#FFF;font-size:1rem">Khulula</div><div class="tag" style="color:#8FA096">Staff</div></div></div>
+            <div class="grp">Care</div>
+            <div class="item">Enclosures</div>
+            <div class="item">Animals</div>
+            <div class="grp">Administration</div>
+            <div class="item on">Donations</div>
+            <div class="item">Staff accounts</div>
+            <div class="who"><div>Thandi Mokoena</div><div class="role">Veterinarian &middot; Administrator</div><div class="out">&#8617; Sign out</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-head"><div><h2>Donations</h2><p>Recorded intentions to give. No payment is processed by this application.</p></div></div>
+            <div class="kpis">
+              <div class="kpi"><div class="n">R 24 350</div><div class="l">Recorded this month</div></div>
+              <div class="kpi"><div class="n">61</div><div class="l">Donations this month</div></div>
+              <div class="kpi"><div class="n">R 399</div><div class="l">Average donation</div></div>
+              <div class="kpi"><div class="n">38%</div><div class="l">Given anonymously</div></div>
+            </div>
+            <div class="toolbar">
+              <input class="control ph" value="From 01/08/2026" style="min-width:150px">
+              <input class="control ph" value="To 08/08/2026" style="min-width:150px">
+              <button class="btn btn-ghost btn-sm">Export CSV</button>
+            </div>
+            <div class="tablewrap">
+              <table>
+                <thead><tr><th>Date</th><th>Amount</th><th>Donor</th><th>Message</th><th><span class="eyebrow">Actions</span></th></tr></thead>
+                <tbody>
+                  <tr><td>8 Aug 2026</td><td><span class="nm">R 500</span></td><td>Anna Botha<div class="sub">a.botha@example.com</div></td><td>Keep up the work with the pangolins.</td><td><button class="btn btn-ghost btn-sm">Erase data</button></td></tr>
+                  <tr><td>7 Aug 2026</td><td><span class="nm">R 1 000</span></td><td><span style="color:var(--muted);font-style:italic">Anonymous</span></td><td>—</td><td>—</td></tr>
+                  <tr><td>7 Aug 2026</td><td><span class="nm">R 250</span></td><td><span style="color:var(--muted);font-style:italic">Anonymous</span></td><td>For Nala 🐆</td><td>—</td></tr>
+                  <tr><td>5 Aug 2026</td><td><span class="nm">R 2 000</span></td><td>Johan Pretorius<div class="sub">jp@example.com</div></td><td>—</td><td><button class="btn btn-ghost btn-sm">Erase data</button></td></tr>
+                  <tr><td>3 Aug 2026</td><td><span class="nm">R 150</span></td><td><span style="color:var(--muted);font-style:italic">Anonymous</span></td><td>—</td><td>—</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pager">
+              <span class="count">1&ndash;5 of 61 donations</span>
+              <button class="btn btn-ghost btn-sm">Previous</button>
+              <button class="btn btn-ghost btn-sm">Next</button>
+            </div>
+            <div class="notice" style="margin-top:20px">
+              <strong>Personal data.</strong> Names and emails appear only where the donor gave explicit consent. « Erase data » removes the name, the email and the message but keeps the amount and the date — the accounting record survives, the person disappears. Contact details are erased automatically after 3 years.
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> Cet écran matérialise le droit à l'effacement (§6.3). L'anonymisation plutôt que la suppression de la ligne est un choix assumé : elle satisfait le droit de la personne sans détruire l'historique comptable du centre. C'est un bon exemple à présenter au jury.</p>
+    </section>
+
+    <!-- 12 -->
+    <section class="screen" id="s12">
+      <div class="proto-head"><h2>12 · Comptes du personnel</h2><p>A1 — <strong>réservé aux comptes administrateurs</strong>. Il n'existe aucune inscription publique : un compte ne naît que d'ici. Écran qui ferme RG12, RG13, RG14 et RG15.</p></div>
+      <div class="frame">
+        <div class="app">
+          <aside class="app-side">
+            <div class="brand" style="margin-bottom:6px"><div class="mark">K</div><div><div class="name" style="color:#FFF;font-size:1rem">Khulula</div><div class="tag" style="color:#8FA096">Staff</div></div></div>
+            <div class="grp">Care</div>
+            <div class="item">Enclosures</div>
+            <div class="item">Animals</div>
+            <div class="grp">Administration</div>
+            <div class="item">Donations</div>
+            <div class="item on">Staff accounts</div>
+            <div class="who"><div>Thandi Mokoena</div><div class="role">Veterinarian &middot; Administrator</div><div class="out">&#8617; Sign out</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-head">
+              <div><h2>Staff accounts</h2><p>Search by name to find someone directly. New accounts are always ordinary accounts — administration is not granted from this application.</p></div>
+              <button class="btn btn-primary btn-sm" data-open="m12">New account</button>
+            </div>
+            <div class="toolbar">
+              <input class="control ph" value="Search by name or email…" style="min-width:230px">
+              <select class="control"><option>All accounts</option><option>Active only</option><option>Deactivated only</option></select>
+              <select class="control"><option>All roles</option><option>Keepers</option><option>Veterinarians</option></select>
+            </div>
+            <div class="tablewrap">
+              <table>
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th><span class="eyebrow">Actions</span></th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><span class="nm">Thandi Mokoena</span><div class="sub">You</div></td>
+                    <td>t.mokoena@khulula.example</td>
+                    <td>Veterinarian <span class="pill p-outline">Admin</span></td>
+                    <td><span class="pill p-released">Active</span></td>
+                    <td><span style="color:var(--muted);font-size:0.8125rem">You cannot deactivate your own account</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="nm">Lerato Nkosi</span></td>
+                    <td>l.nkosi@khulula.example</td>
+                    <td>Keeper <span class="pill p-outline">Admin</span></td>
+                    <td><span class="pill p-released">Active</span></td>
+                    <td><button class="btn btn-ghost btn-sm">Reset password</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="nm">Sipho Dlamini</span></td>
+                    <td>s.dlamini@khulula.example</td>
+                    <td>Keeper</td>
+                    <td><span class="pill p-released">Active</span></td>
+                    <td><button class="btn btn-ghost btn-sm">Reset password</button> <button class="btn btn-ghost btn-sm">Deactivate</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="nm">Naledi Khumalo</span></td>
+                    <td>n.khumalo@khulula.example</td>
+                    <td>Keeper</td>
+                    <td><span class="pill p-released">Active</span></td>
+                    <td><button class="btn btn-ghost btn-sm">Reset password</button> <button class="btn btn-ghost btn-sm">Deactivate</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="nm">Pieter van Wyk</span></td>
+                    <td>p.vanwyk@khulula.example</td>
+                    <td>Veterinarian</td>
+                    <td><span class="pill p-released">Active</span></td>
+                    <td><button class="btn btn-ghost btn-sm">Reset password</button> <button class="btn btn-ghost btn-sm">Deactivate</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="nm">Grace Mabaso</span></td>
+                    <td>g.mabaso@khulula.example</td>
+                    <td>Keeper</td>
+                    <td><span class="pill p-deceased">Deactivated</span></td>
+                    <td><button class="btn btn-ghost btn-sm">Reactivate</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pager">
+              <span class="count">1&ndash;6 of 6 accounts</span>
+              <button class="btn btn-ghost btn-sm" disabled>Previous</button>
+              <button class="btn btn-ghost btn-sm" disabled>Next</button>
+            </div>
+
+          </div>
+
+          <div class="modal" id="m12" role="dialog" aria-modal="true" aria-labelledby="m12t">
+            <div class="modal-box">
+              <div class="modal-head">
+                <div>
+                  <h3 id="m12t">New account</h3>
+                  <p>The new member of staff signs in with the password you set here.</p>
+                </div>
+                <button class="x" type="button" data-close aria-label="Close">&times;</button>
+              </div>
+              <form class="form">
+                <div class="row-2">
+                  <div class="field"><label for="un">Full name <span style="color:#A32020">*</span></label><input id="un" class="control ph" value="e.g. Nomsa Zulu"></div>
+                  <div class="field"><label for="ue">Email <span style="color:#A32020">*</span></label><input id="ue" class="control ph" value="name@khulula.example"></div>
+                </div>
+                <div class="field">
+                  <label for="ur">Role <span style="color:#A32020">*</span></label>
+                  <select id="ur" class="control"><option>Keeper</option><option>Veterinarian</option></select>
+                  <div class="hint">A veterinarian may additionally pronounce a release or a death, and edit species sheets.</div>
+                </div>
+                <div class="field">
+                  <label for="up">Initial password <span style="color:#A32020">*</span></label>
+                  <input id="up" class="control ph" value="Minimum 12 characters">
+                  <div class="hint">Stored hashed with argon2, never in clear text. There is no reset by email: an administrator resets it from the table behind this dialog (RG15).</div>
+                </div>
+                <div class="notice" style="margin:2px 0">
+                  <strong>No “administrator” checkbox — on purpose.</strong><br>
+                  Every account created here is an ordinary account. The two administrator accounts come from the database seed script and cannot be created, copied or granted from the interface (RG13).
+                </div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" type="button">Create account</button><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> Trois points à montrer au jury. <strong>(1)</strong> Le droit d'administration n'est pas un rôle mais un attribut du compte : le rôle dit le métier, l'attribut dit qui administre l'outil — deux axes indépendants (§3.2). <strong>(2)</strong> Le formulaire n'expose pas cet attribut, donc aucune escalade de privilège n'est possible depuis l'interface (RG13). <strong>(3)</strong> Le dernier administrateur actif ne peut pas être désactivé, et personne ne peut désactiver son propre compte : sans cette règle, le centre se verrouillerait définitivement hors de son propre outil (RG14). Un compte n'est jamais supprimé, seulement désactivé, afin de conserver l'historique de ses actions (RG12).</p>
+      <p class="note"><strong>Recherche et pagination.</strong> La recherche par nom est ici la fonction utile : pour désactiver un compte, l'administrateur cherche une personne précise, il ne parcourt pas la liste. C'est aussi la raison pour laquelle cet écran n'a <em>pas</em> d'onglets par rôle — on ne connaît pas forcément le métier de la personne qu'on cherche, alors qu'on connaît toujours son nom. Le filtre qui gagne sa place est <em>Active / Deactivated</em> : comme un compte n'est jamais supprimé (RG12), c'est par les comptes désactivés que la liste s'allonge avec les années. La pagination est présente sur les sept listes de l'application (§6.4) : la <code>LIMIT</code> est toujours appliquée côté serveur, même quand la liste est courte — c'est la requête sans borne qui pose problème, pas la liste courte. Le contrôle de pagination, lui, n'apparaît qu'au-delà d'une page : ici il est désactivé, six comptes tenant sur une seule.</p>
+    </section>
+
+    <!-- 13 -->
+    <section class="screen" id="s13">
+      <div class="proto-head"><h2>13 · Accès refusé et erreurs</h2><p>Exigence §6.1 — <em>« gestion complète des erreurs ; aucun message d'erreur technique renvoyé au client »</em>. Une page générique, trois états.</p></div>
+      <div class="frame">
+        <div class="app">
+          <aside class="app-side">
+            <div class="brand" style="margin-bottom:6px"><div class="mark">K</div><div><div class="name" style="color:#FFF;font-size:1rem">Khulula</div><div class="tag" style="color:#8FA096">Staff</div></div></div>
+            <div class="grp">Care</div>
+            <div class="item">Enclosures</div>
+            <div class="item">Animals</div>
+            <div class="who"><div>Sipho Dlamini</div><div class="role">Keeper</div><div class="out">&#8617; Sign out</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-head"><div><h2>Access denied</h2><p>State 1 of 3 — a keeper opened /staff-accounts directly by URL.</p></div></div>
+
+            <div class="panel" style="max-width:620px;text-align:center;padding:40px 30px">
+              <div style="font-size:2rem;margin-bottom:10px" aria-hidden="true">&#128274;</div>
+              <h3 style="font-size:1.15rem;margin-bottom:8px">You do not have access to this page</h3>
+              <p style="color:var(--muted);font-size:0.9375rem;max-width:420px;margin:0 auto 20px">Staff accounts are managed by the centre's administrators. If you need an account created or a password reset, ask Thandi or Lerato.</p>
+              <button class="btn btn-primary btn-sm">Back to enclosures</button>
+            </div>
+
+            <h3 style="margin:30px 0 12px;font-size:1.05rem">The two other states</h3>
+            <div class="row-2" style="max-width:900px">
+              <div class="panel" style="text-align:center;padding:30px 24px">
+                <div style="font-size:1.6rem;margin-bottom:8px" aria-hidden="true">&#128269;</div>
+                <h3 style="font-size:1rem;margin-bottom:6px">Page not found</h3>
+                <p style="color:var(--muted);font-size:0.875rem;margin-bottom:16px">This page does not exist, or the animal you are looking for has been removed.</p>
+                <button class="btn btn-ghost btn-sm">Back to enclosures</button>
+              </div>
+              <div class="panel" style="text-align:center;padding:30px 24px">
+                <div style="font-size:1.6rem;margin-bottom:8px" aria-hidden="true">&#9203;</div>
+                <h3 style="font-size:1rem;margin-bottom:6px">Your session has expired</h3>
+                <p style="color:var(--muted);font-size:0.875rem;margin-bottom:16px">You have been signed out after 30 minutes of inactivity. Please sign in again.</p>
+                <button class="btn btn-primary btn-sm">Sign in</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>Notes.</strong> Le menu latéral de Sipho ne contient <em>pas</em> « Staff accounts » : le filtrage du menu est un confort d'usage. Mais s'il saisit l'URL à la main, c'est le <strong>serveur</strong> qui refuse — c'est cette page qu'il obtient. Masquer un bouton n'est jamais une mesure de sécurité : c'est la faille OWASP A01, <em>Broken Access Control</em>. Aucun des trois messages ne divulgue de détail technique (pas de trace, pas de nom de table, pas de version) : un message d'erreur bavard est en soi une aide à l'attaquant.</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.proto-nav button');
+  buttons.forEach(b => b.addEventListener('click', () => {
+    buttons.forEach(x => x.removeAttribute('aria-current'));
+    b.setAttribute('aria-current', 'true');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+    document.getElementById(b.dataset.s).classList.add('on');
+    document.querySelector('.proto-main').scrollTo(0, 0);
+    window.scrollTo(0, 0);
+    closeModals();
+  }));
+
+  // Tabs: a button carrying data-tab-target="x" reveals the sibling panel data-tab="x".
+  document.querySelectorAll('.tabs button').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const bar = tab.closest('.tabs');
+      bar.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', 'false'));
+      tab.setAttribute('aria-selected', 'true');
+      bar.parentElement.querySelectorAll('[data-tab]').forEach(panel => {
+        panel.hidden = panel.dataset.tab !== tab.dataset.tabTarget;
+      });
+    });
+  });
+
+  // Modal dialogs: a button carrying data-open="<id>" shows that modal,
+  // any element carrying data-close hides it. Escape closes too (RGAA).
+  function closeModals() {
+    document.querySelectorAll('.modal.on').forEach(m => m.classList.remove('on'));
+  }
+
+  document.querySelectorAll('[data-open]').forEach(b => {
+    b.addEventListener('click', () => {
+      document.getElementById(b.dataset.open).classList.add('on');
+    });
+  });
+
+  document.querySelectorAll('[data-close]').forEach(b => {
+    b.addEventListener('click', closeModals);
+  });
+
+  document.querySelectorAll('.modal').forEach(m => {
+    // Clicking the dark background closes the dialog, but clicking inside it does not.
+    m.addEventListener('click', e => { if (e.target === m) closeModals(); });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModals();
+  });
+</script>
