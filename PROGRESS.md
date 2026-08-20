@@ -18,7 +18,12 @@
 - **The Docker infrastructure runs** (step 7): `postgres`, `redis`, `adminer`, all verified.
   `api` and `client` join it at step 11, when there is code to containerise.
 - **No application code yet.** No `package.json`, no Prisma schema.
-- **Next:** step 8, the Prisma schema translated from the MPD. The Figma maquettes (step 4) last.
+- **Next session, in this order:**
+  1. Write up the *difficulté rencontrée* of 20 August — the cloud routine that could not be
+     connected to GitHub. CP 4 evidence, and it cannot be reconstructed later.
+  2. **Step 8** — translate the MPD into `schema.prisma` and run the first migration. The seven
+     tables should then be visible in Adminer.
+- Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
 
 ---
 
