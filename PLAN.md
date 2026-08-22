@@ -125,8 +125,12 @@ yet. An application cannot be containerised before it is written.*
 
 ### Step 8 — Prisma schema and first migration
 
-- [ ] Translate the MPD into `schema.prisma`.
-- [ ] `npx prisma migrate dev` — the seven tables exist.
+**Done — `api/prisma/schema.prisma`, migration `20260822094655_init`.**
+
+- [x] Backend lives in `api/`, the React app will live in `client/` — two separate
+      `package.json` files, matching the two Docker services planned for step 11.
+- [x] Translate the MPD into `schema.prisma` — 7 models, 7 enums.
+- [x] `npx prisma migrate dev` — the seven tables exist, verified in PostgreSQL.
 
 ### Step 9 — Hand-written SQL inside Prisma migrations  ·  CP 8 — the graded part
 

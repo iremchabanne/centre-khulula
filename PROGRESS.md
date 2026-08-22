@@ -1,8 +1,8 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 20 August 2026
+**Updated:** 22 August 2026
 **Deadline:** DP filled in by **31 August 2026** · exam **October 2026**
-**Status:** conception complete · repository in place · **no application code yet**
+**Status:** conception complete · database schema in place · **no application code yet**
 
 > `PLAN.md` holds the ordered list of remaining steps. Design decisions are **not** repeated
 > here — they live in the design documents themselves.
@@ -17,12 +17,12 @@
 - **The repository exists** (step 6) — https://github.com/iremchabanne/centre-khulula
 - **The Docker infrastructure runs** (step 7): `postgres`, `redis`, `adminer`, all verified.
   `api` and `client` join it at step 11, when there is code to containerise.
-- **No application code yet.** No `package.json`, no Prisma schema.
-- **Next session, in this order:**
-  1. Write up the *difficulté rencontrée* of 20 August — the cloud routine that could not be
-     connected to GitHub. CP 4 evidence, and it cannot be reconstructed later.
-  2. **Step 8** — translate the MPD into `schema.prisma` and run the first migration. The seven
-     tables should then be visible in Adminer.
+- **The database schema exists** (step 8): `api/prisma/schema.prisma`, 7 models and 7 enums,
+  applied by migration `20260822094655_init`. The seven tables are visible in Adminer.
+- **No application code yet.** `api/` holds only Prisma; there is no Express, no `client/`.
+- **Next session:** **Step 9** — the hand-written SQL that Prisma cannot generate. Four pieces,
+  one at a time: the partial unique index (RG1), the `enclosure.status` trigger (RG3, RG7),
+  the two stored functions, and the two database accounts with their grants.
 - Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
 
 ---
@@ -44,6 +44,7 @@
 | `docs/conception/modele-donnees.md` | **1.1** | MCD, MLD, MPD. Naming convention, RG1–RG16 coverage. |
 | `docs/conception/arborescence-ecrans.md` | **1.7** | 13 screens, 4 diagrams, the six dialogs, animal lifecycle. |
 | `docs/conception/maquettes/prototype.html` | **v1.6** | 13 clickable screens, working tabs and dialogs. |
+| `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. Says in a header comment what it deliberately leaves to step 9. |
 
 ---
 
