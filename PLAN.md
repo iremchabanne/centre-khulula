@@ -137,12 +137,25 @@ yet. An application cannot be containerised before it is written.*
 Created with `npx prisma migrate dev --create-only`, then written by hand. Prisma does not
 generate any of this, and that split is the answer to give the jury.
 
-- [ ] PL/pgSQL **trigger** deriving `enclosure.status` from current stays (RG3, RG7).
-- [ ] **Stored function** — occupancy rate.
-- [ ] **Stored function** — average length of stay.
-- [ ] The two **database users** and their grants.
+**Done — four migrations, each one demonstrated against the running database.**
+
+- [x] **Partial unique index** `uq_stay_current_enclosure` — one open stay per enclosure (RG1).
+      Proven: a second admission into an occupied enclosure is refused; the same enclosure is
+      reusable once the stay is closed, and keeps both stays.
+- [x] PL/pgSQL **trigger** deriving `enclosure.status` from current stays (RG3, RG7, RG16).
+      Proven across the whole lifecycle, including a direct `UPDATE … SET status = 'free'` on an
+      occupied enclosure — accepted, then corrected back to `occupied`.
+- [x] **Stored function** `occupancy_rate()` — maintenance excluded from the denominator.
+- [x] **Stored function** `average_stay_length_days()` — finished stays only, `NULL` when none.
+- [x] The two **database users** and their grants. `khulula_app` proven unable to delete anything,
+      rewrite an observation, change a species, drop a table, or read the migration history —
+      while still able to do its normal work.
 
 **Done when:** each object can be demonstrated in Adminer, and you can explain every line.
+
+> The password of `khulula_app` is deliberately **not** in the migration: migrations are
+> committed. The role is created able to log in with no password; setting one is a documented
+> manual step (`api/.env.example`).
 
 ### Step 10 — Seed script
 
