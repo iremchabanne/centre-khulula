@@ -1,0 +1,26 @@
+{
+  // How TypeScript should read and check the code in this folder.
+  // Kept deliberately short: every line here is one we actually need.
+  "compilerOptions": {
+    // The JavaScript version we compile down to. Node 24 understands ES2022.
+    "target": "ES2022",
+    // We write `import x from 'y'`, not `require('y')` — matches "type": "module".
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    // The important one. Turns on every type check TypeScript has, so a value
+    // that might be undefined is an error here rather than a crash in production.
+    "strict": true,
+
+    // Makes Node's own globals — process, console, Buffer — known to TypeScript.
+    "types": ["node"],
+
+    // Lets us import packages written in the older CommonJS style.
+    "esModuleInterop": true,
+    // Do not type-check inside node_modules. Nothing we can fix lives there.
+    "skipLibCheck": true,
+
+    "outDir": "dist"
+  },
+  "include": ["src", "prisma"]
+}

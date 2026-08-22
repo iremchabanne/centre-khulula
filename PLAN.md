@@ -159,9 +159,21 @@ generate any of this, and that split is the answer to give the jury.
 
 ### Step 10 — Seed script
 
-- [ ] The **two administrator accounts** — the referent vet and the referent keeper (RG13).
-- [ ] Species, enclosures, animals, stays and donations — enough data to make every screen look
-      real and every list worth paginating.
+**Done — `api/prisma/seed.ts`, run with `npm run seed`.**
+
+- [x] The **two administrator accounts** — the referent vet and the referent keeper (RG13).
+      Plus a deactivated account, so RG12 is visible on screen.
+- [x] Species, enclosures, animals, stays and donations. Deliberately sized at **two pages of
+      ten**: 14 animals, 12 donations. Enough that pagination is needed, few enough to stay
+      readable.
+- [x] All five lifecycle states present; enclosures free, occupied and under maintenance; one
+      animal with two successive stays (RG8); finished stays of different lengths, so the two
+      dashboard functions return real numbers (66.7 % occupancy, 28.2 days average).
+- [x] Passwords hashed with **argon2** — never in clear, even in a seed.
+- [x] Re-running the seed gives the same database, not a doubled one.
+
+> The seed never writes `enclosure.status`. The reported `3 free / 6 occupied / 1 maintenance`
+> comes back from the database: the trigger put it there. That is the demonstration.
 
 ---
 

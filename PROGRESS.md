@@ -23,9 +23,11 @@
   against the running database: the partial unique index (RG1), the `enclosure.status` trigger
   (RG3, RG7, RG16), the two dashboard stored functions (T4), and the restricted `khulula_app`
   account. This is the CP 8 centrepiece.
-- **No application code yet.** `api/` holds only Prisma; there is no Express, no `client/`.
-- **Next session:** **Step 10** — the seed script. Two administrator accounts (RG13), species,
-  enclosures, animals, stays and donations — enough to make every screen look real.
+- **The database has data** (step 10): `api/prisma/seed.ts`, run with `npm run seed`. 14 animals,
+  12 donations — two pages of ten. TypeScript is set up (`tsconfig.json`, `tsx`, `argon2`).
+- **No application code yet.** `api/` holds Prisma and the seed; there is no Express, no `client/`.
+- **Next session:** **Step 11** — the Express skeleton. Layers routes → controllers → services →
+  data access, a central error handler, structured logging. **No business logic in a route.**
 - Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
 
 ---
@@ -49,6 +51,8 @@
 | `docs/conception/maquettes/prototype.html` | **v1.6** | 13 clickable screens, working tabs and dialogs. |
 | `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. Says in a header comment what it deliberately leaves to step 9. |
 | `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. Each file explains in comments why the rule lives in the database. |
+| `api/prisma/seed.ts` | — | Development data. Flat lists plus two simple loops; deliberately sized at two pages of ten. |
+| `KOMUTLAR.md` | — | **Git-ignored.** Irem's own command cheat-sheet, in Turkish. Not a deliverable. |
 
 ---
 
