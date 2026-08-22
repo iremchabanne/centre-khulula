@@ -1,0 +1,29 @@
+// Builds the Express application: the middleware, in order, and the routes.
+//
+// Why this is separate from server.ts — the file that opens the port. A test
+// needs the application, not a listening server. Keeping them apart means the
+// integration tests of step 23 can call createApp() and send requests to it
+// without occupying port 3000.
+
+import express from 'express';
+import { apiRouter } from './routes';
+import { requestLogger, notFoundHandler, errorHandler } from './middleware';
+
+export function createApp() {
+  const app = express();
+
+  // Reads a JSON request body into req.body.
+  app.use(express.json());
+
+  app.use(requestLogger);
+
+  // Everything the API offers lives under /api.
+  app.use('/api', apiRouter);
+
+  // These two go last, and in this order: notFoundHandler catches a URL no
+  // route matched, errorHandler catches everything that was thrown.
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+  return app;
+}

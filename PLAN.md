@@ -181,9 +181,21 @@ generate any of this, and that split is the answer to give the jury.
 
 ### Step 11 — Express skeleton  ·  CP 3, graded on layering
 
-- [ ] Layers: routes → controllers → services → data access. **No business logic in a route.**
-- [ ] Central error handler — no technical error ever reaches the client (§6.1).
-- [ ] Structured logging.
+**Done — `api/src/`, 10 short files. Run with `npm run dev`.**
+
+- [x] Layers: routes → controllers → services → data access. **No business logic in a route.**
+      `species` is written end to end as the reference example; the other resources follow the
+      same shape at step 14.
+- [x] Central error handler — no technical error ever reaches the client (§6.1). An `AppError`
+      we raised on purpose returns its own message; anything else is logged in full on the server
+      and answered with a generic 500. OWASP A05.
+- [x] Structured logging — one JSON line per request, hand-written, ~20 lines, no dependency.
+- [x] The API connects as **`khulula_app`**, the restricted account (`src/config.ts`).
+      Prisma migrations keep using `khulula_admin`.
+- [ ] `api` and `client` Docker services — still waiting on the React app.
+
+> Not demonstrated yet: the generic-500 branch of the error handler. There is no endpoint that
+> can fail that way until the write routes exist. Prove it at step 12 or 13 and screenshot it.
 
 ### Step 12 — Validation with Zod
 

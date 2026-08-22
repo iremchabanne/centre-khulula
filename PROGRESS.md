@@ -25,9 +25,12 @@
   account. This is the CP 8 centrepiece.
 - **The database has data** (step 10): `api/prisma/seed.ts`, run with `npm run seed`. 14 animals,
   12 donations — two pages of ten. TypeScript is set up (`tsconfig.json`, `tsx`, `argon2`).
-- **No application code yet.** `api/` holds Prisma and the seed; there is no Express, no `client/`.
-- **Next session:** **Step 11** — the Express skeleton. Layers routes → controllers → services →
-  data access, a central error handler, structured logging. **No business logic in a route.**
+- **The API runs** (step 11): `api/src/`, 10 short files, `npm run dev`. Four layers, a central
+  error handler, JSON request logging, and the connection made as the restricted `khulula_app`
+  account. `species` is written end to end as the reference example.
+- **No frontend yet.** `client/` does not exist.
+- **Next session:** **Step 12** — Zod. One schema file per resource, validating params, query and
+  body *before* any database access, applied as route middleware.
 - Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
 
 ---
@@ -52,6 +55,7 @@
 | `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. Says in a header comment what it deliberately leaves to step 9. |
 | `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. Each file explains in comments why the rule lives in the database. |
 | `api/prisma/seed.ts` | — | Development data. Flat lists plus two simple loops; deliberately sized at two pages of ten. |
+| `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. `middleware.ts` holds the central error handler. |
 | `KOMUTLAR.md` | — | **Git-ignored.** Irem's own command cheat-sheet, in Turkish. Not a deliverable. |
 
 ---
