@@ -11,7 +11,6 @@
 import type { Request, Response } from 'express';
 import { SpeciesService } from '../services/species.service';
 import { prisma } from '../prisma';
-import { AppError } from '../errors';
 
 const speciesService = new SpeciesService(prisma);
 
@@ -21,16 +20,9 @@ export async function listSpecies(req: Request, res: Response): Promise<void> {
 }
 
 export async function getSpecies(req: Request, res: Response): Promise<void> {
-  // A URL segment is always text: "/api/species/abc" gives the string "abc",
-  // and Number('abc') is NaN. Checking it here stops a meaningless value
-  // reaching the database.
-  //
-  // Provisional. Step 12 replaces this with Zod, so that every input in the
-  // API is validated the same way in one place per resource.
+  // The validate middleware has already checked and converted this: "abc" was
+  // refused before reaching here, and "12" arrived as the number 12.
   const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    throw new AppError('The species id must be a positive whole number', 400);
-  }
 
   const species = await speciesService.findById(id);
   res.json(species);

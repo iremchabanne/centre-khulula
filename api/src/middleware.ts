@@ -4,8 +4,60 @@
 // sending the response. They run in the order they are registered in app.ts.
 
 import type { Request, Response, NextFunction } from 'express';
+import type { ZodType } from 'zod';
 import { AppError } from './errors';
 import { logger } from './logger';
+
+// Checks the input of a request against the schemas in schemas.ts, before the
+// controller runs. Written once here rather than repeated in each controller,
+// so every rejected request in the API looks the same to the client, and so
+// adding a route cannot accidentally skip validation in a new way.
+//
+//     router.post('/donations', validate({ body: createDonationSchema }), createDonation)
+//                               ^^^^^^^^ runs first; the controller is only
+//                                        reached if the input was valid.
+export function validate(schemas: { params?: ZodType; body?: ZodType }) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    if (schemas.params) {
+      const result = schemas.params.safeParse(req.params);
+      if (!result.success) {
+        respondWithValidationErrors(res, result.error.issues);
+        return;
+      }
+      // Put the parsed value back: "12" the string has become 12 the number,
+      // and the controller receives the clean version.
+      req.params = result.data as typeof req.params;
+    }
+
+    if (schemas.body) {
+      const result = schemas.body.safeParse(req.body);
+      if (!result.success) {
+        respondWithValidationErrors(res, result.error.issues);
+        return;
+      }
+      req.body = result.data;
+    }
+
+    next();
+  };
+}
+
+// One shape for every validation failure, so the frontend can show the errors
+// next to the right fields without guessing.
+function respondWithValidationErrors(
+  res: Response,
+  issues: { path: PropertyKey[]; message: string }[],
+): void {
+  res.status(400).json({
+    error: 'Invalid request',
+    details: issues.map((issue) => ({
+      // Some problems are about the request as a whole rather than one field —
+      // an unknown key, for instance — and their path is empty.
+      field: issue.path.join('.') || '(request)',
+      message: issue.message,
+    })),
+  });
+}
 
 // Logs one line per request, once the response has actually been sent — which
 // is when we know its status code and how long it took.

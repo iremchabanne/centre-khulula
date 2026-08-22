@@ -199,8 +199,25 @@ generate any of this, and that split is the answer to give the jury.
 
 ### Step 12 — Validation with Zod
 
-- [ ] One schema file per resource, server-side, before any DB access.
-- [ ] Uniform validation error format.
+**Done — `api/src/schemas.ts` plus `validate()` in `api/src/middleware.ts`.**
+
+- [x] All the rules in **one file**, grouped by resource, server-side, before any DB access.
+      One file per resource was tried and dropped: the rules are short, and a single page is
+      easier to hold in your head than five. Authentication gets its own file at step 13 only
+      if its rules turn out to be long.
+- [x] Applied as route middleware, so a route reads
+      `validate({ body: createDonationSchema })` and the controller is only reached if the input
+      was valid. This is where `requireAuth` and `requireRole` will slot in at step 13.
+- [x] Uniform validation error format: `{ error, details: [{ field, message }] }`.
+- [x] `POST /api/donations` — the first write endpoint. RG9 (amount), RG10/RG11 (anonymous
+      allowed), plus an RGPD rule spanning two fields: an email may only be stored with consent.
+- [x] Unknown keys rejected (`strictObject`), so a request cannot smuggle in a field the schema
+      never declared.
+- [x] The hand-written id check in the species controller deleted — Zod does it now.
+
+> No schema was written for login or sign-up. Login belongs to step 13, with its route.
+> **Sign-up does not exist in this project at all** — staff accounts are created by an
+> administrator (RG13) and visitors have no account.
 
 ### Step 13 — Authentication and access control  ·  CP 2, CP 3
 

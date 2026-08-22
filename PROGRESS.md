@@ -28,9 +28,12 @@
 - **The API runs** (step 11): `api/src/`, 10 short files, `npm run dev`. Four layers, a central
   error handler, JSON request logging, and the connection made as the restricted `khulula_app`
   account. `species` is written end to end as the reference example.
+- **Input validation is in place** (step 12): all Zod rules in `api/src/schemas.ts`, applied as
+  route middleware. `POST /api/donations` is the first write endpoint and proves it.
 - **No frontend yet.** `client/` does not exist.
-- **Next session:** **Step 12** — Zod. One schema file per resource, validating params, query and
-  body *before* any database access, applied as route middleware.
+- **Next session:** **Step 13** — authentication and access control. argon2, sessions in Redis,
+  `requireAuth` / `requireRole` / `requireAdmin`. Every protected route must refuse the call
+  **server-side**, not only in the interface (OWASP A01).
 - Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
 
 ---
@@ -55,7 +58,7 @@
 | `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. Says in a header comment what it deliberately leaves to step 9. |
 | `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. Each file explains in comments why the rule lives in the database. |
 | `api/prisma/seed.ts` | — | Development data. Flat lists plus two simple loops; deliberately sized at two pages of ten. |
-| `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. `middleware.ts` holds the central error handler. |
+| `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. `middleware.ts` holds the request logger, `validate()` and the central error handler; `schemas.ts` holds every Zod rule. |
 | `KOMUTLAR.md` | — | **Git-ignored.** Irem's own command cheat-sheet, in Turkish. Not a deliverable. |
 
 ---
