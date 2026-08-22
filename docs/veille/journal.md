@@ -7,6 +7,37 @@ Une entrée n'est retenue que si elle répond à *« qu'est-ce que cela change p
 
 ---
 
+## 22 août 2026
+
+### `deepmerge-ts` — vulnérabilité dans une dépendance de l'outil Prisma
+
+| | |
+|---|---|
+| **Source** | GitHub Advisory Database — GHSA-ggr8-5vv4-36mx, remontée par `npm audit` |
+| **CP** | 8, 11 |
+
+L'installation de Prisma déclenche trois alertes de sévérité *high*. Elles viennent toutes du même
+paquet, `deepmerge-ts`, tiré par `@prisma/config` : une saturation de pile lorsqu'il fusionne un
+objet dont la structure se référence elle-même.
+
+**Ce que cela change pour Khulula : aucune action, et la raison est la chaîne de dépendance.**
+`@prisma/config` n'est chargé que par l'outil en ligne de commande `prisma`, déclaré en
+`devDependencies` : il sert à lire la configuration pendant une migration, sur le poste de
+développement. Il n'est pas embarqué dans `@prisma/client`, donc il n'est jamais exécuté par l'API.
+Aucune donnée venant d'un utilisateur ne l'atteint. Le correctif proposé par `npm audit fix --force`
+rétrograderait Prisma de 6.19 à 6.12, ce qui coûte plus que le risque encouru. La situation sera
+revue à la sortie d'une version corrigée.
+
+**Ce que cela apprend.** Une alerte *high* n'est pas une urgence en soi : ce qui compte est de
+savoir si le code vulnérable est atteignable depuis une entrée utilisateur. `dependencies` et
+`devDependencies` ne présentent pas le même risque, et lire la chaîne de dépendance fait partie du
+travail de tri.
+
+> Constat annexe : Dependabot n'est toujours pas activé sur le dépôt, cette alerte a donc été
+> trouvée manuellement. À activer — c'est la troisième source du système.
+
+---
+
 ## 20 août 2026
 
 ### Index unique partiel — garantir l'unicité d'occupation d'un enclos
