@@ -190,6 +190,10 @@
 >
 > Fill it in *the day it happens*. One line per problem: what broke, what the actual cause was
 > (not the symptom), how you fixed it, and the commit that proves it.
+>
+> **Scope — decided 22/08/2026.** Only two kinds of entry belong here: a real problem that came
+> out of the code, and a design decision taken early that had to be changed later. Tooling
+> incidents around the AI assistant are out of scope and never go in.
 
 | Difficulté | Diagnostic | Résolution | Commit |
 |---|---|---|---|
