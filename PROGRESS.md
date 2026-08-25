@@ -1,6 +1,6 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 22 August 2026
+**Updated:** 25 August 2026
 **Deadline:** DP filled in by **31 August 2026** · exam **October 2026**
 **Status:** conception complete · database schema in place · **no application code yet**
 
@@ -30,10 +30,12 @@
   account. `species` is written end to end as the reference example.
 - **Input validation is in place** (step 12): all Zod rules in `api/src/schemas.ts`, applied as
   route middleware. `POST /api/donations` is the first write endpoint and proves it.
+- **Authentication works** (step 13): `POST /api/auth/login`, `POST /api/auth/logout`,
+  `GET /api/auth/me`. argon2, sessions in Redis, and the three access-control middleware.
+  Proved with curl, not only written — see the checklist in `PLAN.md` step 13.
+  `requireRole` and `requireAdmin` exist but have **no route yet**; step 15 gives them one.
 - **No frontend yet.** `client/` does not exist.
-- **Next session:** **Step 13** — authentication and access control. argon2, sessions in Redis,
-  `requireAuth` / `requireRole` / `requireAdmin`. Every protected route must refuse the call
-  **server-side**, not only in the interface (OWASP A01).
+- **Next session:** **Step 14** — the service classes (CP 3, the OOP criterion).
 - Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
 
 ---
@@ -58,7 +60,8 @@
 | `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. Says in a header comment what it deliberately leaves to step 9. |
 | `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. Each file explains in comments why the rule lives in the database. |
 | `api/prisma/seed.ts` | — | Development data. Flat lists plus two simple loops; deliberately sized at two pages of ten. |
-| `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. `middleware.ts` holds the request logger, `validate()` and the central error handler; `schemas.ts` holds every Zod rule. |
+| `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. `middleware.ts` holds the request logger, `validate()`, the three access-control middleware and the central error handler; `schemas.ts` holds every Zod rule; `session.ts` and `redis.ts` hold the staff sessions. |
+| `docs/dp/captures.md` | — | **Git-ignored.** The running list of screenshots to take for the DP: what to show, how to reproduce it, which slot it goes in. Images live in `docs/dp/captures/`, also git-ignored. |
 | `KOMUTLAR.md` | — | **Git-ignored.** Irem's own command cheat-sheet, in Turkish. Not a deliverable. |
 
 ---

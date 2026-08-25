@@ -221,14 +221,22 @@ generate any of this, and that split is the answer to give the jury.
 
 ### Step 13 — Authentication and access control  ·  CP 2, CP 3
 
-- [ ] argon2 password hashing — never in clear text.
-- [ ] Sessions in **Redis**.
-- [ ] `requireAuth`, `requireRole('veterinaire')`, `requireAdmin` middleware.
-- [ ] A deactivated account cannot log in (RG12).
-- [ ] Protection against XSS and CSRF.
+- [x] argon2 password hashing — never in clear text. `AuthService.verifyCredentials`.
+- [x] Sessions in **Redis**, with `express-session` and `connect-redis`. The browser holds an
+      opaque id and nothing else; the rights live server-side.
+- [x] `requireAuth`, `requireRole('veterinarian')`, `requireAdmin` middleware. Only `requireAuth`
+      has a route so far (`GET /api/auth/me`); the other two get theirs at step 15.
+- [x] A deactivated account cannot log in — and cannot keep working either: `findActiveById`
+      reads the database on every request, so RG12 applies for the whole life of the session.
+- [x] Wrong password and unknown email answer the same message, so the endpoint cannot be used
+      to find out which accounts exist (OWASP A07).
+- [x] The session id is regenerated at login, against session fixation.
+- [x] CSRF: `SameSite=Lax` on the session cookie. XSS: `httpOnly`, so an injected script cannot
+      read the session id. The frontend half of XSS comes with the frontend.
 
 **Done when:** every protected route refuses the call server-side, not only in the interface —
-this is OWASP A01, *Broken Access Control*.
+this is OWASP A01, *Broken Access Control*. **Done on 25/08/2026**, proved with curl: no session
+→ 401, forged cookie → 401, account deactivated mid-session → 401.
 
 ### Step 14 — Service classes  ·  CP 3, the OOP criterion
 
