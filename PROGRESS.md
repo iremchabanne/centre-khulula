@@ -1,7 +1,8 @@
 # Progress — Dossier Professionnel CDA
 
 **Updated:** 25 August 2026
-**Deadline:** DP filled in by **31 August 2026** · exam **October 2026**
+**Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
+**07/10/2026 23:59** · exam **October 2026**. See `docs/decisions.md` — the old "31 August" was wrong.
 **Status:** conception complete · database schema in place · **no application code yet**
 
 > `PLAN.md` holds the ordered list of remaining steps. Design decisions are **not** repeated
