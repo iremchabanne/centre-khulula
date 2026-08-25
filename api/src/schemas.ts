@@ -50,6 +50,28 @@ export const speciesIdParamsSchema = z.strictObject({
 });
 
 // ---------------------------------------------------------------------------
+// Enclosures
+// ---------------------------------------------------------------------------
+
+export const enclosureIdParamsSchema = z.strictObject({
+  id: z.coerce
+    .number({ error: 'The enclosure id must be a whole number' })
+    .int({ error: 'The enclosure id must be a whole number' })
+    .positive({ error: 'The enclosure id must be greater than 0' }),
+});
+
+// The body of PATCH /enclosures/:id/maintenance. One field, and it is the only
+// field an administrator may send: `status` is not accepted here, because it is
+// the trigger's to write (RG3). strictObject is what refuses it.
+export const setMaintenanceSchema = z.strictObject({
+  is_under_maintenance: z.boolean({
+    error: 'is_under_maintenance is required and must be true or false',
+  }),
+});
+
+export type SetMaintenanceInput = z.infer<typeof setMaintenanceSchema>;
+
+// ---------------------------------------------------------------------------
 // Donations
 // ---------------------------------------------------------------------------
 
