@@ -14,6 +14,31 @@
 
 ---
 
+## The order to do the remaining steps in — revised 25 August 2026
+
+The steps below are numbered by dependency. This section says which order to **do** them in,
+which is not the same thing. No dates and no hours — Irem sets the pace.
+
+| Order | Steps | Why here |
+|---|---|---|
+| 1 | **15** — transactions and concurrency | The most valuable step left. *« Les conflits d'accès aux données sont gérés »* (CP 8) is proved by nothing else in this project. |
+| 2 | **16**, **17** — public API, staff API | The frontend has nothing to call without them. The Redis cache and the rate limiting live here — more CP 8. |
+| 3 | **23**, **25**, **26**, **27**, **28** | Moved **before** the frontend. Each covers a criterion nothing else covers: tests (CP 9), load testing and fuzzing (CP 9, three separate items), code-quality tool (CP 11), CI (CP 11), backup and restore demonstrated (CP 7). None of them needs the frontend — they run against the API, which already exists. Left at the end, these are the ones that get dropped. |
+| 4 | **18**, **20**, then **21**, **19**, **22** | The frontend. Order inside it: the shell and the login first, then the **admission dialog and its access-conflict state** — that is the screen that shows CP 8's work to a reader — then the remaining staff screens, then the public pages (RGAA + mentions légales), then the accessibility pass over whatever exists. |
+| 5 | **29** — deployment | CP 10 and CP 11. Blocked on an open decision — see below. |
+| 6 | **30**, **31**, **32** — the DP itself | Written throughout, finished last. |
+
+Two rules that override the table:
+
+- **Step 31 never waits.** The *Difficultés rencontrées* table and the meeting notes are filled
+  the day the problem happens. Today's Docker incident is already in it.
+- **One veille entry a week**, throughout. Graded in six CPs, and it cannot be backdated.
+
+> If something has to go, it comes out of order 4. Never out of order 6: the jury reads the DP
+> and never runs Khulula, so a feature that exists but is not written up scores nothing.
+
+---
+
 ## Track A — Conception (finish this before any code)
 
 ### Step 1 — Close the remaining mockup decisions
@@ -355,24 +380,26 @@ Two separate deliverables, both small, both easy to forget.
 
 **This track does not wait for the others.** Steps 30 and 31 start now.
 
-### Step 30 — The nine prep files
+### Step 30 — The six prep files
 
-Only `AT1-exemple-1.md` exists. The other eight are not generated yet.
+Was nine. Revised on 25 August 2026: the DP allows **up to** three examples per activité-type,
+not three exactly, so the third page of each is left blank. What has to be covered is the CPs,
+not the slots — see `docs/decisions.md`.
 
-- [ ] Generate the eight remaining files from the validated template.
-- [ ] After **each validated feature**: note what to screenshot and which CP it proves.
+Only `AT1-exemple-1.md` exists. The other five are not generated yet.
+
+- [ ] Generate the five remaining files from the validated template.
+- [ ] After **each validated feature**: note what to screenshot and which CP it proves. The
+      running list is `docs/dp/captures.md` — git-ignored, local only.
 
 | DP slot | CP(s) | File |
 |---|---|---|
 | AT1 — Exemple 1 | CP 1 + CP 4 | `docs/dp/AT1-exemple-1.md` ✅ |
-| AT1 — Exemple 2 | CP 2 | `docs/dp/AT1-exemple-2.md` |
-| AT1 — Exemple 3 | CP 3 | `docs/dp/AT1-exemple-3.md` |
+| AT1 — Exemple 2 | CP 2 + CP 3 | `docs/dp/AT1-exemple-2.md` |
 | AT2 — Exemple 1 | CP 5 + CP 6 | `docs/dp/AT2-exemple-1.md` |
-| AT2 — Exemple 2 | CP 7 | `docs/dp/AT2-exemple-2.md` |
-| AT2 — Exemple 3 | CP 8 | `docs/dp/AT2-exemple-3.md` |
+| AT2 — Exemple 2 | CP 7 + CP 8 | `docs/dp/AT2-exemple-2.md` |
 | AT3 — Exemple 1 | CP 9 | `docs/dp/AT3-exemple-1.md` |
-| AT3 — Exemple 2 | CP 10 | `docs/dp/AT3-exemple-2.md` |
-| AT3 — Exemple 3 | CP 11 | `docs/dp/AT3-exemple-3.md` |
+| AT3 — Exemple 2 | CP 10 + CP 11 | `docs/dp/AT3-exemple-2.md` |
 
 ### Step 31 — Difficulties and meeting notes — **the same day, never later**
 
@@ -384,9 +411,13 @@ are the evidence for CP 4 and for the transversal *démarche de résolution de p
 
 ### Step 32 — Fill `DP-Vierge-pre-rempli-CDA.pdf`
 
-- [ ] Nine slots, five fields each, written from the prep files.
-- [ ] Screenshots and annexes attached.
-- [ ] Full reread against `docs/dp/00-referentiel-CP.md`.
+- [ ] Six slots, five fields each, written from the prep files. The third example page of each
+      activité-type stays blank, on purpose.
+- [ ] Screenshots pasted into field **5. Informations complémentaires** of each page, from
+      `docs/dp/captures.md`.
+- [ ] Full reread against `docs/dp/00-referentiel-CP.md` — every CP covered by some example.
+- [ ] **Signed**, exported as PDF named exactly `dossier_professionnel.pdf`, uploaded to the
+      drive before **07/10/2026 23:59**.
 
 ---
 
