@@ -6,8 +6,8 @@
 
 - Steps are **ordered by dependency**, not by date. There are no deadlines and no time estimates
   here on purpose — Irem sets the pace.
-- **One step at a time.** Each step is built, checkpointed, and validated
-  before starting the next.
+- **One step at a time.** A step is built, then stops at a checkpoint and is validated before the
+  next one starts.
 - Each step says **what**, **why it is graded**, and **done when** — so "finished" is never a
   matter of opinion.
 - Tick the boxes as you go. This file is also the CP 4 artefact for *« le projet est planifié »*.
@@ -118,10 +118,10 @@ by itself.
 - [x] First three entries written.
 - [ ] **Irem:** create the Feedly account, add the feeds, and turn on GitHub *Watch → Releases*
       on the seven repositories. Dependabot comes with Step 6.
-- [ ] **Ongoing:** one entry in `journal.md` per week worked on the project. Irem raises it at the
-      start of a session, from the sources listed in `veille-technologique.md`.
-      A weekly automation was attempted and abandoned - the setup was not
-      straightforward, and the automation adds nothing the jury can see.
+- [ ] **Ongoing:** one entry in `journal.md` per week worked on the project. Written at the start
+      of a working session, from the sources listed in `veille-technologique.md`.
+      Automating it was attempted and abandoned — the setup was not straightforward and the
+      automation adds nothing the jury can see.
 
 **Done when:** there is a dated log with entries in it, not just an intention.
 

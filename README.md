@@ -65,7 +65,7 @@ docker compose down -v   # arrêter et supprimer les données
 | `docs/dp/` | Référentiel des compétences et fiches de préparation du dossier professionnel |
 | `PLAN.md` | Les étapes du projet, ordonnées par dépendance |
 | `PROGRESS.md` | L'état d'avancement |
-| `docs/decisions.md` | Les décisions de projet — source de vérité |
+| `docs/decisions.md` | Les décisions de projet — source de vérité (local, non versionné) |
 
 ## Langues
 

@@ -192,8 +192,8 @@
 > (not the symptom), how you fixed it, and the commit that proves it.
 >
 > **Scope — decided 22/08/2026.** Only two kinds of entry belong here: a real problem that came
-> out of the code, and a design decision taken early that had to be changed later. Tooling
-> incidents around the AI assistant are out of scope and never go in.
+> out of the code, and a design decision taken early that had to be changed later. Incidents with
+> the editor or other local tooling are out of scope and never go in.
 
 | Difficulté | Diagnostic | Résolution | Commit |
 |---|---|---|---|
