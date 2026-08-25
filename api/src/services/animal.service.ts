@@ -26,7 +26,7 @@
 
 import { Prisma, type PrismaClient, type EnclosureStatus } from '@prisma/client';
 import { AppError } from '../errors';
-import type { CreateAdmissionInput } from '../schemas';
+import type { CreateAdmissionInput, RecordOutcomeInput } from '../schemas';
 
 // Prisma reports "a unique constraint was violated" as the code P2002.
 function isUniqueViolation(error: unknown): boolean {
@@ -126,6 +126,66 @@ export class AnimalService {
 
         throw error;
       }
+    });
+  }
+
+  // Pronounce the outcome of an animal: released, or deceased.
+  //
+  // Three rules meet here, and they are enforced in three different places —
+  // worth knowing which is which:
+  //
+  //   RG6, only a veterinarian may do this, is enforced by requireRole on the
+  //        route. It is about WHO is calling, so it belongs before the service.
+  //   RG5, released and deceased are terminal, is enforced below. It is about
+  //        the state of the animal, which only this layer knows.
+  //   RG7, the outcome frees the enclosure, is enforced by the trigger. We
+  //        close the stay; the database draws the consequence.
+  //
+  // staffId is the vet who pronounced it, taken from the session (RG6 again:
+  // the signature must be the person logged in).
+  async recordOutcome(animalId: number, input: RecordOutcomeInput, staffId: number) {
+    const outcomeAt = new Date();
+
+    return this.prisma.$transaction(async (tx) => {
+      const animal = await tx.animal.findUnique({ where: { id: animalId } });
+
+      if (!animal) {
+        throw new AppError(`No animal with id ${animalId}`, 404);
+      }
+
+      // RG5 — a terminal state is final. An animal that has been released does
+      // not come back to being in care, and one recorded as deceased certainly
+      // does not.
+      if (animal.status === 'released' || animal.status === 'deceased') {
+        throw new AppError(`This animal is already ${animal.status}`, 409);
+      }
+
+      // The three outcome columns are filled together, never one without the
+      // others — modele-donnees.md.
+      const updated = await tx.animal.update({
+        where: { id: animalId },
+        data: {
+          status: input.outcome,
+          outcome_at: outcomeAt,
+          outcome_note: input.outcome_note,
+          outcome_by_id: staffId,
+        },
+        select: { id: true, name: true, status: true, outcome_at: true },
+      });
+
+      // Closing the stay is what frees the enclosure: the trigger on `stay`
+      // recomputes enclosure.status (RG7). We never write that column.
+      //
+      // updateMany and not update, because the search is on "the open stay of
+      // this animal" rather than on a primary key. RG1 guarantees there is at
+      // most one, and an animal whose stay was already closed by hand simply
+      // updates nothing here instead of raising an error.
+      await tx.stay.updateMany({
+        where: { animal_id: animalId, ended_at: null },
+        data: { ended_at: outcomeAt },
+      });
+
+      return updated;
     });
   }
 }

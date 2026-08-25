@@ -119,6 +119,36 @@ export const createAdmissionSchema = z.strictObject({
 
 export type CreateAdmissionInput = z.infer<typeof createAdmissionSchema>;
 
+export const animalIdParamsSchema = z.strictObject({
+  id: z.coerce
+    .number({ error: 'The animal id must be a whole number' })
+    .int({ error: 'The animal id must be a whole number' })
+    .positive({ error: 'The animal id must be greater than 0' }),
+});
+
+// Pronouncing an outcome — RG5, RG6, RG7.
+//
+// Only the two terminal values are accepted. `in_care` and `recovering` are
+// ordinary status changes and go through a different route, not this one.
+//
+// outcome_by_id and outcome_at are not accepted: the vet is whoever is logged
+// in, and the date is the server's.
+export const recordOutcomeSchema = z.strictObject({
+  outcome: z.enum(['released', 'deceased'], {
+    error: 'The outcome must be released or deceased',
+  }),
+
+  // Required, not optional. An outcome without a reason is not a medical
+  // record, and the three outcome columns are filled together.
+  outcome_note: z
+    .string({ error: 'A note is required to pronounce an outcome' })
+    .trim()
+    .min(1, { error: 'A note is required to pronounce an outcome' })
+    .max(2000),
+});
+
+export type RecordOutcomeInput = z.infer<typeof recordOutcomeSchema>;
+
 // ---------------------------------------------------------------------------
 // Donations
 // ---------------------------------------------------------------------------
