@@ -13,6 +13,7 @@ import {
   listFreeEnclosures,
   setEnclosureMaintenance,
 } from './controllers/enclosure.controller';
+import { admitAnimal } from './controllers/animal.controller';
 import { validate, requireAuth, requireAdmin } from './middleware';
 import {
   speciesIdParamsSchema,
@@ -20,6 +21,7 @@ import {
   loginSchema,
   enclosureIdParamsSchema,
   setMaintenanceSchema,
+  createAdmissionSchema,
 } from './schemas';
 
 export const apiRouter = Router();
@@ -55,3 +57,8 @@ apiRouter.patch(
   validate({ params: enclosureIdParamsSchema, body: setMaintenanceSchema }),
   setEnclosureMaintenance,
 );
+
+// Admission — the transaction of RG2. Any member of staff may admit an animal;
+// only a veterinarian may later pronounce its outcome (RG6), which is a
+// different route and comes next.
+apiRouter.post('/animals', requireAuth, validate({ body: createAdmissionSchema }), admitAnimal);

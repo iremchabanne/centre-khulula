@@ -72,6 +72,54 @@ export const setMaintenanceSchema = z.strictObject({
 export type SetMaintenanceInput = z.infer<typeof setMaintenanceSchema>;
 
 // ---------------------------------------------------------------------------
+// Animals
+// ---------------------------------------------------------------------------
+
+// The admission form of screen 8.
+//
+// Three fields are deliberately NOT accepted here, and strictObject rejects
+// them if sent:
+//   - status       the lifecycle always starts at `admitted` (RG4)
+//   - admitted_at  the server decides what "now" is, not the browser
+//   - opened_by_id the stay is opened by whoever is logged in, from the session
+export const createAdmissionSchema = z.strictObject({
+  name: z
+    .string({ error: 'The name is required' })
+    .trim()
+    .min(1, { error: 'The name is required' })
+    .max(100),
+
+  species_id: z.coerce
+    .number({ error: 'A species must be chosen' })
+    .int()
+    .positive({ error: 'A species must be chosen' }),
+
+  enclosure_id: z.coerce
+    .number({ error: 'An enclosure must be chosen' })
+    .int()
+    .positive({ error: 'An enclosure must be chosen' }),
+
+  // The enum values are the ones the database enum accepts. Anything else is
+  // refused here, before PostgreSQL ever sees it.
+  sex: z.enum(['male', 'female', 'unknown'], { error: 'Sex must be male, female or unknown' }),
+
+  age_class: z.enum(['juvenile', 'subadult', 'adult', 'unknown'], {
+    error: 'Age class must be juvenile, subadult, adult or unknown',
+  }),
+
+  // A place name, never GPS coordinates, and never shown publicly — RG11.
+  found_near: z.string().trim().max(255).nullish(),
+
+  admission_reason: z
+    .string({ error: 'The admission reason is required' })
+    .trim()
+    .min(1, { error: 'The admission reason is required' })
+    .max(2000),
+});
+
+export type CreateAdmissionInput = z.infer<typeof createAdmissionSchema>;
+
+// ---------------------------------------------------------------------------
 // Donations
 // ---------------------------------------------------------------------------
 
