@@ -26,7 +26,7 @@
 
 import { Prisma, type PrismaClient, type EnclosureStatus } from '@prisma/client';
 import { AppError } from '../errors';
-import type { CreateAdmissionInput, RecordOutcomeInput } from '../schemas';
+import type { CreateAdmissionInput, RecordOutcomeInput, MoveAnimalInput } from '../schemas';
 
 // Prisma reports "a unique constraint was violated" as the code P2002.
 function isUniqueViolation(error: unknown): boolean {
@@ -126,6 +126,99 @@ export class AnimalService {
 
         throw error;
       }
+    });
+  }
+
+  // Move an animal to another enclosure — RG8.
+  //
+  // Closing the old stay and opening the new one are "indissociables": if the
+  // second failed on its own, the animal would be recorded as living nowhere
+  // and both enclosures would read `free`. One transaction, or nothing.
+  //
+  // The old stay is closed FIRST and the new one opened after. Not a detail:
+  // done the other way round, the animal would briefly have two open stays.
+  async move(animalId: number, input: MoveAnimalInput, staffId: number) {
+    const movedAt = new Date();
+
+    return this.prisma.$transaction(async (tx) => {
+      // Same lock as an admission, for the same reason: the destination must
+      // still be free when we write, not merely when the screen was drawn.
+      //
+      // Only the destination is locked here. Two moves that swap two
+      // enclosures at the same instant can therefore deadlock — PostgreSQL
+      // detects it and aborts one of them with an error rather than hanging.
+      // Rare enough in a centre with ten enclosures to be left as is.
+      const rows = await tx.$queryRaw<{ id: number; code: string; status: EnclosureStatus }[]>`
+        SELECT id, code, status
+        FROM enclosure
+        WHERE id = ${input.enclosure_id}
+        FOR UPDATE
+      `;
+
+      const destination = rows[0];
+
+      if (!destination) {
+        throw new AppError(`No enclosure with id ${input.enclosure_id}`, 404);
+      }
+
+      const animal = await tx.animal.findUnique({ where: { id: animalId } });
+
+      if (!animal) {
+        throw new AppError(`No animal with id ${animalId}`, 404);
+      }
+
+      // RG5 again — an animal that has left the centre is not moved around it.
+      if (animal.status === 'released' || animal.status === 'deceased') {
+        throw new AppError(`This animal is already ${animal.status}`, 409);
+      }
+
+      const currentStay = await tx.stay.findFirst({
+        where: { animal_id: animalId, ended_at: null },
+      });
+
+      if (!currentStay) {
+        throw new AppError('This animal is not currently in an enclosure', 409);
+      }
+
+      // Checked BEFORE the status of the destination, and the order matters.
+      // An animal asked to move where it already is makes that enclosure
+      // `occupied` — by itself. Testing the status first would answer "no
+      // longer free", which is true and useless: the occupant IS the animal
+      // being moved. This check has to come first to say anything sensible.
+      if (currentStay.enclosure_id === input.enclosure_id) {
+        throw new AppError(`This animal is already in ${destination.code}`, 409);
+      }
+
+      if (destination.status !== 'free') {
+        throw new AppError(`Enclosure ${destination.code} is no longer free`, 409);
+      }
+
+      // Closing this stay frees the enclosure the animal is leaving, through
+      // the trigger. Opening the next one occupies the destination, through
+      // the same trigger. We write neither status.
+      await tx.stay.update({
+        where: { id: currentStay.id },
+        data: { ended_at: movedAt },
+      });
+
+      await tx.stay.create({
+        data: {
+          animal_id: animalId,
+          enclosure_id: input.enclosure_id,
+          started_at: movedAt,
+          // Only a stay opened by a move carries a reason. An admission
+          // leaves this column empty, which is how the two are told apart.
+          move_reason: input.move_reason,
+          opened_by_id: staffId,
+        },
+      });
+
+      return {
+        id: animal.id,
+        name: animal.name,
+        moved_at: movedAt,
+        enclosure: { id: destination.id, code: destination.code },
+      };
     });
   }
 

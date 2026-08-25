@@ -13,7 +13,7 @@ import {
   listFreeEnclosures,
   setEnclosureMaintenance,
 } from './controllers/enclosure.controller';
-import { admitAnimal, recordAnimalOutcome } from './controllers/animal.controller';
+import { admitAnimal, moveAnimal, recordAnimalOutcome } from './controllers/animal.controller';
 import { validate, requireAuth, requireAdmin, requireRole } from './middleware';
 import {
   speciesIdParamsSchema,
@@ -23,6 +23,7 @@ import {
   setMaintenanceSchema,
   createAdmissionSchema,
   animalIdParamsSchema,
+  moveAnimalSchema,
   recordOutcomeSchema,
 } from './schemas';
 
@@ -64,6 +65,14 @@ apiRouter.patch(
 // only a veterinarian may later pronounce its outcome (RG6), which is a
 // different route and comes next.
 apiRouter.post('/animals', requireAuth, validate({ body: createAdmissionSchema }), admitAnimal);
+
+// The move — RG8. Any member of staff may move an animal.
+apiRouter.patch(
+  '/animals/:id/enclosure',
+  requireAuth,
+  validate({ params: animalIdParamsSchema, body: moveAnimalSchema }),
+  moveAnimal,
+);
 
 // The outcome — RG6, reserved for a veterinarian. This is where requireRole
 // earns its place: a keeper is refused here by the server, whatever the

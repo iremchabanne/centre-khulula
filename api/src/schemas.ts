@@ -126,6 +126,25 @@ export const animalIdParamsSchema = z.strictObject({
     .positive({ error: 'The animal id must be greater than 0' }),
 });
 
+// Moving an animal to another enclosure — RG8.
+export const moveAnimalSchema = z.strictObject({
+  enclosure_id: z.coerce
+    .number({ error: 'A destination enclosure must be chosen' })
+    .int()
+    .positive({ error: 'A destination enclosure must be chosen' }),
+
+  // Required. A move without a reason cannot be explained afterwards, and the
+  // column is what distinguishes a stay opened by a move from one opened by an
+  // admission.
+  move_reason: z
+    .string({ error: 'A reason is required to move an animal' })
+    .trim()
+    .min(1, { error: 'A reason is required to move an animal' })
+    .max(2000),
+});
+
+export type MoveAnimalInput = z.infer<typeof moveAnimalSchema>;
+
 // Pronouncing an outcome — RG5, RG6, RG7.
 //
 // Only the two terminal values are accepted. `in_care` and `recovering` are

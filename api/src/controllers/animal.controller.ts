@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { AnimalService } from '../services/animal.service';
 import { prisma } from '../prisma';
 import { logger } from '../logger';
-import type { CreateAdmissionInput, RecordOutcomeInput } from '../schemas';
+import type { CreateAdmissionInput, RecordOutcomeInput, MoveAnimalInput } from '../schemas';
 
 const animalService = new AnimalService(prisma);
 
@@ -21,6 +21,18 @@ export async function admitAnimal(req: Request, res: Response): Promise<void> {
   });
 
   res.status(201).json(admission);
+}
+
+export async function moveAnimal(req: Request, res: Response): Promise<void> {
+  const { id } = req.params as unknown as { id: number };
+  const input = req.body as MoveAnimalInput;
+  const staffId = req.session.staffId!;
+
+  const move = await animalService.move(id, input, staffId);
+
+  logger.info('move', { animalId: move.id, to: move.enclosure.code, staffId });
+
+  res.json(move);
 }
 
 export async function recordAnimalOutcome(req: Request, res: Response): Promise<void> {
