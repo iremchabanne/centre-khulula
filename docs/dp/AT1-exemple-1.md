@@ -197,7 +197,7 @@
 
 | Difficulté | Diagnostic | Résolution | Commit |
 |---|---|---|---|
-| *(à compléter)* | | | |
+| 25/08/2026 — `docker compose up` échoue : « container name /khulula-redis is already in use », alors que les conteneurs tournaient. | `docker inspect` montre le label `com.docker.compose.project=dossierprof` et un chemin de configuration qui n'existe plus. Le dossier du projet avait été renommé `dossier prof` → `khulula` ; Compose déduit le nom de projet du nom du dossier, il tentait donc de créer un projet neuf `khulula` dont les noms de conteneurs étaient déjà pris par l'ancien projet. Le symptôme était le nom du conteneur, la cause était le renommage du dossier. | Migration propre plutôt que contournement : suppression des conteneurs de l'ancien projet, `docker compose up -d` depuis le nouveau dossier, puis `prisma migrate deploy` et `npm run seed`. Les volumes de l'ancien projet ont été conservés le temps de vérifier les données. Aucune perte : le contenu était le jeu de données de développement, reproductible par le seed (14 animaux, 5 comptes, 12 dons, identiques avant et après). | — (incident d'environnement, aucun fichier du dépôt modifié) |
 
 ---
 

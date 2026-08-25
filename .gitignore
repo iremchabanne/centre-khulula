@@ -24,3 +24,9 @@ message.txt
 
 # Personal command cheat-sheet, written in Turkish — a working note, not a deliverable
 KOMUTLAR.md
+
+# Screenshots for the DP, and the list of which ones to take. These go into the
+# DP document itself, not into the repository: they are personal exam material,
+# and image files would grow the repository for no benefit.
+docs/dp/captures.md
+docs/dp/captures/
