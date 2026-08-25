@@ -35,8 +35,21 @@
   `GET /api/auth/me`. argon2, sessions in Redis, and the three access-control middleware.
   Proved with curl, not only written — see the checklist in `PLAN.md` step 13.
   `requireRole` and `requireAdmin` exist but have **no route yet**; step 15 gives them one.
+- **Enclosures are done end to end** (part of step 14): `EnclosureService`, `GET /enclosures`,
+  `GET /enclosures/free`, `PATCH /enclosures/:id/maintenance`. RG16 lives in the service, not in
+  the trigger — an occupied enclosure cannot be put under maintenance, or the animal inside would
+  vanish from the screens.
+- **Step 15 is nearly done** — the CP 8 centrepiece. `POST /animals` admits in one transaction
+  with `SELECT … FOR UPDATE`; `PATCH /animals/:id/enclosure` moves (RG8); `PATCH
+  /animals/:id/outcome` pronounces an outcome, vet only (RG5, RG6, RG7).
+  **The race was demonstrated by hand**: two parallel admissions into the last free enclosure
+  give one 201 and one 409, with a single open stay left in the database.
+- **What step 15 still owes:** an **automated** test of that race, and a test that actually proves
+  the transaction rolls back. Both belong with step 23, which now comes before the frontend.
 - **No frontend yet.** `client/` does not exist.
-- **Next session:** **Step 14** — the service classes (CP 3, the OOP criterion).
+- **Next session:** finish step 15's automated test, then step 16 — the public API.
+- **Working habit, decided 25 August:** push at the end of every working day. The repository had
+  been three days behind.
 - Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
 
 ---
