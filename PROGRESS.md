@@ -47,7 +47,13 @@
 - **What step 15 still owes:** an **automated** test of that race, and a test that actually proves
   the transaction rolls back. Both belong with step 23, which now comes before the frontend.
 - **No frontend yet.** `client/` does not exist.
-- **Next session:** finish step 15's automated test, then step 16 — the public API.
+- **Next session, first thing — a defect, not a feature.** `requireAuth` trusts the session and
+  never asks the database, so a **deactivated account keeps full access until its session
+  expires**. Only `GET /auth/me` checks `is_active`. RG12 is therefore enforced on one route out
+  of six, and the claim in step 13 of `PLAN.md` overstates what the code does.
+  Fix `requireSession`, then prove it with a test. **Show the bug happening before fixing it.**
+  Then: step 15's automated race test, then step 16.
+- A full review of the code as it stands is in `docs/audit.md` — local, not committed.
 - **Working habit, decided 25 August:** push at the end of every working day. The repository had
   been three days behind.
 - Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
