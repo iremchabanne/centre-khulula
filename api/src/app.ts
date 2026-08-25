@@ -8,6 +8,7 @@
 import express from 'express';
 import { apiRouter } from './routes';
 import { requestLogger, notFoundHandler, errorHandler } from './middleware';
+import { sessionMiddleware } from './session';
 
 export function createApp() {
   const app = express();
@@ -16,6 +17,10 @@ export function createApp() {
   app.use(express.json());
 
   app.use(requestLogger);
+
+  // Reads the session cookie and fills req.session from Redis. It has to run
+  // before the routes, because a route may need to know who is calling.
+  app.use(sessionMiddleware);
 
   // Everything the API offers lives under /api.
   app.use('/api', apiRouter);

@@ -25,5 +25,13 @@ export const config = {
   // 20260822105239_application_database_account.
   databaseUrl: required('DATABASE_URL_APP'),
 
+  // Redis holds the staff sessions. See src/session.ts for why they live there
+  // rather than in PostgreSQL or in the cookie itself.
+  redisUrl: required('REDIS_URL'),
+
+  // The secret that signs the session cookie. Required, never has a default:
+  // a default secret in a committed file is the same as no secret at all.
+  sessionSecret: required('SESSION_SECRET'),
+
   environment: process.env.NODE_ENV ?? 'development',
 };

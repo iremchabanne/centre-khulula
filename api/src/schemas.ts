@@ -15,6 +15,28 @@
 import { z } from 'zod';
 
 // ---------------------------------------------------------------------------
+// Authentication
+//
+// There is no sign-up schema, and there never will be one: staff accounts are
+// created by an administrator (RG13) and visitors have no account at all.
+// ---------------------------------------------------------------------------
+
+export const loginSchema = z.strictObject({
+  email: z.email({ error: 'Email and password are both required' }).max(255),
+
+  // Only "not empty" is checked here, deliberately. The rules on how strong a
+  // password must be belong to the moment an account is created, not to the
+  // moment someone logs in: refusing a login because the stored password is
+  // too short would lock a real member of staff out for our own mistake.
+  password: z
+    .string({ error: 'Email and password are both required' })
+    .min(1, { error: 'Email and password are both required' })
+    .max(200),
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;
+
+// ---------------------------------------------------------------------------
 // Species
 // ---------------------------------------------------------------------------
 
