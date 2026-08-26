@@ -51,9 +51,15 @@
 - **What step 15 still owes:** an **automated** test of that race, and a test that actually proves
   the transaction rolls back. Both belong with step 23, which now comes before the frontend.
 - **No frontend yet.** `client/` does not exist.
-- **Next: step 15's automated race test**, then the rollback test, then step 16 (the frontend).
-  The access-control fix still has **no automated test** — it was proved by hand with a script.
-  Both tests belong with step 23.
+- **Step 15 is finished** (26 August). The race now has an automated test —
+  `api/tests/admission-race.test.ts`, `npm test`. **Vitest** is the test tool, decided the same
+  day. Worth knowing, and written in the test file: removing `FOR UPDATE` does **not** make the
+  test fail, because the partial unique index refuses the second stay on its own. The test asserts
+  the result the centre needs, not which of the two defences delivered it.
+- **Still owed to step 23:** a rollback test, and an automated version of the deactivated-account
+  check (proved by hand today with `api/scripts/check-deactivated-account.sh`).
+- **Next: step 16** — the public API, and with it Redis's two remaining uses, the free-enclosure
+  cache and the rate limiting. Then step 17, and the backend is done.
 - A full review of the code as it stands is in `docs/audit.md` — local, not committed.
 - **Working habit, decided 25 August:** push at the end of every working day. The repository had
   been three days behind.

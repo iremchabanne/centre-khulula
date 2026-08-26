@@ -279,15 +279,18 @@ Plain classes: a constructor taking the Prisma client, and methods. No inheritan
 
 ### Step 15 — Transactions and concurrency  ·  CP 8 — the centrepiece
 
-- [ ] **Admission**: one transaction — lock the enclosure with `SELECT … FOR UPDATE`, check it is
+- [x] **Admission**: one transaction — lock the enclosure with `SELECT … FOR UPDATE`, check it is
       still free, create the animal and the stay, let the trigger occupy it. All or nothing (RG2).
-- [ ] **Move**: closes the current stay and opens a new one, indivisibly (RG8) — same race, same
+- [x] **Move**: closes the current stay and opens a new one, indivisibly (RG8) — same race, same
       lock.
-- [ ] **Outcome**: vet only (RG6), terminal (RG5), frees the enclosure (RG7).
-- [ ] An automated test that proves two simultaneous admissions cannot take the same enclosure.
+- [x] **Outcome**: vet only (RG6), terminal (RG5), frees the enclosure (RG7).
+- [x] An automated test that proves two simultaneous admissions cannot take the same enclosure —
+      `api/tests/admission-race.test.ts`, run with `npm test`. Vitest, chosen on 26/08.
+- [ ] A test that proves the transaction actually rolls back — still owed, goes with step 23.
 
 **Done when:** the conflict is reproducible on demand — this is the demonstration the DP is built
-around.
+around. **Done on 26/08/2026**: by hand with two parallel `curl`, and automatically with the test
+above, which also checks the database afterwards rather than trusting the two HTTP answers.
 
 ### Step 16 — Public API
 
@@ -339,9 +342,15 @@ around.
 
 ### Step 23 — Tests  ·  CP 9
 
+**Tool: Vitest**, decided 26/08/2026. Configured in `api/vitest.config.ts` — one setting, which
+hands the variables of `api/.env` to the tests, because the tests use the real database.
+
 - [ ] Unit tests on the service classes.
 - [ ] Integration tests on the routes.
-- [ ] The concurrency test from step 15.
+- [x] The concurrency test from step 15 — `api/tests/admission-race.test.ts`.
+- [ ] A test of the deactivated account (the 26/08 defect). Proved by hand for now, with
+      `api/scripts/check-deactivated-account.sh`.
+- [ ] A test that the admission transaction rolls back.
 
 ### Step 24 — Test plan and results  ·  CP 9
 
