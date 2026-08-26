@@ -443,16 +443,16 @@ tests, y compris en anglais.
 
 | Requirement | Appears in | Status |
 |---|---|---|
-| Docker / conteneurs | CP 1, CP 11 | to do |
-| Git + remote + collaborative tooling | CP 1, CP 4, CP 11 | to do |
-| Veille technologique, documented | CP 2, 3, 8, 9, 10, 11 | to do |
+| Docker / conteneurs | CP 1, CP 11 | done for postgres, redis, adminer — `api` and `client` still to add |
+| Git + remote + collaborative tooling | CP 1, CP 4, CP 11 | repository done — project-management tool still undecided |
+| Veille technologique, documented | CP 2, 3, 8, 9, 10, 11 | system in place — the weekly entry is the habit to keep |
 | Sécurité (OWASP, ANSSI, XSS, CSRF, injection SQL) | CP 2, 3, 6, 7, 8, 9 | to do |
 | Accessibilité RGAA | CP 2, CP 5 | to do |
 | RGPD / mentions légales | CP 2, CP 5, CP 7 | to do |
 | Éco-conception | CP 6 | to do |
 | Code and documentation in English | transversal | to do |
-| NoSQL (key/value) | CP 8 | **undecided** |
-| Stored procedures / triggers / transactions | CP 8 | to do |
+| NoSQL (key/value) | CP 8 | **Redis** — decided and running. Staff sessions done; enclosure cache and rate limiting still to do |
+| Stored procedures / triggers / transactions | CP 8 | done — 2 stored functions, the `enclosure.status` trigger, the admission transaction |
 | Backup & restore demonstrated | CP 7 | to do |
 | Load test + fuzzing | CP 9 | to do |
 | Code-quality tool (e.g. SonarCloud) | CP 11 | to do |

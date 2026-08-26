@@ -249,10 +249,14 @@ generate any of this, and that split is the answer to give the jury.
 - [x] argon2 password hashing — never in clear text. `AuthService.verifyCredentials`.
 - [x] Sessions in **Redis**, with `express-session` and `connect-redis`. The browser holds an
       opaque id and nothing else; the rights live server-side.
-- [x] `requireAuth`, `requireRole('veterinarian')`, `requireAdmin` middleware. Only `requireAuth`
-      has a route so far (`GET /api/auth/me`); the other two get theirs at step 15.
-- [x] A deactivated account cannot log in — and cannot keep working either: `findActiveById`
-      reads the database on every request, so RG12 applies for the whole life of the session.
+- [x] `requireAuth`, `requireRole('veterinarian')`, `requireAdmin` middleware. All three have
+      routes since step 15: the outcome route is veterinarian-only, maintenance is admin-only.
+- [x] A deactivated account cannot log in — and cannot keep working either: `requireSession`
+      calls `findActiveById` on every protected request, so RG12 applies for the whole life of
+      the session, and so does a change of role or of `is_admin`.
+      **This line was written on 25/08 before it was true.** `requireSession` only looked at the
+      session, so RG12 held on `GET /auth/me` alone and a deactivated account kept full access
+      for up to eight hours. Found and fixed on 26/08 — see the *Difficultés rencontrées* entry.
 - [x] Wrong password and unknown email answer the same message, so the endpoint cannot be used
       to find out which accounts exist (OWASP A07).
 - [x] The session id is regenerated at login, against session fixation.
@@ -260,8 +264,10 @@ generate any of this, and that split is the answer to give the jury.
       read the session id. The frontend half of XSS comes with the frontend.
 
 **Done when:** every protected route refuses the call server-side, not only in the interface —
-this is OWASP A01, *Broken Access Control*. **Done on 25/08/2026**, proved with curl: no session
-→ 401, forged cookie → 401, account deactivated mid-session → 401.
+this is OWASP A01, *Broken Access Control*. **Done on 26/08/2026**, proved with curl on all six
+protected routes: no session → 401, forged cookie → 401, account deactivated mid-session → 401,
+keeper on a veterinarian route → 403, keeper on an admin route → 403.
+The 25/08 version of this proof only covered `GET /auth/me`, which is how the defect above got in.
 
 ### Step 14 — Service classes  ·  CP 3, the OOP criterion
 

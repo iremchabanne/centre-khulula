@@ -8,6 +8,10 @@ import type { ZodType } from 'zod';
 import type { StaffRole } from '@prisma/client';
 import { AppError } from './errors';
 import { logger } from './logger';
+import { AuthService } from './services/auth.service';
+import { prisma } from './prisma';
+
+const authService = new AuthService(prisma);
 
 // ---------------------------------------------------------------------------
 // Access control
@@ -23,20 +27,38 @@ import { logger } from './logger';
 // a session id we issued, and the rights attached to it are ours.
 // ---------------------------------------------------------------------------
 
-// The check the three of them share: is anybody logged in at all?
+// The check the three of them share: is anybody logged in at all, and is that
+// account still allowed to work?
 //
-// Repeated inside each one rather than assumed to have run before. If a route
-// is written one day with requireAdmin but without requireAuth, it must still
-// refuse an anonymous call instead of silently letting it through.
-function requireSession(req: Request): void {
+// Two questions, not one. The cookie only proves a session was opened at some
+// point; it says nothing about now. So we also read the account from the
+// database on every protected request, and refuse a deactivated one (RG12).
+// Without that second question an account switched off by an administrator
+// would keep working until its session expired eight hours later.
+//
+// It costs one extra query per protected request, on the primary key — the
+// cheapest read a database does. We deliberately do not cache the answer:
+// a cache would give a deactivated account a few more seconds of access, and
+// that is exactly the thing this check exists to prevent.
+//
+// Repeated inside each of the three rather than assumed to have run before. If
+// a route is written one day with requireAdmin but without requireAuth, it must
+// still refuse an anonymous call instead of silently letting it through.
+async function requireSession(req: Request) {
   if (!req.session.staffId) {
     throw new AppError('You must be logged in', 401);
   }
+
+  // Throws a 401 if the account was deleted or deactivated since login.
+  return authService.findActiveById(req.session.staffId);
 }
 
 // Logged in — no more than that. Used on routes any member of staff may call.
-export function requireAuth(req: Request, res: Response, next: NextFunction): void {
-  requireSession(req);
+//
+// Express 5 sends a rejected promise from an async middleware to the central
+// error handler on its own, which is why there is no try/catch here.
+export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
+  await requireSession(req);
   next();
 }
 
@@ -45,10 +67,12 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
 //
 //     router.post('/animals/:id/outcome', requireRole('veterinarian'), setOutcome)
 export function requireRole(role: StaffRole) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    requireSession(req);
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const staff = await requireSession(req);
 
-    if (req.session.role !== role) {
+    // The role comes from the database row we have just read, not from the
+    // session. Same reason as above: the session is what was true at login.
+    if (staff.role !== role) {
       // 403, not 401: we know who this is, they are simply not allowed.
       throw new AppError('Your role does not allow this action', 403);
     }
@@ -60,10 +84,10 @@ export function requireRole(role: StaffRole) {
 // The second axis of rights — administering the tool, not the animals. A vet
 // is not automatically an admin, and an admin is not automatically a vet:
 // is_admin and role are two independent columns, on purpose (RG13).
-export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  requireSession(req);
+export async function requireAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const staff = await requireSession(req);
 
-  if (!req.session.isAdmin) {
+  if (!staff.is_admin) {
     throw new AppError('This action is reserved for administrators', 403);
   }
 

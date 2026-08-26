@@ -1,9 +1,9 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 25 August 2026
+**Updated:** 26 August 2026
 **Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
 **07/10/2026 23:59** · exam **October 2026**. See `docs/decisions.md` — the old "31 August" was wrong.
-**Status:** conception complete · database schema in place · **no application code yet**
+**Status:** conception complete · database and API built through step 15 · **no frontend yet**
 
 > `PLAN.md` holds the ordered list of remaining steps. Design decisions are **not** repeated
 > here — they live in the design documents themselves.
@@ -34,7 +34,11 @@
 - **Authentication works** (step 13): `POST /api/auth/login`, `POST /api/auth/logout`,
   `GET /api/auth/me`. argon2, sessions in Redis, and the three access-control middleware.
   Proved with curl, not only written — see the checklist in `PLAN.md` step 13.
-  `requireRole` and `requireAdmin` exist but have **no route yet**; step 15 gives them one.
+- **The access-control defect is fixed** (26 August). `requireSession` now reads the account from
+  the database on every protected request, so a deactivated account is refused immediately (RG12)
+  and so is a role or `is_admin` that has changed since login. One extra primary-key query per
+  protected request, deliberately not cached. The bug was reproduced before being fixed — that
+  terminal output is DP evidence and a *Difficultés rencontrées* row.
 - **Enclosures are done end to end** (part of step 14): `EnclosureService`, `GET /enclosures`,
   `GET /enclosures/free`, `PATCH /enclosures/:id/maintenance`. RG16 lives in the service, not in
   the trigger — an occupied enclosure cannot be put under maintenance, or the animal inside would
@@ -47,12 +51,9 @@
 - **What step 15 still owes:** an **automated** test of that race, and a test that actually proves
   the transaction rolls back. Both belong with step 23, which now comes before the frontend.
 - **No frontend yet.** `client/` does not exist.
-- **Next session, first thing — a defect, not a feature.** `requireAuth` trusts the session and
-  never asks the database, so a **deactivated account keeps full access until its session
-  expires**. Only `GET /auth/me` checks `is_active`. RG12 is therefore enforced on one route out
-  of six, and the claim in step 13 of `PLAN.md` overstates what the code does.
-  Fix `requireSession`, then prove it with a test. **Show the bug happening before fixing it.**
-  Then: step 15's automated race test, then step 16.
+- **Next: step 15's automated race test**, then the rollback test, then step 16 (the frontend).
+  The access-control fix still has **no automated test** — it was proved by hand with a script.
+  Both tests belong with step 23.
 - A full review of the code as it stands is in `docs/audit.md` — local, not committed.
 - **Working habit, decided 25 August:** push at the end of every working day. The repository had
   been three days behind.
