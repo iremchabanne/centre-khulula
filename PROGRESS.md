@@ -63,7 +63,13 @@
   shape for all six lists (§6.4, éco-conception). **Redis now has all three of its jobs**:
   sessions, the free-enclosure cache (`src/cache.ts`), and rate limiting (`rateLimit()` in
   `middleware.ts`). CP 8's NoSQL half is complete.
-- **Next: step 17** — the staff API, and the backend is done. Then the frontend.
+- **Step 17 is done, and with it the whole backend** (26 August). Staff accounts with RG13, RG14
+  and RG15; the animal file and observations, where the note and the status change are one
+  transaction because `observation.status_after` makes them one act; the staff animal list; the
+  donation list. Every screen of `arborescence-ecrans.md` now has the routes it needs.
+- **Next: step 18** — React, and the frontend. `client/` still does not exist.
+- **Still owed to step 23:** a rollback test, an automated deactivated-account test, and unit
+  tests on the service classes. Only the concurrency test exists so far.
 - A full review of the code as it stands is in `docs/audit.md` — local, not committed.
 - **Working habit, decided 25 August:** push at the end of every working day. The repository had
   been three days behind.

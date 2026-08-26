@@ -313,8 +313,12 @@ above, which also checks the database afterwards rather than trusting the two HT
 - [x] Animal detail and observations — screen 10. `GET /animals/:id`,
       `POST /animals/:id/observations`. The observation and the status change are one call and
       one transaction, because `observation.status_after` made them one act (S5, RG4, RG5).
-- [ ] The staff animal list — screen 9.
-- [ ] The donation list — screen 11.
+- [x] The staff animal list — screen 9. `GET /animals/all`, every status filterable including
+      `deceased`, with the current enclosure. Declared before `/animals/:id`, which matters.
+- [x] The donation list — screen 11. `GET /donations`, administrators only.
+
+**Done when:** every screen of the application has the routes it needs. **Done on 26/08/2026** —
+the backend is complete.
 
 ---
 

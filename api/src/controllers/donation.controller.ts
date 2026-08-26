@@ -1,9 +1,16 @@
 import type { Request, Response } from 'express';
 import { DonationService } from '../services/donation.service';
 import { prisma } from '../prisma';
-import type { CreateDonationInput } from '../schemas';
+import type { CreateDonationInput, ListDonationsQuery } from '../schemas';
 
 const donationService = new DonationService(prisma);
+
+export async function listDonations(req: Request, res: Response): Promise<void> {
+  const query = res.locals.query as ListDonationsQuery;
+
+  const donations = await donationService.findAll(query);
+  res.json(donations);
+}
 
 export async function createDonation(req: Request, res: Response): Promise<void> {
   // The validate middleware has already parsed and replaced req.body, so this

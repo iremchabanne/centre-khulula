@@ -6,7 +6,7 @@
 
 import { Router } from 'express';
 import { listSpecies, getSpecies } from './controllers/species.controller';
-import { createDonation } from './controllers/donation.controller';
+import { createDonation, listDonations } from './controllers/donation.controller';
 import { login, logout, getCurrentStaff } from './controllers/auth.controller';
 import {
   listEnclosures,
@@ -15,6 +15,7 @@ import {
 } from './controllers/enclosure.controller';
 import {
   listPublicAnimals,
+  listStaffAnimals,
   getAnimal,
   addObservation,
   admitAnimal,
@@ -36,6 +37,8 @@ import {
   setMaintenanceSchema,
   createAdmissionSchema,
   listAnimalsQuerySchema,
+  listStaffAnimalsQuerySchema,
+  listDonationsQuerySchema,
   createObservationSchema,
   animalIdParamsSchema,
   createStaffSchema,
@@ -118,6 +121,19 @@ apiRouter.patch(
 // different route and comes next.
 apiRouter.post('/animals', requireAuth, validate({ body: createAdmissionSchema }), admitAnimal);
 
+// Screen 9 — the staff list of animals. Every status, the enclosure, and no
+// filter needed.
+//
+// Declared BEFORE /animals/:id and the order matters: Express tries routes in
+// the order they are registered, and ":id" would otherwise match the word
+// "all" and answer "the animal id must be a whole number".
+apiRouter.get(
+  '/animals/all',
+  requireAuth,
+  validate({ query: listStaffAnimalsQuerySchema }),
+  listStaffAnimals,
+);
+
 // Screen 10 — the animal file. Staff only: it carries the enclosure, the
 // clinical status and the notes, none of which a visitor sees.
 apiRouter.get(
@@ -141,6 +157,15 @@ apiRouter.patch(
   requireAuth,
   validate({ params: animalIdParamsSchema, body: moveAnimalSchema }),
   moveAnimal,
+);
+
+// Screen 11 — the donation list, administrators only. The donor's name and
+// email appear here, which is the one place they were collected for.
+apiRouter.get(
+  '/donations',
+  requireAdmin,
+  validate({ query: listDonationsQuerySchema }),
+  listDonations,
 );
 
 // Staff accounts — screen 12, administrators only. RG13, RG14 and RG15 are in

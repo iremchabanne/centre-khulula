@@ -7,6 +7,7 @@ import type {
   RecordOutcomeInput,
   MoveAnimalInput,
   ListAnimalsQuery,
+  ListStaffAnimalsQuery,
   CreateObservationInput,
 } from '../schemas';
 
@@ -18,6 +19,13 @@ export async function listPublicAnimals(req: Request, res: Response): Promise<vo
   const query = res.locals.query as ListAnimalsQuery;
 
   const animals = await animalService.findPublicList(query);
+  res.json(animals);
+}
+
+export async function listStaffAnimals(req: Request, res: Response): Promise<void> {
+  const query = res.locals.query as ListStaffAnimalsQuery;
+
+  const animals = await animalService.findStaffList(query);
   res.json(animals);
 }
 

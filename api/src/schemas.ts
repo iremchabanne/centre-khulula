@@ -177,6 +177,36 @@ export const listAnimalsQuerySchema = z.strictObject({
 
 export type ListAnimalsQuery = z.infer<typeof listAnimalsQuerySchema>;
 
+// The staff list of animals — screen 9. Unlike the public one, every status is
+// a valid filter, `deceased` included, and the filter itself is optional: the
+// screen opens on the whole centre.
+export const listStaffAnimalsQuerySchema = z.strictObject({
+  status: z
+    .enum(['admitted', 'in_care', 'recovering', 'released', 'deceased'], {
+      error: 'Unknown status filter',
+    })
+    .optional(),
+
+  page: z.coerce
+    .number({ error: 'The page must be a whole number' })
+    .int({ error: 'The page must be a whole number' })
+    .positive({ error: 'The page must be greater than 0' })
+    .default(1),
+});
+
+export type ListStaffAnimalsQuery = z.infer<typeof listStaffAnimalsQuerySchema>;
+
+// The donation list — screen 11.
+export const listDonationsQuerySchema = z.strictObject({
+  page: z.coerce
+    .number({ error: 'The page must be a whole number' })
+    .int({ error: 'The page must be a whole number' })
+    .positive({ error: 'The page must be greater than 0' })
+    .default(1),
+});
+
+export type ListDonationsQuery = z.infer<typeof listDonationsQuerySchema>;
+
 // Moving an animal to another enclosure — RG8.
 export const moveAnimalSchema = z.strictObject({
   enclosure_id: z.coerce

@@ -7,6 +7,56 @@ Une entrée n'est retenue que si elle répond à *« qu'est-ce que cela change p
 
 ---
 
+## 26 août 2026
+
+### Express 5 — `req.query` devient non modifiable
+
+| | |
+|---|---|
+| **Source** | Guide de migration Express 4 → 5 (expressjs.com), confirmé par l'erreur à l'exécution |
+| **CP** | 2, 3 |
+
+Express 5 transforme `req.query` en propriété calculée en lecture seule. En Express 4, un
+middleware de validation pouvait réécrire `req.query` avec la valeur nettoyée ; en Express 5, la
+même ligne lève une `TypeError`. `req.params` et `req.body` restent modifiables.
+
+**Ce que cela change pour Khulula.** Le middleware `validate()` réécrivait déjà `req.params` et
+`req.body` pour que le contrôleur reçoive des valeurs converties — `"12"` devenu `12`. La
+pagination de l'étape 16 avait besoin du même mécanisme sur la chaîne de requête. La valeur
+validée transite désormais par `res.locals`, l'emplacement prévu par Express pour passer une
+donnée d'un middleware au contrôleur de la même requête. Deux lignes de code, mais la découvrir
+en production aurait coûté une erreur 500 sur toutes les listes paginées.
+
+À noter pour le même sujet : Express 5 transmet seul une promesse rejetée par un middleware
+`async` au gestionnaire d'erreurs central. C'est ce qui permet à `requireSession` d'interroger la
+base sans `try/catch`, et ce qui a rendu la correction de RG12 courte.
+
+---
+
+### Vitest retenu comme outil de test
+
+| | |
+|---|---|
+| **Source** | Documentation Vitest, comparaison avec le lanceur de tests natif de Node |
+| **CP** | 9 |
+
+Deux candidats pour le CP 9 : `node:test`, livré avec Node et sans installation, et **Vitest**,
+qui comprend TypeScript directement et dont la sortie est nettement plus lisible.
+
+**Ce que cela change pour Khulula.** Vitest est retenu — décision d'Irem. Le coût est une
+dépendance de développement supplémentaire ; le gain est une sortie compréhensible, ce qui compte
+pour quelqu'un qui écrit ses premiers tests. Un seul réglage de configuration a été nécessaire :
+Vitest n'a pas d'équivalent de `--env-file`, donc `vitest.config.ts` charge `api/.env` avec
+`loadEnv` et le transmet aux tests, qui parlent à la vraie base PostgreSQL.
+
+Premier test écrit : la course de deux admissions simultanées. Enseignement inattendu — le test
+passe **même en supprimant le `SELECT … FOR UPDATE`**, parce que l'index unique partiel refuse
+seul le second séjour. Le test valide donc le résultat attendu par le centre, pas le mécanisme qui
+le produit. C'est la défense en profondeur qui fonctionne, et c'est écrit en tête du fichier de
+test pour que personne ne conclue plus tard que le verrou est inutile.
+
+---
+
 ## 22 août 2026
 
 ### `deepmerge-ts` — vulnérabilité dans une dépendance de l'outil Prisma

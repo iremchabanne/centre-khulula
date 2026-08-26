@@ -33,6 +33,7 @@ import type {
   RecordOutcomeInput,
   MoveAnimalInput,
   ListAnimalsQuery,
+  ListStaffAnimalsQuery,
   CreateObservationInput,
 } from '../schemas';
 
@@ -94,6 +95,52 @@ export class AnimalService {
     const total = await this.prisma.animal.count({ where });
 
     return pageResult(animals, total, query.page);
+  }
+
+  // The staff list of animals — screen 9.
+  //
+  // Separate from the public list rather than the same method with a flag: the
+  // two differ in what they show and in who may see it, and a single method
+  // deciding that from an argument is how a field ends up on a public page by
+  // accident.
+  async findStaffList(query: ListStaffAnimalsQuery) {
+    // No filter means the whole centre, which is how the screen opens.
+    const where = query.status ? { status: query.status } : {};
+
+    const animals = await this.prisma.animal.findMany({
+      where,
+      orderBy: { admitted_at: 'desc' },
+      include: {
+        species: { select: { id: true, common_name: true } },
+        // The open stay is where the animal is now. There is at most one.
+        stays: {
+          where: { ended_at: null },
+          include: { enclosure: { select: { id: true, code: true } } },
+        },
+      },
+      ...pageQuery(query.page),
+    });
+
+    const total = await this.prisma.animal.count({ where });
+
+    // Same flattening as EnclosureService.findAll: a list that can only hold
+    // one element becomes a single field, so the screen does not reason about
+    // an array. An animal that has been released is in no enclosure at all.
+    const items = animals.map((animal) => {
+      const openStay = animal.stays[0];
+
+      return {
+        id: animal.id,
+        name: animal.name,
+        status: animal.status,
+        admitted_at: animal.admitted_at,
+        outcome_at: animal.outcome_at,
+        species: animal.species,
+        enclosure: openStay ? openStay.enclosure : null,
+      };
+    });
+
+    return pageResult(items, total, query.page);
   }
 
   // One animal, with everything screen 10 shows: where it is, where it has

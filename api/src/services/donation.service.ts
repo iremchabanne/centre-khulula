@@ -5,13 +5,32 @@
 // That is an explicit out-of-scope decision in the cahier des charges.
 
 import type { PrismaClient } from '@prisma/client';
-import type { CreateDonationInput } from '../schemas';
+import { pageQuery, pageResult } from '../pagination';
+import type { CreateDonationInput, ListDonationsQuery } from '../schemas';
 
 export class DonationService {
   private readonly prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
+  }
+
+  // The donation list — screen 11, administrators only.
+  //
+  // The donor's name and email are returned here, and that is not a
+  // contradiction with `record` below: an administrator reading the list is
+  // exactly who those fields were collected for. What protects the donor is
+  // upstream — a donation whose donor did not consent has nothing stored in
+  // those columns at all, so there is nothing here to show.
+  async findAll(query: ListDonationsQuery) {
+    const donations = await this.prisma.donation.findMany({
+      orderBy: { created_at: 'desc' },
+      ...pageQuery(query.page),
+    });
+
+    const total = await this.prisma.donation.count();
+
+    return pageResult(donations, total, query.page);
   }
 
   async record(input: CreateDonationInput) {
