@@ -33,6 +33,7 @@ import type {
   RecordOutcomeInput,
   MoveAnimalInput,
   ListAnimalsQuery,
+  CreateObservationInput,
 } from '../schemas';
 
 // Prisma reports "a unique constraint was violated" as the code P2002.
@@ -93,6 +94,99 @@ export class AnimalService {
     const total = await this.prisma.animal.count({ where });
 
     return pageResult(animals, total, query.page);
+  }
+
+  // One animal, with everything screen 10 shows: where it is, where it has
+  // been, and what has been written about it.
+  //
+  // Staff only, so unlike the public list this returns the enclosure, the
+  // clinical status and the notes.
+  async findById(animalId: number) {
+    const animal = await this.prisma.animal.findUnique({
+      where: { id: animalId },
+      include: {
+        species: { select: { id: true, common_name: true, scientific_name: true } },
+
+        // Every stay, newest first. The open one — ended_at is null — is where
+        // the animal is now; the others are where it has been.
+        stays: {
+          orderBy: { started_at: 'desc' },
+          include: { enclosure: { select: { id: true, code: true } } },
+        },
+
+        observations: {
+          orderBy: { observed_at: 'desc' },
+          include: { author: { select: { id: true, full_name: true } } },
+        },
+      },
+    });
+
+    if (!animal) {
+      throw new AppError(`No animal with id ${animalId}`, 404);
+    }
+
+    return animal;
+  }
+
+  // Add an observation, and move the animal on in its care if the observation
+  // says so — S5.
+  //
+  // One method and one transaction, because the model made it one act:
+  // observation.status_after is "only filled when the observation makes the
+  // animal change status". Written separately, a crash between the two would
+  // leave a status change nobody can explain, or a note about a change that
+  // never happened.
+  //
+  // The observation table is append-only, and not only by convention: the
+  // khulula_app account has no UPDATE and no DELETE on it (migration
+  // 20260822105239). What is written here cannot be rewritten later.
+  async addObservation(animalId: number, input: CreateObservationInput, staffId: number) {
+    const observedAt = new Date();
+
+    return this.prisma.$transaction(async (tx) => {
+      const animal = await tx.animal.findUnique({ where: { id: animalId } });
+
+      if (!animal) {
+        throw new AppError(`No animal with id ${animalId}`, 404);
+      }
+
+      if (input.status_after) {
+        // RG5 — a terminal state is final, so nothing moves an animal out of
+        // it. A plain note is still allowed below; it is the status change
+        // that is refused.
+        if (animal.status === 'released' || animal.status === 'deceased') {
+          throw new AppError(`This animal is already ${animal.status}`, 409);
+        }
+
+        // RG4 — the lifecycle runs forwards: admitted, in_care, recovering.
+        // An animal that is recovering does not go back to being admitted.
+        const order = ['admitted', 'in_care', 'recovering'];
+
+        if (order.indexOf(input.status_after) <= order.indexOf(animal.status)) {
+          throw new AppError(
+            `An animal that is ${animal.status} cannot go back to ${input.status_after}`,
+            409,
+          );
+        }
+
+        await tx.animal.update({
+          where: { id: animalId },
+          data: { status: input.status_after },
+        });
+      }
+
+      return tx.observation.create({
+        data: {
+          animal_id: animalId,
+          // The author is whoever is logged in, never a value from the body.
+          author_id: staffId,
+          observed_at: observedAt,
+          body: input.body,
+          status_after: input.status_after ?? null,
+        },
+        include: { author: { select: { id: true, full_name: true } } },
+      });
+    });
   }
 
   // Admit an animal into a free enclosure. All of it, or none of it.

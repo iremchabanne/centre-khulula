@@ -7,6 +7,7 @@ import type {
   RecordOutcomeInput,
   MoveAnimalInput,
   ListAnimalsQuery,
+  CreateObservationInput,
 } from '../schemas';
 
 const animalService = new AnimalService(prisma);
@@ -18,6 +19,29 @@ export async function listPublicAnimals(req: Request, res: Response): Promise<vo
 
   const animals = await animalService.findPublicList(query);
   res.json(animals);
+}
+
+export async function getAnimal(req: Request, res: Response): Promise<void> {
+  const { id } = req.params as unknown as { id: number };
+
+  const animal = await animalService.findById(id);
+  res.json(animal);
+}
+
+export async function addObservation(req: Request, res: Response): Promise<void> {
+  const { id } = req.params as unknown as { id: number };
+  const input = req.body as CreateObservationInput;
+  const staffId = req.session.staffId!;
+
+  const observation = await animalService.addObservation(id, input, staffId);
+
+  logger.info('observation', {
+    animalId: id,
+    statusAfter: observation.status_after,
+    staffId,
+  });
+
+  res.status(201).json(observation);
 }
 
 export async function admitAnimal(req: Request, res: Response): Promise<void> {

@@ -15,6 +15,8 @@ import {
 } from './controllers/enclosure.controller';
 import {
   listPublicAnimals,
+  getAnimal,
+  addObservation,
   admitAnimal,
   moveAnimal,
   recordAnimalOutcome,
@@ -34,6 +36,7 @@ import {
   setMaintenanceSchema,
   createAdmissionSchema,
   listAnimalsQuerySchema,
+  createObservationSchema,
   animalIdParamsSchema,
   createStaffSchema,
   staffIdParamsSchema,
@@ -114,6 +117,23 @@ apiRouter.patch(
 // only a veterinarian may later pronounce its outcome (RG6), which is a
 // different route and comes next.
 apiRouter.post('/animals', requireAuth, validate({ body: createAdmissionSchema }), admitAnimal);
+
+// Screen 10 — the animal file. Staff only: it carries the enclosure, the
+// clinical status and the notes, none of which a visitor sees.
+apiRouter.get(
+  '/animals/:id',
+  requireAuth,
+  validate({ params: animalIdParamsSchema }),
+  getAnimal,
+);
+
+// An observation, and the status change when there is one — S5, RG4, RG5.
+apiRouter.post(
+  '/animals/:id/observations',
+  requireAuth,
+  validate({ params: animalIdParamsSchema, body: createObservationSchema }),
+  addObservation,
+);
 
 // The move — RG8. Any member of staff may move an animal.
 apiRouter.patch(

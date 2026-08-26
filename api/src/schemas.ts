@@ -126,6 +126,32 @@ export const animalIdParamsSchema = z.strictObject({
     .positive({ error: 'The animal id must be greater than 0' }),
 });
 
+// Adding an observation — screen 10, S5.
+//
+// One request, not two. `status_after` is optional, and the model says why:
+// the column is "only filled when the observation makes the animal change
+// status". Writing a note and moving the animal on in its care are the same
+// act, so they are one call and one transaction.
+//
+// Only the two intermediate statuses are here. `released` and `deceased` are
+// terminal and pronounced by a veterinarian on another route (RG5, RG6), and
+// `admitted` is where an animal starts and never returns to (RG4).
+export const createObservationSchema = z.strictObject({
+  body: z
+    .string({ error: 'The observation cannot be empty' })
+    .trim()
+    .min(1, { error: 'The observation cannot be empty' })
+    .max(2000, { error: 'The observation cannot exceed 2000 characters' }),
+
+  status_after: z
+    .enum(['in_care', 'recovering'], {
+      error: 'The new status must be in_care or recovering',
+    })
+    .optional(),
+});
+
+export type CreateObservationInput = z.infer<typeof createObservationSchema>;
+
 // The public list of animals — screen 4, "Nos animaux".
 //
 // One list and one filter, not two routes: arborescence-ecrans.md §1, *« même

@@ -310,7 +310,9 @@ above, which also checks the database afterwards rather than trusting the two HT
 - [x] Staff accounts — screen 12. `GET /staff`, `POST /staff`, `PATCH /staff/:id/active`,
       `PATCH /staff/:id/password`. Administrators only.
 - [x] RG14 enforced: nobody deactivates their own account or the last active administrator.
-- [ ] Animal detail and observations — screen 10.
+- [x] Animal detail and observations — screen 10. `GET /animals/:id`,
+      `POST /animals/:id/observations`. The observation and the status change are one call and
+      one transaction, because `observation.status_after` made them one act (S5, RG4, RG5).
 - [ ] The staff animal list — screen 9.
 - [ ] The donation list — screen 11.
 
