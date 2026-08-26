@@ -7,6 +7,7 @@
 
 import type { PrismaClient } from '@prisma/client';
 import { AppError } from '../errors';
+import { readFreeEnclosures, writeFreeEnclosures, forgetFreeEnclosures } from '../cache';
 
 export class EnclosureService {
   private readonly prisma: PrismaClient;
@@ -63,11 +64,24 @@ export class EnclosureService {
   // screen builds its list from this.
   //
   // No occupant to look up here: `free` already means nobody is inside.
+  //
+  // This is the one cached read of the application — see cache.ts for why this
+  // list and no other, and why a stale answer cannot cause a wrong admission.
   async findFree() {
-    return this.prisma.enclosure.findMany({
+    const cached = await readFreeEnclosures();
+
+    if (cached) {
+      return cached;
+    }
+
+    const enclosures = await this.prisma.enclosure.findMany({
       where: { status: 'free' },
       orderBy: { code: 'asc' },
     });
+
+    await writeFreeEnclosures(enclosures);
+
+    return enclosures;
   }
 
   // RG16 — an enclosure goes under maintenance only while it is free.
@@ -94,10 +108,18 @@ export class EnclosureService {
 
     // Note what is NOT in `data`: status. Writing is_under_maintenance fires
     // the trigger, and the trigger writes status.
-    return this.prisma.enclosure.update({
+    const updated = await this.prisma.enclosure.update({
       where: { id },
       data: { is_under_maintenance: isUnderMaintenance },
       select: { id: true, code: true, is_under_maintenance: true, status: true },
     });
+
+    // The set of free enclosures has just changed, so the cached list is wrong.
+    // Cleared after the write and not before: cleared first, a reader arriving
+    // in between would store the old list again and the cache would be wrong
+    // until it expired.
+    await forgetFreeEnclosures();
+
+    return updated;
   }
 }

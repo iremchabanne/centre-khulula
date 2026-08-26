@@ -294,15 +294,25 @@ above, which also checks the database afterwards rather than trusting the two HT
 
 ### Step 16 — Public API
 
-- [ ] Species, animals filtered by status, donation recording.
-- [ ] **Rate limiting via Redis** on the public pages and the donation form.
-- [ ] **Redis cache** on the free-enclosure list, invalidated on every admission and outcome.
-- [ ] Pagination — the `LIMIT` always applied server-side (§6.4).
+- [x] Species (step 11), animals filtered by status, donation recording (step 12).
+      `GET /animals?status=in_care|released&page=n` — one route and one filter for both public
+      tabs. `deceased` is not a value a visitor may ask for, and the enclosure is not returned.
+- [x] **Rate limiting via Redis** on the public pages and the donation form. `rateLimit()` in
+      `middleware.ts`, one counter per IP and per path: 60/minute on the public reads, 5/hour on
+      the donation form. INCR plus an expiry, so the counters clean themselves up.
+- [x] **Redis cache** on the free-enclosure list, invalidated on every admission, move, outcome
+      and maintenance change. `src/cache.ts`, 60-second expiry as a safety net only.
+- [x] Pagination — the `LIMIT` always applied server-side (§6.4). `src/pagination.ts`, ten per
+      page, one answer shape for all six lists.
 
 ### Step 17 — Staff API
 
-- [ ] Enclosures, animals, stays, species, donations, staff accounts.
-- [ ] RG14 enforced: nobody deactivates their own account or the last active administrator.
+- [x] Staff accounts — screen 12. `GET /staff`, `POST /staff`, `PATCH /staff/:id/active`,
+      `PATCH /staff/:id/password`. Administrators only.
+- [x] RG14 enforced: nobody deactivates their own account or the last active administrator.
+- [ ] Animal detail and observations — screen 10.
+- [ ] The staff animal list — screen 9.
+- [ ] The donation list — screen 11.
 
 ---
 

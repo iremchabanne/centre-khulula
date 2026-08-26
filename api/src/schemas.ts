@@ -126,6 +126,31 @@ export const animalIdParamsSchema = z.strictObject({
     .positive({ error: 'The animal id must be greater than 0' }),
 });
 
+// The public list of animals — screen 4, "Nos animaux".
+//
+// One list and one filter, not two routes: arborescence-ecrans.md §1, *« même
+// liste, même requête, un seul filtre qui change »*.
+//
+// The two values a visitor may ask for are named here rather than taken from
+// the AnimalStatus enum. `admitted`, `in_care` and `recovering` are grouped
+// under `in_care` for the public — a visitor does not need the clinical detail
+// — and `deceased` is deliberately absent: it is never shown publicly.
+export const listAnimalsQuerySchema = z.strictObject({
+  status: z.enum(['in_care', 'released'], {
+    error: 'The filter must be in_care or released',
+  }),
+
+  // Comes from the URL, so it arrives as text: coerce turns "2" into 2.
+  // Defaulting to 1 means a URL with no page is a valid request, not an error.
+  page: z.coerce
+    .number({ error: 'The page must be a whole number' })
+    .int({ error: 'The page must be a whole number' })
+    .positive({ error: 'The page must be greater than 0' })
+    .default(1),
+});
+
+export type ListAnimalsQuery = z.infer<typeof listAnimalsQuerySchema>;
+
 // Moving an animal to another enclosure — RG8.
 export const moveAnimalSchema = z.strictObject({
   enclosure_id: z.coerce
@@ -199,3 +224,76 @@ export const createDonationSchema = z
   });
 
 export type CreateDonationInput = z.infer<typeof createDonationSchema>;
+
+// ---------------------------------------------------------------------------
+// Staff accounts — screen 12, administrators only
+//
+// RG13 is enforced twice, and both are deliberate. The schemas below are
+// strictObject, so a request carrying `is_admin` is refused as an unrecognised
+// key rather than quietly ignored; and staff.service.ts never writes that
+// column whatever it receives. The validation gives a clear error, the service
+// makes the rule true even if the validation is ever changed.
+// ---------------------------------------------------------------------------
+
+// Written once and reused by account creation and password reset (RG15), so
+// the two can never drift apart.
+//
+// Twelve characters, and nothing else. This follows the ANSSI recommendation:
+// length is what makes a password hard to guess, while rules about capitals
+// and symbols mostly push people towards "Password123!" and a sticky note.
+const passwordRule = z
+  .string({ error: 'A password is required' })
+  .min(12, { error: 'The password must be at least 12 characters long' })
+  .max(200, { error: 'The password cannot exceed 200 characters' });
+
+export const createStaffSchema = z.strictObject({
+  full_name: z
+    .string({ error: 'The full name is required' })
+    .trim()
+    .min(1, { error: 'The full name is required' })
+    .max(100),
+
+  email: z.email({ error: 'This is not a valid email address' }).max(255),
+
+  // The two business roles. `is_admin` is not here — RG13.
+  role: z.enum(['keeper', 'veterinarian'], {
+    error: 'The role must be keeper or veterinarian',
+  }),
+
+  password: passwordRule,
+});
+
+export type CreateStaffInput = z.infer<typeof createStaffSchema>;
+
+export const staffIdParamsSchema = z.strictObject({
+  id: z.coerce
+    .number({ error: 'The staff id must be a whole number' })
+    .int({ error: 'The staff id must be a whole number' })
+    .positive({ error: 'The staff id must be greater than 0' }),
+});
+
+export const setStaffActiveSchema = z.strictObject({
+  is_active: z.boolean({ error: 'is_active must be true or false' }),
+});
+
+export type SetStaffActiveInput = z.infer<typeof setStaffActiveSchema>;
+
+// RG15 — a forgotten password is reset by an administrator. There is no
+// current-password field: the administrator does not know it, and that is the
+// whole point of the rule. There is no email procedure either.
+export const resetPasswordSchema = z.strictObject({
+  password: passwordRule,
+});
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+// The staff list, paginated like every other list (§6.4).
+export const listStaffQuerySchema = z.strictObject({
+  page: z.coerce
+    .number({ error: 'The page must be a whole number' })
+    .int({ error: 'The page must be a whole number' })
+    .positive({ error: 'The page must be greater than 0' })
+    .default(1),
+});
+
+export type ListStaffQuery = z.infer<typeof listStaffQuerySchema>;

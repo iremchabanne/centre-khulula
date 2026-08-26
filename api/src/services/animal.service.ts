@@ -24,9 +24,16 @@
 //      the same enclosure. A defence that does not depend on the application
 //      being right.
 
-import { Prisma, type PrismaClient, type EnclosureStatus } from '@prisma/client';
+import { Prisma, type PrismaClient, type EnclosureStatus, type AnimalStatus } from '@prisma/client';
 import { AppError } from '../errors';
-import type { CreateAdmissionInput, RecordOutcomeInput, MoveAnimalInput } from '../schemas';
+import { pageQuery, pageResult } from '../pagination';
+import { forgetFreeEnclosures } from '../cache';
+import type {
+  CreateAdmissionInput,
+  RecordOutcomeInput,
+  MoveAnimalInput,
+  ListAnimalsQuery,
+} from '../schemas';
 
 // Prisma reports "a unique constraint was violated" as the code P2002.
 function isUniqueViolation(error: unknown): boolean {
@@ -40,6 +47,54 @@ export class AnimalService {
     this.prisma = prisma;
   }
 
+  // The public list of animals — screen 4, no account needed.
+  //
+  // WHAT A VISITOR IS ALLOWED TO SEE, and the reasoning belongs here rather
+  // than in the route:
+  //
+  //   - `deceased` animals never appear. The centre publishes the animals it
+  //     is helping and the ones it has set free, not the ones it lost.
+  //   - the enclosure is not returned. Which animal is in which enclosure is
+  //     staff information — decisions.md, the visitor role is deliberately
+  //     minimal.
+  //   - `admission_reason` and the outcome note stay out too: they are
+  //     clinical notes written by staff for staff.
+  //
+  // So the fields are listed one by one below instead of returning the row.
+  // A `select` that names what goes out cannot leak a column added later.
+  async findPublicList(query: ListAnimalsQuery) {
+    // The three clinical states a visitor sees as one. Someone reading the
+    // site does not need to know the difference between admitted and
+    // recovering; the centre does, which is why the database keeps them apart.
+    const inCare: AnimalStatus[] = ['admitted', 'in_care', 'recovering'];
+
+    const statuses = query.status === 'released' ? (['released'] as AnimalStatus[]) : inCare;
+
+    const where = { status: { in: statuses } };
+
+    const animals = await this.prisma.animal.findMany({
+      where,
+      // Newest first: the animals arrived — or released — most recently are
+      // the ones a visitor came to see.
+      orderBy: { admitted_at: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        admitted_at: true,
+        outcome_at: true,
+        species: { select: { id: true, common_name: true } },
+      },
+      ...pageQuery(query.page),
+    });
+
+    // Counted with the same `where`, so the two can never describe different
+    // lists. This is the number the interface needs to draw "page 2 of 5".
+    const total = await this.prisma.animal.count({ where });
+
+    return pageResult(animals, total, query.page);
+  }
+
   // Admit an animal into a free enclosure. All of it, or none of it.
   //
   // staffId comes from the session, never from the request body: the person
@@ -51,7 +106,7 @@ export class AnimalService {
     // apart. The stored function that computes length of stay reads these.
     const admittedAt = new Date();
 
-    return this.prisma.$transaction(async (tx) => {
+    const admission = await this.prisma.$transaction(async (tx) => {
       // Written as raw SQL because Prisma has no way to express FOR UPDATE.
       // The value is passed as a parameter by the tagged template, not glued
       // into the string, so this is not an SQL injection (OWASP A03).
@@ -127,6 +182,15 @@ export class AnimalService {
         throw error;
       }
     });
+
+    // One enclosure fewer is free. Cleared AFTER the commit, never inside the
+    // transaction: a reader arriving between the clear and the commit would
+    // still see the enclosure as free and cache that, and the cache would be
+    // wrong until it expired. If the transaction rolls back we never get here,
+    // which is correct — nothing changed.
+    await forgetFreeEnclosures();
+
+    return admission;
   }
 
   // Move an animal to another enclosure — RG8.
@@ -140,7 +204,7 @@ export class AnimalService {
   async move(animalId: number, input: MoveAnimalInput, staffId: number) {
     const movedAt = new Date();
 
-    return this.prisma.$transaction(async (tx) => {
+    const move = await this.prisma.$transaction(async (tx) => {
       // Same lock as an admission, for the same reason: the destination must
       // still be free when we write, not merely when the screen was drawn.
       //
@@ -220,6 +284,12 @@ export class AnimalService {
         enclosure: { id: destination.id, code: destination.code },
       };
     });
+
+    // A move changes two enclosures at once: the one left behind became free,
+    // the destination became occupied. Same reason as an admission.
+    await forgetFreeEnclosures();
+
+    return move;
   }
 
   // Pronounce the outcome of an animal: released, or deceased.
@@ -239,7 +309,7 @@ export class AnimalService {
   async recordOutcome(animalId: number, input: RecordOutcomeInput, staffId: number) {
     const outcomeAt = new Date();
 
-    return this.prisma.$transaction(async (tx) => {
+    const outcome = await this.prisma.$transaction(async (tx) => {
       const animal = await tx.animal.findUnique({ where: { id: animalId } });
 
       if (!animal) {
@@ -280,5 +350,10 @@ export class AnimalService {
 
       return updated;
     });
+
+    // The stay was closed, so the trigger has just freed the enclosure.
+    await forgetFreeEnclosures();
+
+    return outcome;
   }
 }

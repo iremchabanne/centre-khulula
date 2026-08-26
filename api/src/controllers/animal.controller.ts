@@ -2,9 +2,23 @@ import type { Request, Response } from 'express';
 import { AnimalService } from '../services/animal.service';
 import { prisma } from '../prisma';
 import { logger } from '../logger';
-import type { CreateAdmissionInput, RecordOutcomeInput, MoveAnimalInput } from '../schemas';
+import type {
+  CreateAdmissionInput,
+  RecordOutcomeInput,
+  MoveAnimalInput,
+  ListAnimalsQuery,
+} from '../schemas';
 
 const animalService = new AnimalService(prisma);
+
+export async function listPublicAnimals(req: Request, res: Response): Promise<void> {
+  // validate({ query: … }) ran first and left the checked value here. See the
+  // comment in middleware.ts for why it travels through res.locals.
+  const query = res.locals.query as ListAnimalsQuery;
+
+  const animals = await animalService.findPublicList(query);
+  res.json(animals);
+}
 
 export async function admitAnimal(req: Request, res: Response): Promise<void> {
   const input = req.body as CreateAdmissionInput;

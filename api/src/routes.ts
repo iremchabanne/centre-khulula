@@ -13,8 +13,19 @@ import {
   listFreeEnclosures,
   setEnclosureMaintenance,
 } from './controllers/enclosure.controller';
-import { admitAnimal, moveAnimal, recordAnimalOutcome } from './controllers/animal.controller';
-import { validate, requireAuth, requireAdmin, requireRole } from './middleware';
+import {
+  listPublicAnimals,
+  admitAnimal,
+  moveAnimal,
+  recordAnimalOutcome,
+} from './controllers/animal.controller';
+import {
+  listStaff,
+  createStaff,
+  setStaffActive,
+  resetStaffPassword,
+} from './controllers/staff.controller';
+import { validate, requireAuth, requireAdmin, requireRole, rateLimit } from './middleware';
 import {
   speciesIdParamsSchema,
   createDonationSchema,
@@ -22,7 +33,13 @@ import {
   enclosureIdParamsSchema,
   setMaintenanceSchema,
   createAdmissionSchema,
+  listAnimalsQuerySchema,
   animalIdParamsSchema,
+  createStaffSchema,
+  staffIdParamsSchema,
+  setStaffActiveSchema,
+  resetPasswordSchema,
+  listStaffQuerySchema,
   moveAnimalSchema,
   recordOutcomeSchema,
 } from './schemas';
@@ -37,14 +54,46 @@ apiRouter.get('/health', (req, res) => {
 
 // Authentication. There is no /auth/register: staff accounts are created by an
 // administrator (RG13), and visitors have no account.
-apiRouter.post('/auth/login', validate({ body: loginSchema }), login);
+// Rate limited against brute force: without it, an attacker can try passwords
+// as fast as the network allows. argon2 is deliberately slow, which already
+// makes that expensive, but slow is not the same as refused — OWASP A07.
+//
+// 10 attempts per quarter of an hour. A member of staff who mistypes their
+// password three times in a row is not inconvenienced; a script is stopped.
+// The counter is per IP address, so one person being locked out never locks
+// out the whole centre.
+apiRouter.post('/auth/login', rateLimit(10, 15 * 60), validate({ body: loginSchema }), login);
 apiRouter.post('/auth/logout', logout);
 apiRouter.get('/auth/me', requireAuth, getCurrentStaff);
 
-apiRouter.get('/species', listSpecies);
-apiRouter.get('/species/:id', validate({ params: speciesIdParamsSchema }), getSpecies);
+// The public routes below are rate limited. The numbers are ours — the cahier
+// des charges asks for rate limiting without fixing a figure — and they are
+// chosen to be invisible to a real visitor and quickly reached by a script.
+//
+// 60 reads a minute is one page every second, sustained, which nobody does by
+// hand. The donation form gets 5 an hour instead: a real donor sends one, and
+// a form with no account behind it is the easiest thing on the site to abuse.
+const PUBLIC_PAGES = rateLimit(60, 60);
+const DONATION_FORM = rateLimit(5, 60 * 60);
 
-apiRouter.post('/donations', validate({ body: createDonationSchema }), createDonation);
+apiRouter.get('/species', PUBLIC_PAGES, listSpecies);
+apiRouter.get('/species/:id', PUBLIC_PAGES, validate({ params: speciesIdParamsSchema }), getSpecies);
+
+apiRouter.post(
+  '/donations',
+  DONATION_FORM,
+  validate({ body: createDonationSchema }),
+  createDonation,
+);
+
+// The public list of animals — no session, screen 4. One route and one filter
+// for "in care" and "released": same list, same query, one filter that changes.
+apiRouter.get(
+  '/animals',
+  PUBLIC_PAGES,
+  validate({ query: listAnimalsQuerySchema }),
+  listPublicAnimals,
+);
 
 // Enclosures — staff only. A visitor has no reason to know how full the centre
 // is, and the occupant of an enclosure is an animal we may not be showing
@@ -72,6 +121,26 @@ apiRouter.patch(
   requireAuth,
   validate({ params: animalIdParamsSchema, body: moveAnimalSchema }),
   moveAnimal,
+);
+
+// Staff accounts — screen 12, administrators only. RG13, RG14 and RG15 are in
+// StaffService; requireAdmin is what keeps a keeper out of all four routes.
+apiRouter.get('/staff', requireAdmin, validate({ query: listStaffQuerySchema }), listStaff);
+
+apiRouter.post('/staff', requireAdmin, validate({ body: createStaffSchema }), createStaff);
+
+apiRouter.patch(
+  '/staff/:id/active',
+  requireAdmin,
+  validate({ params: staffIdParamsSchema, body: setStaffActiveSchema }),
+  setStaffActive,
+);
+
+apiRouter.patch(
+  '/staff/:id/password',
+  requireAdmin,
+  validate({ params: staffIdParamsSchema, body: resetPasswordSchema }),
+  resetStaffPassword,
 );
 
 // The outcome — RG6, reserved for a veterinarian. This is where requireRole

@@ -10,6 +10,7 @@ import { AppError } from './errors';
 import { logger } from './logger';
 import { AuthService } from './services/auth.service';
 import { prisma } from './prisma';
+import { redis } from './redis';
 
 const authService = new AuthService(prisma);
 
@@ -94,6 +95,51 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
   next();
 }
 
+// ---------------------------------------------------------------------------
+// Rate limiting — Redis's third and last job.
+//
+// The public pages have no account, so there is nothing to suspend when
+// somebody misuses them. A visitor can send the donation form a thousand times
+// a minute, or walk the whole animal list in a loop. Counting requests per IP
+// address and refusing past a limit is what stands in the way.
+//
+// HOW IT WORKS, in three lines of Redis. INCR adds one to a counter and
+// returns the new value, creating it at 1 if it did not exist. The first time
+// we see an address we give that key an expiry, so the counter disappears on
+// its own and the visitor starts again with a clean slate. No cleanup job, no
+// stored table — this is exactly the kind of short-lived counting a key/value
+// database is for, and it is why Redis is in this project.
+// ---------------------------------------------------------------------------
+
+export function rateLimit(maxRequests: number, windowSeconds: number) {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    // The path is part of the key, so the donation form and the animal list
+    // have separate counters. Using the same key for both would let a visitor
+    // browsing the site use up the budget of the form.
+    const key = `khulula:ratelimit:${req.ip}:${req.path}`;
+
+    const count = await redis.incr(key);
+
+    // Only on the first request of a window: setting the expiry every time
+    // would push it further away at each request, and the counter would never
+    // reset for someone sending requests continuously.
+    if (count === 1) {
+      await redis.expire(key, windowSeconds);
+    }
+
+    if (count > maxRequests) {
+      logger.warn('rate limit reached', { ip: req.ip, path: req.path, count });
+
+      // 429 Too Many Requests. The message says to wait, and deliberately does
+      // not say how long or how many are allowed: a number is a hint about how
+      // to stay just under the limit.
+      throw new AppError('Too many requests. Please wait a moment and try again.', 429);
+    }
+
+    next();
+  };
+}
+
 // Checks the input of a request against the schemas in schemas.ts, before the
 // controller runs. Written once here rather than repeated in each controller,
 // so every rejected request in the API looks the same to the client, and so
@@ -102,8 +148,22 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
 //     router.post('/donations', validate({ body: createDonationSchema }), createDonation)
 //                               ^^^^^^^^ runs first; the controller is only
 //                                        reached if the input was valid.
-export function validate(schemas: { params?: ZodType; body?: ZodType }) {
+export function validate(schemas: { params?: ZodType; body?: ZodType; query?: ZodType }) {
   return (req: Request, res: Response, next: NextFunction): void => {
+    if (schemas.query) {
+      const result = schemas.query.safeParse(req.query);
+      if (!result.success) {
+        respondWithValidationErrors(res, result.error.issues);
+        return;
+      }
+
+      // Not written back onto req.query, unlike params and body: Express 5
+      // made req.query read-only, and assigning to it throws. res.locals is
+      // Express's own place for values passed from a middleware to the
+      // controller of the same request, so the clean value travels there.
+      res.locals.query = result.data;
+    }
+
     if (schemas.params) {
       const result = schemas.params.safeParse(req.params);
       if (!result.success) {

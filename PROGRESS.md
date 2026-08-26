@@ -58,8 +58,12 @@
   the result the centre needs, not which of the two defences delivered it.
 - **Still owed to step 23:** a rollback test, and an automated version of the deactivated-account
   check (proved by hand today with `api/scripts/check-deactivated-account.sh`).
-- **Next: step 16** — the public API, and with it Redis's two remaining uses, the free-enclosure
-  cache and the rate limiting. Then step 17, and the backend is done.
+- **Step 16 is done** (26 August). `GET /animals?status=in_care|released&page=n` — one route and
+  one filter for both public tabs. Pagination is in `src/pagination.ts`, ten per page, one answer
+  shape for all six lists (§6.4, éco-conception). **Redis now has all three of its jobs**:
+  sessions, the free-enclosure cache (`src/cache.ts`), and rate limiting (`rateLimit()` in
+  `middleware.ts`). CP 8's NoSQL half is complete.
+- **Next: step 17** — the staff API, and the backend is done. Then the frontend.
 - A full review of the code as it stands is in `docs/audit.md` — local, not committed.
 - **Working habit, decided 25 August:** push at the end of every working day. The repository had
   been three days behind.
