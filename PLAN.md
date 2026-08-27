@@ -87,15 +87,28 @@ is missing.
 **Tool: Vitest.** Configured in `api/vitest.config.ts` — one setting, which hands the variables
 of `api/.env` to the tests, because the tests use the real database.
 
-- [x] The concurrency test — `api/tests/admission-race.test.ts`.
-- [ ] A test that proves the admission transaction actually **rolls back**.
-- [ ] A test of the deactivated account. Proved by hand for now, with
-      `api/scripts/check-deactivated-account.sh`.
-- [ ] Unit tests on the service classes.
-- [ ] Integration tests on the routes.
+**Four tests, and then this step is finished.** Decided 27/08/2026. CP 9 is graded on
+*« les tests sont pertinents »* — relevant tests, not many tests. Four Irem can explain line by
+line beat forty she cannot, and an open-ended scope like "unit tests on the service classes"
+never ends.
 
-**Done when:** `npm test` runs green and covers the three business rules that matter — the race,
-the rollback, and the deactivated account.
+- [x] **The admission race** — `api/tests/admission-race.test.ts`. CP 8's centrepiece: two
+      keepers, the last free enclosure, one winner.
+- [x] **The admission rollback** — `api/tests/admission-rollback.test.ts`. The other half of RG2:
+      a half-done admission leaves no orphan animal behind.
+- [x] **The deactivated account** — `api/tests/deactivated-account.test.ts`. RG12 and OWASP A01,
+      the real defect found on 26/08. The HTTP half stays with the manual script,
+      `api/scripts/check-deactivated-account.sh`.
+- [x] **One unit test** — `api/tests/pagination.test.ts`. Pure functions, no database, no mocks,
+      so the suite holds both kinds of test, which CP 9 distinguishes.
+
+**Done on 27/08/2026** — `npm test` runs 4 files, 5 tests, green. Nothing else is owed to this
+step.
+
+> **Each of the three integration tests was proved by breaking the code it guards**, then
+> restored with `git checkout`: the race by deleting `FOR UPDATE`, the rollback by removing
+> `$transaction`, RG12 by removing the `is_active` check. A test that has never been seen failing
+> proves nothing. Those three failing outputs are DP evidence.
 
 ### Step 24 — Test plan and results  ·  CP 9
 

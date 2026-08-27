@@ -69,18 +69,29 @@ the routes it needs. Nothing is added until a frontend screen proves something i
 - **Pagination** applied server-side, ten per page, one answer shape for all six lists
   (`src/pagination.ts`).
 
-### Tests — barely started
+### Tests — done
 
-**Vitest**, configured in `api/vitest.config.ts`. One test exists:
-`api/tests/admission-race.test.ts` proves two simultaneous admissions cannot take the last free
-enclosure — one 201, one 409, a single open stay left in the database.
+**Vitest.** Four files in `api/tests/`, five tests, run with `npm test`. Deliberately four and no
+more: CP 9 is graded on relevant tests, and four Irem can explain beat forty she cannot.
 
-Worth knowing, and written in the test file: removing `FOR UPDATE` does **not** make the test
-fail, because the partial unique index refuses the second stay on its own. The test asserts the
-result the centre needs, not which of the two defences delivered it.
+| File | What it proves |
+|---|---|
+| `admission-race.test.ts` | Two simultaneous admissions cannot take the last free enclosure — one 201, one 409, one open stay (RG2, CP 8). |
+| `admission-rollback.test.ts` | An admission that fails halfway leaves no orphan animal (RG2). |
+| `deactivated-account.test.ts` | An account deactivated mid-session is refused on the next request (RG12, OWASP A01). |
+| `pagination.test.ts` | The only unit test — pure functions, no database. There so the suite holds both kinds. |
 
-Three tests are owed (step 23): the transaction rollback, the deactivated account (proved by hand
-for now with `api/scripts/check-deactivated-account.sh`), and unit tests on the service classes.
+**Every one of the three integration tests was watched failing before being kept**, by breaking
+the code it guards and restoring it with `git checkout`: `FOR UPDATE` deleted, `$transaction`
+removed, the `is_active` check removed. Those three failing outputs are the DP evidence — better
+than the passing ones, because they show the defence is load-bearing.
+
+One finding, written in the race test: removing `FOR UPDATE` does **not** make that test fail,
+because the partial unique index refuses the second stay on its own. The test asserts the result
+the centre needs, not which of the two defences delivered it.
+
+The HTTP half of RG12 stays with `api/scripts/check-deactivated-account.sh`, run by hand: the
+test covers the rule, the script covers the wiring through Express.
 
 ### Frontend — does not exist
 
@@ -90,8 +101,8 @@ for now with `api/scripts/check-deactivated-account.sh`), and unit tests on the 
 
 ## 2. What is next
 
-**Step 23 — tests.** Then the rest of Track E and step 28, then the frontend. The order and the
-reasoning are in `PLAN.md`.
+**Step 24 — the written test plan**, then step 25 (load testing and fuzzing), 26, 27 and 28.
+Then the frontend. The order and the reasoning are in `PLAN.md`.
 
 ---
 
