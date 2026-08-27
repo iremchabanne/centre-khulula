@@ -77,7 +77,10 @@ L'honnêteté sur les limites fait partie du plan.
 
 - **Le front-end** — il n'existe pas encore.
 - **Les tests de charge et le fuzzing** — étape 25, deux livrables distincts.
-- **Les tests d'acceptation** — décision ouverte : voir `PLAN.md`.
+- **Les tests d'acceptation** — reportés après le front-end, et c'est délibéré : une recette se
+  fait sur des écrans. Chacun des 18 besoins du cahier des charges sera alors parcouru dans
+  l'application et le résultat consigné, daté. Le projet étant mené seul et la maîtrise d'ouvrage
+  fictive, c'est Irem qui tiendra le rôle du client : le dossier professionnel le dira tel quel.
 - **Le câblage HTTP des middlewares** — couvert par les vérifications manuelles du §4, pas par
   Vitest. Démarrer un serveur Express dans un test coûterait plus que la règle ne vaut.
 

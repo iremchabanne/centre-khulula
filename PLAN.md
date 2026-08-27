@@ -115,8 +115,16 @@ step.
 - [x] *Plan de tests* **and** *compte rendu d'exécution* — `docs/tests/plan-de-tests.md` v1.0,
       one document, because the two share the same table. Covers the backend only; the frontend
       gets a v2.0.
-- [ ] Acceptance tests — **decision open.** How to do this honestly on a solo project, where the
-      maîtrise d'ouvrage is fictional.
+- [ ] **Acceptance tests — after the frontend.** Decided 27/08/2026: Irem walks through the 18
+      *besoins* of the cahier des charges in the finished application, one by one, and records
+      the result in a dated table. The DP says plainly that she played the client's role herself —
+      the maîtrise d'ouvrage is fictional, and a jury reads an honest limit better than a
+      pretence. An acceptance test is done on screens, so it cannot happen before they exist.
+      *If a formateur or a classmate can be sat down for twenty minutes, that observation is
+      added on top. Better, but it depends on someone else's diary.*
+- [ ] **The same pass doubles as the end-of-build review** — Irem's point, 27/08: while going
+      through the 18 besoins, look for dead code, missing pieces, and anything that does not
+      behave as expected. One walk through the application, two purposes.
 
 ### Step 25 — Load testing and fuzzing  ·  CP 9
 
@@ -225,10 +233,9 @@ are the evidence for CP 4 and for the transversal *démarche de résolution de p
 | 1 | Project-management tool for CP 4 | Track B |
 | 2 | Code-quality tool | Step 26 |
 | 3 | Deployment target | Step 29 |
-| 4 | Acceptance tests on a solo project | Step 24 |
-| 5 | *Comptes rendus de réunion* on a solo project | Step 31 |
-| 6 | Confirm the English UI with the formateur | — |
-| 7 | Irem's name for the *maître d'œuvre* line | — |
+| 4 | *Comptes rendus de réunion* on a solo project | Step 31 |
+| 5 | Confirm the English UI with the formateur | — |
+| 6 | Irem's name for the *maître d'œuvre* line | — |
 
 ---
 
