@@ -121,6 +121,19 @@ install, generate the Prisma types, lint, type check, unit test. Green since 27 
 The three integration tests are deliberately left out — they need a migrated and seeded
 PostgreSQL, and that machinery costs more than it gives here. `npm test` runs them locally.
 
+### Backup and restore — demonstrated
+
+`api/scripts/backup.sh` and `api/scripts/restore.sh`. The dumps go to `backups/`, git-ignored.
+
+**The restore was run, not merely scripted** (27 August): back up · delete Lindiwe and her stay by
+hand, 14 animals → 13 · restore · 14 animals, Lindiwe back with her stay. The two triggers, the
+two stored functions and the partial unique index came back as well — checked in `pg_catalog`,
+because a backup that restores rows but not the hand-written SQL looks fine and is useless.
+
+`restore.sh` asks for a typed `yes` before replacing anything, and takes the file as an argument
+rather than picking the newest one: the newest backup is sometimes the one taken just after the
+accident.
+
 ### Frontend — does not exist
 
 `client/` has not been created.
@@ -129,8 +142,12 @@ PostgreSQL, and that machinery costs more than it gives here. `npm test` runs th
 
 ## 2. What is next
 
-**Step 28 — backup and restore**, the last step before the frontend. The order and the reasoning
-are in `PLAN.md`.
+**Step 18 — the frontend.** Everything before it is done: the backend, the tests, the test plan,
+the load test and fuzzing, ESLint, CI, and backup and restore. `client/` does not exist yet.
+
+The rule for the whole frontend, decided 27 August: **plain React**. `useState`, `useEffect`,
+`fetch`. Four libraries only — React Router, Tailwind, React Hook Form and its resolver. No state
+manager, no data-fetching library, no component library. See `PLAN.md`, Track D.
 
 ---
 

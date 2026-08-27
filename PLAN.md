@@ -181,10 +181,17 @@ which is exactly what CI is for.
 
 Two short shell scripts, plain commands, no functions and no options to parse.
 
-- [ ] `api/scripts/backup.sh` — `docker exec` + `pg_dump` into a dated `.sql` file.
-- [ ] `api/scripts/restore.sh` — the same in reverse, with `psql`.
-- [ ] **A demonstrated restore**, screenshotted: back up, delete an animal by hand, restore, show
-      the animal is back. A script that exists proves nothing; a restore that ran does.
+- [x] `api/scripts/backup.sh` — `docker exec` + `pg_dump --clean --if-exists` into a dated `.sql`
+      file in `backups/`, which is git-ignored: the dump holds every row.
+- [x] `api/scripts/restore.sh` — the same in reverse. The file is given as an argument, never
+      guessed, and the script asks for a typed `yes` first.
+- [x] **A restore that actually ran**, 27/08/2026: back up · delete Lindiwe (id 30) and her stay
+      by hand, 14 animals → 13 · restore · **14 animals, Lindiwe back with her stay**.
+      Verified afterwards that the two triggers, the two stored functions and the partial unique
+      index came back too — a backup that restored the rows but not the hand-written SQL would
+      look fine and be useless.
+
+**Done on 27/08/2026.**
 
 ### Step 29 — Deployment  ·  CP 10, CP 11
 

@@ -15,6 +15,10 @@ coverage/
 *.log
 npm-debug.log*
 
+# Database backups. The scripts that make them are committed; the dumps
+# themselves are not — they hold every row of the database.
+backups/
+
 # OS
 .DS_Store
 
