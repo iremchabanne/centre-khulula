@@ -161,11 +161,17 @@ the fix. That is the whole point of the step, and it is a *Difficultés rencontr
 
 One GitHub Actions file, about twenty lines, three steps.
 
-- [ ] `.github/workflows/ci.yml` — install, lint, run the unit test. Runs on every push.
-- [ ] **The three integration tests stay out of CI, on purpose.** They need a PostgreSQL with the
+- [x] `.github/workflows/ci.yml` — install, generate the Prisma types, lint, type check, unit
+      test. Runs on every push and on every pull request against `main`.
+- [x] **The three integration tests stay out of CI, on purpose.** They need a PostgreSQL with the
       migrations applied and the seed loaded; rebuilding that on every push is more machinery than
-      the project needs. The limit is written down in the workflow file and in the DP — an honest
-      limit reads better than a pipeline nobody can explain.
+      the project needs. The limit is written down in the workflow file and in the plan de tests —
+      an honest limit reads better than a pipeline nobody can explain.
+
+**Done on 27/08/2026**, green on the first run. It immediately proved its own point: `api/.env`
+is not in the repository, so `prisma generate` and `vitest` had nothing to read. Two placeholder
+variables in the workflow fix it. On Irem's machine the file exists and the problem is invisible —
+which is exactly what CI is for.
 
 ---
 

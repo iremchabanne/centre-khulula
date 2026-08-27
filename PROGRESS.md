@@ -113,6 +113,14 @@ supported everywhere. `npm run typecheck` and `npm test` pass unchanged after th
 Known and not fixed: `npm audit` reports three high-severity advisories, all inside Prisma's own
 dependency `deepmerge-ts`. The only fix offered is a breaking downgrade of Prisma, so it waits.
 
+### Continuous integration — running
+
+`.github/workflows/ci.yml`, one job, on every push and every pull request against `main`:
+install, generate the Prisma types, lint, type check, unit test. Green since 27 August.
+
+The three integration tests are deliberately left out — they need a migrated and seeded
+PostgreSQL, and that machinery costs more than it gives here. `npm test` runs them locally.
+
 ### Frontend — does not exist
 
 `client/` has not been created.
@@ -121,8 +129,8 @@ dependency `deepmerge-ts`. The only fix offered is a breaking downgrade of Prism
 
 ## 2. What is next
 
-**Step 27 — continuous integration**, then 28 (backup and restore). Then the frontend. The order
-and the reasoning are in `PLAN.md`.
+**Step 28 — backup and restore**, the last step before the frontend. The order and the reasoning
+are in `PLAN.md`.
 
 ---
 
