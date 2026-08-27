@@ -93,6 +93,13 @@ the centre needs, not which of the two defences delivered it.
 The HTTP half of RG12 stays with `api/scripts/check-deactivated-account.sh`, run by hand: the
 test covers the rule, the script covers the wiring through Express.
 
+**Load testing and fuzzing are done too** (27 August), with no new tool installed: `ab` for the
+load test, and `api/scripts/fuzz-donation-form.sh` for the fuzzing. The load test measured 583
+req/s and a 6 ms median on a public list, and showed the rate limiter refusing 240 of 300 requests
+with a 429. The fuzzing found a real defect on its first run — a non-JSON body answered 500
+instead of 400 — fixed the same day in `errorHandler`. Everything is written up in
+`docs/tests/plan-de-tests.md` v1.1.
+
 ### Frontend — does not exist
 
 `client/` has not been created.
@@ -101,8 +108,8 @@ test covers the rule, the script covers the wiring through Express.
 
 ## 2. What is next
 
-**Step 24 — the written test plan**, then step 25 (load testing and fuzzing), 26, 27 and 28.
-Then the frontend. The order and the reasoning are in `PLAN.md`.
+**Step 26 — ESLint**, then 27 (CI) and 28 (backup and restore). Then the frontend. The order and
+the reasoning are in `PLAN.md`.
 
 ---
 

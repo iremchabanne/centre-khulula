@@ -130,14 +130,15 @@ step.
 
 Two separate deliverables, both small. **No new tool is installed for either.**
 
-- [ ] **Load test with `ab`** (Apache Bench) — already on the machine, `/usr/sbin/ab`, nothing to
-      install. Two commands, one on a public list and one on the donation form, and the output
-      saved. Enough to answer §6.5 of the cahier des charges.
-- [ ] **Fuzzing with a short script of our own** — about forty lines, sending broken input to
-      `POST /api/donations`: negative amount, huge text, `null`, an SQL fragment, missing fields.
-      It checks **one thing**: the API answers 201 or 400 and never 500, and never crashes. That
-      is what fuzzing is for, and a ready-made fuzzer would add a dependency and a manual to read.
-- [ ] The results go into `docs/tests/plan-de-tests.md` as **v1.1**, not into a new document.
+- [x] **Load test with `ab`** (Apache Bench), already on the machine. Two measurements: 583 req/s
+      and a 6 ms median under the rate limit, and 60 accepted / 240 refused with a 429 above it.
+- [x] **Fuzzing with a script of our own** — `api/scripts/fuzz-donation-form.sh`, fifteen
+      hand-picked payloads, checking one thing: every answer is 201 or 400, never 500.
+- [x] The results are in `docs/tests/plan-de-tests.md` **v1.1**, §5 and §6.
+
+**Done on 27/08/2026.** The fuzzing found a real defect on its first run — a non-JSON body
+answered 500 instead of 400 — fixed the same day in `errorHandler`, and the script now verifies
+the fix. That is the whole point of the step, and it is a *Difficultés rencontrées* row.
 
 ### Step 26 — Code quality tool  ·  CP 11
 

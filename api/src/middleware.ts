@@ -250,6 +250,24 @@ export function errorHandler(
     return;
   }
 
+  // A body that is not valid JSON at all. express.json() fails before any of
+  // our code runs, so this never reaches a Zod schema — without the branch
+  // below it fell through to the generic 500 underneath.
+  //
+  // Found by fuzzing on 27/08/2026 (api/scripts/fuzz-donation-form.sh). 500
+  // means "the server broke"; nothing broke here, the caller sent something
+  // that is not JSON. That is a 400, and saying so keeps the server logs about
+  // real failures.
+  //
+  // `type` is the property express.json() puts on the error; testing the class
+  // alone would also catch a SyntaxError thrown by a genuine bug in our code,
+  // which must stay a 500.
+  if (error instanceof SyntaxError && (error as { type?: string }).type === 'entity.parse.failed') {
+    logger.warn('rejected request', { path: req.originalUrl, status: 400, reason: 'invalid JSON' });
+    res.status(400).json({ error: 'The request body is not valid JSON' });
+    return;
+  }
+
   // Anything else is a bug or a database failure. The detail is written to the
   // server log, where we can read it, and the client gets a generic sentence.
   //
