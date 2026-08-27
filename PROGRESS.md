@@ -1,109 +1,129 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 26 August 2026
+**Updated:** 27 August 2026
 **Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
-**07/10/2026 23:59** · exam **October 2026**. See `docs/decisions.md` — the old "31 August" was wrong.
-**Status:** conception complete · database and API built through step 15 · **no frontend yet**
+**07/10/2026 23:59** · exam **October 2026**.
+**Status:** conception complete · database and API complete · **no frontend yet**
 
-> `PLAN.md` holds the ordered list of remaining steps. Design decisions are **not** repeated
-> here — they live in the design documents themselves.
+> **This file says where we are.** `PLAN.md` says what is left to do, and holds the open
+> decisions and the list of things not to forget. Design decisions live in the design documents.
+> Nothing is repeated across two files.
 
 ---
 
 ## 1. Where we are
 
-- **Conception is complete** (steps 1–3 of `PLAN.md`): cahier des charges, dossier de conception,
-  charte graphique, data model, screen flow, 13 mockup screens.
-- **The technology watch system is in place** (step 5), with its first three entries.
-- **The repository exists** (step 6) — https://github.com/iremchabanne/centre-khulula
-- **The Docker infrastructure runs** (step 7): `postgres`, `redis`, `adminer`, all verified.
-  `api` and `client` join it at step 11, when there is code to containerise.
-- **The database schema exists** (step 8): `api/prisma/schema.prisma`, 7 models and 7 enums,
-  applied by migration `20260822094655_init`. The seven tables are visible in Adminer.
-- **The hand-written SQL is done** (step 9), in four separate migrations, each one demonstrated
-  against the running database: the partial unique index (RG1), the `enclosure.status` trigger
-  (RG3, RG7, RG16), the two dashboard stored functions (T4), and the restricted `khulula_app`
-  account. This is the CP 8 centrepiece.
-- **The database has data** (step 10): `api/prisma/seed.ts`, run with `npm run seed`. 14 animals,
-  12 donations — two pages of ten. TypeScript is set up (`tsconfig.json`, `tsx`, `argon2`).
-- **The API runs** (step 11): `api/src/`, 10 short files, `npm run dev`. Four layers, a central
-  error handler, JSON request logging, and the connection made as the restricted `khulula_app`
-  account. `species` is written end to end as the reference example.
-- **Input validation is in place** (step 12): all Zod rules in `api/src/schemas.ts`, applied as
-  route middleware. `POST /api/donations` is the first write endpoint and proves it.
-- **Authentication works** (step 13): `POST /api/auth/login`, `POST /api/auth/logout`,
-  `GET /api/auth/me`. argon2, sessions in Redis, and the three access-control middleware.
-  Proved with curl, not only written — see the checklist in `PLAN.md` step 13.
-- **The access-control defect is fixed** (26 August). `requireSession` now reads the account from
-  the database on every protected request, so a deactivated account is refused immediately (RG12)
-  and so is a role or `is_admin` that has changed since login. One extra primary-key query per
-  protected request, deliberately not cached. The bug was reproduced before being fixed — that
-  terminal output is DP evidence and a *Difficultés rencontrées* row.
-- **Enclosures are done end to end** (part of step 14): `EnclosureService`, `GET /enclosures`,
-  `GET /enclosures/free`, `PATCH /enclosures/:id/maintenance`. RG16 lives in the service, not in
-  the trigger — an occupied enclosure cannot be put under maintenance, or the animal inside would
-  vanish from the screens.
-- **Step 15 is nearly done** — the CP 8 centrepiece. `POST /animals` admits in one transaction
-  with `SELECT … FOR UPDATE`; `PATCH /animals/:id/enclosure` moves (RG8); `PATCH
-  /animals/:id/outcome` pronounces an outcome, vet only (RG5, RG6, RG7).
-  **The race was demonstrated by hand**: two parallel admissions into the last free enclosure
-  give one 201 and one 409, with a single open stay left in the database.
-- **What step 15 still owes:** an **automated** test of that race, and a test that actually proves
-  the transaction rolls back. Both belong with step 23, which now comes before the frontend.
-- **No frontend yet.** `client/` does not exist.
-- **Step 15 is finished** (26 August). The race now has an automated test —
-  `api/tests/admission-race.test.ts`, `npm test`. **Vitest** is the test tool, decided the same
-  day. Worth knowing, and written in the test file: removing `FOR UPDATE` does **not** make the
-  test fail, because the partial unique index refuses the second stay on its own. The test asserts
-  the result the centre needs, not which of the two defences delivered it.
-- **Still owed to step 23:** a rollback test, and an automated version of the deactivated-account
-  check (proved by hand today with `api/scripts/check-deactivated-account.sh`).
-- **Step 16 is done** (26 August). `GET /animals?status=in_care|released&page=n` — one route and
-  one filter for both public tabs. Pagination is in `src/pagination.ts`, ten per page, one answer
-  shape for all six lists (§6.4, éco-conception). **Redis now has all three of its jobs**:
-  sessions, the free-enclosure cache (`src/cache.ts`), and rate limiting (`rateLimit()` in
-  `middleware.ts`). CP 8's NoSQL half is complete.
-- **Step 17 is done, and with it the whole backend** (26 August). Staff accounts with RG13, RG14
-  and RG15; the animal file and observations, where the note and the status change are one
-  transaction because `observation.status_after` makes them one act; the staff animal list; the
-  donation list. Every screen of `arborescence-ecrans.md` now has the routes it needs.
-- **Next: step 18** — React, and the frontend. `client/` still does not exist.
-- **Still owed to step 23:** a rollback test, an automated deactivated-account test, and unit
-  tests on the service classes. Only the concurrency test exists so far.
-- A full review of the code as it stands is in `docs/audit.md` — local, not committed.
-- **Working habit, decided 25 August:** push at the end of every working day. The repository had
-  been three days behind.
-- Still Irem's, whenever she wants: Dependabot alerts, the Feedly account, and step 4 (Figma).
+### Conception — done
+
+Cahier des charges, dossier de conception, charte graphique, data model, screen flow and 13
+mockup screens. The veille system exists with its first three entries. Still owed: the Figma
+maquettes (step 4, Irem's task) and one veille entry a week.
+
+### Infrastructure — done
+
+The repository is at https://github.com/iremchabanne/centre-khulula. Docker Compose runs
+`postgres`, `redis` and `adminer`, all verified. `api` and `client` join them at step 18.
+
+### Database — done
+
+Seven tables from `api/prisma/schema.prisma`, plus **five migrations whose last four are
+hand-written SQL** — this is CP 8's graded part, and each one was demonstrated against the
+running database:
+
+- the partial unique index `uq_stay_current_enclosure` — one open stay per enclosure (RG1);
+- the PL/pgSQL trigger deriving `enclosure.status` (RG3, RG7, RG16), proved across the whole
+  lifecycle including a direct `UPDATE` that the trigger corrected back;
+- the two dashboard stored functions — occupancy rate and average stay length;
+- the two database accounts, with `khulula_app` proved unable to delete anything, rewrite an
+  observation, change a species or drop a table, while still able to do its normal work.
+
+`api/prisma/seed.ts` fills it: 14 animals and 12 donations, two pages of ten, all five lifecycle
+states present. The seed never writes `enclosure.status` — the reported `3 free / 6 occupied /
+1 maintenance` comes back from the trigger. That is the demonstration.
+
+### Backend — complete
+
+`api/src/`, four layers, run with `npm run dev`. Every screen of `arborescence-ecrans.md` has
+the routes it needs. Nothing is added until a frontend screen proves something is missing.
+
+- **Structure:** routes → controllers → services → Prisma. A central error handler, so no
+  technical error reaches the client. One JSON log line per request. The API connects as the
+  restricted `khulula_app` account; migrations use `khulula_admin`.
+- **Validation:** every Zod rule in `api/src/schemas.ts`, applied as route middleware, before any
+  database access. Unknown keys rejected.
+- **Authentication:** argon2, sessions in Redis, three access-control middleware. `requireSession`
+  re-reads the account from the database on **every** protected request, so a deactivated account
+  is refused immediately (RG12) and so is a changed role. Proved with curl on all six protected
+  routes.
+- **OOP (CP 3):** six service classes — `AnimalService`, `AuthService`, `DonationService`,
+  `EnclosureService`, `SpeciesService`, `StaffService`.
+- **Transactions and concurrency (CP 8, the centrepiece):** admission is one transaction with
+  `SELECT … FOR UPDATE`; move closes one stay and opens another indivisibly (RG8); outcome is
+  vet-only and terminal (RG5, RG6, RG7). RG16 lives in `EnclosureService`, not in the trigger —
+  an occupied enclosure cannot be put under maintenance, or the animal inside would vanish from
+  the screens.
+- **Redis has all three of its jobs:** staff sessions, the free-enclosure cache (`src/cache.ts`,
+  invalidated on every admission, move, outcome and maintenance change), and rate limiting
+  (`rateLimit()` in `middleware.ts`, 60/minute on public reads, 5/hour on the donation form).
+  CP 8's NoSQL half is complete.
+- **Pagination** applied server-side, ten per page, one answer shape for all six lists
+  (`src/pagination.ts`).
+
+### Tests — barely started
+
+**Vitest**, configured in `api/vitest.config.ts`. One test exists:
+`api/tests/admission-race.test.ts` proves two simultaneous admissions cannot take the last free
+enclosure — one 201, one 409, a single open stay left in the database.
+
+Worth knowing, and written in the test file: removing `FOR UPDATE` does **not** make the test
+fail, because the partial unique index refuses the second stay on its own. The test asserts the
+result the centre needs, not which of the two defences delivered it.
+
+Three tests are owed (step 23): the transaction rollback, the deactivated account (proved by hand
+for now with `api/scripts/check-deactivated-account.sh`), and unit tests on the service classes.
+
+### Frontend — does not exist
+
+`client/` has not been created.
 
 ---
 
-## 2. Files
+## 2. What is next
+
+**Step 23 — tests.** Then the rest of Track E and step 28, then the frontend. The order and the
+reasoning are in `PLAN.md`.
+
+---
+
+## 3. Files
 
 | File | Version | Purpose |
 |---|---|---|
 | `docs/decisions.md` | — | Project brief — subject, stack, CP mapping, working rules. Source of truth. |
-| `PLAN.md` | — | 32 ordered steps to the filled DP. No dates. |
-| `PROGRESS.md` | — | This file — the session handover. |
+| `PLAN.md` | — | What is left to do, in order. |
+| `PROGRESS.md` | — | This file — where we are. |
 | `docs/dp/00-referentiel-CP.md` | — | The 11 CPs and their critères de performance. **Never edit.** |
-| `docs/dp/AT1-exemple-1.md` | — | Validated prep-file template. The other 8 are not written yet. |
-| `docs/veille/veille-technologique.md` | **1.0** | The watch system: sources, tools, method, entry format. Graded in CP 2, 3, 8, 9, 10, 11. |
-| `docs/veille/journal.md` | — | The dated entries. **Write one a week — it cannot be reconstructed later.** |
-| `docs/conception/dossier-de-conception.md` | **1.0** | CP 5 deliverable. The design response: démarche, needs analysis, use cases, screen flow, data model, traceability. |
-| `docs/conception/cahier-des-charges.md` | **1.5** | The specification — the *input*, from the maîtrise d'ouvrage. 18 needs, RG1–RG16. |
+| `docs/dp/AT1-exemple-1.md` | — | Validated prep-file template. The other 5 are not written yet. |
+| `docs/veille/veille-technologique.md` | **1.0** | The watch system: sources, tools, method, entry format. |
+| `docs/veille/journal.md` | — | The dated entries. **One a week — it cannot be reconstructed later.** |
+| `docs/conception/dossier-de-conception.md` | **1.0** | CP 5 deliverable. The design response. |
+| `docs/conception/cahier-des-charges.md` | **1.5** | The specification. 18 needs, RG1–RG16. |
 | `docs/conception/charte-graphique.md` | **1.1** | Colours with measured contrast, typography, RGAA, éco-conception. |
 | `docs/conception/modele-donnees.md` | **1.1** | MCD, MLD, MPD. Naming convention, RG1–RG16 coverage. |
 | `docs/conception/arborescence-ecrans.md` | **1.7** | 13 screens, 4 diagrams, the six dialogs, animal lifecycle. |
 | `docs/conception/maquettes/prototype.html` | **v1.6** | 13 clickable screens, working tabs and dialogs. |
-| `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. Says in a header comment what it deliberately leaves to step 9. |
-| `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. Each file explains in comments why the rule lives in the database. |
-| `api/prisma/seed.ts` | — | Development data. Flat lists plus two simple loops; deliberately sized at two pages of ten. |
-| `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. `middleware.ts` holds the request logger, `validate()`, the three access-control middleware and the central error handler; `schemas.ts` holds every Zod rule; `session.ts` and `redis.ts` hold the staff sessions. |
-| `docs/dp/captures.md` | — | **Git-ignored.** The running list of screenshots to take for the DP: what to show, how to reproduce it, which slot it goes in. Images live in `docs/dp/captures/`, also git-ignored. |
+| `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. |
+| `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. |
+| `api/prisma/seed.ts` | — | Development data, sized at two pages of ten. |
+| `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. |
+| `api/tests/` | — | Vitest. One test so far. |
+| `docs/audit.md` | — | **Git-ignored.** A full review of the code as it stands. |
+| `docs/dp/captures.md` | — | **Git-ignored.** The running list of screenshots to take for the DP. Images in `docs/dp/captures/`, also git-ignored. |
 | `KOMUTLAR.md` | — | **Git-ignored.** Irem's own command cheat-sheet, in Turkish. Not a deliverable. |
 
 ---
 
-## 3. Decisions the rest of the build must respect
+## 4. Decisions the rest of the build must respect
 
 These are the ones easy to break by accident. Everything else is in the documents.
 
@@ -115,31 +135,6 @@ These are the ones easy to break by accident. Everything else is in the document
 - **`observation` is append-only** — no `UPDATE`, no `DELETE`, enforced by the `khulula_app` grants.
 - **Nothing is ever deleted:** accounts are deactivated, animals and enclosures keep their history.
 - **Two DB accounts**, `khulula_admin` and a deliberately restricted `khulula_app`.
-
----
-
-## 4. Open decisions
-
-| Decision | Blocks |
-|---|---|
-| Project-management tool for CP 4 (GitHub Projects?) | Step 6 |
-| Code-quality tool (SonarCloud?) | Step 26 |
-| Deployment target | Step 29 |
-| Acceptance tests on a solo project | Step 24 |
-| *Comptes rendus de réunion* on a solo project | Step 31 |
-| Confirm the English UI with the formateur | — |
-| Irem's name for the *maître d'œuvre* line | — |
-
----
-
-## 5. Things not to forget
-
-- **CP 4 artefacts cannot be reconstructed later.** The *Difficultés rencontrées* table and the
-  *comptes rendus de réunion* must be written **the day the problem happens**.
-- **Veille technologique is graded in six CPs.** The system exists — what is left is the habit.
-  An entry written the week it happens cannot be reconstructed afterwards.
-- **Backup and restore must be demonstrated**, not merely scripted.
-- Load testing, fuzzing and acceptance tests are three separate CP 9 items.
-- Éco-conception (CP 6), RGAA (CP 2, CP 5) and RGPD (CP 2, CP 5, CP 7) are graded and easy to skip.
-- **Dependabot alerts are still switched off** on the repository — the third source of the watch
-  system does not actually run until they are enabled.
+- **Never hardcode a colour** — the palette is declared once in the Tailwind theme.
+- **Push at the end of every working day.** Decided 25 August, after the repository had been
+  three days behind.
