@@ -127,7 +127,8 @@ Then the frontend. The order and the reasoning are in `PLAN.md`.
 | `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. |
 | `api/prisma/seed.ts` | — | Development data, sized at two pages of ten. |
 | `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. |
-| `api/tests/` | — | Vitest. One test so far. |
+| `api/tests/` | — | Vitest. Four files, five tests. |
+| `docs/tests/plan-de-tests.md` | **1.0** | CP 9 deliverable, in French. Plan and *compte rendu d'exécution* in one document. Backend only — the frontend gets a v2.0. |
 | `docs/audit.md` | — | **Git-ignored.** A full review of the code as it stands. |
 | `docs/dp/captures.md` | — | **Git-ignored.** The running list of screenshots to take for the DP. Images in `docs/dp/captures/`, also git-ignored. |
 | `KOMUTLAR.md` | — | **Git-ignored.** Irem's own command cheat-sheet, in Turkish. Not a deliverable. |

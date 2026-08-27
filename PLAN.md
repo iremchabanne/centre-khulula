@@ -16,7 +16,7 @@ finished piece proves. A step that is finished collapses here to one line — th
 
 | Order | Steps | Why here |
 |---|---|---|
-| 1 | **23**, **25**, **26**, **27**, **28** | Deliberately **before** the frontend. Each covers a criterion nothing else covers: tests (CP 9), load testing and fuzzing (CP 9, two separate items), code-quality tool (CP 11), CI (CP 11), backup and restore demonstrated (CP 7). None needs the frontend — they run against the API, which already exists. Left at the end, these are the ones that get dropped. |
+| 1 | **23**, **24**, **25**, **26**, **27**, **28** | Deliberately **before** the frontend. Each covers a criterion nothing else covers: tests (CP 9), load testing and fuzzing (CP 9, two separate items), code-quality tool (CP 11), CI (CP 11), backup and restore demonstrated (CP 7). None needs the frontend — they run against the API, which already exists. Left at the end, these are the ones that get dropped. |
 | 2 | **18**, **20**, then **21**, **19**, **22** | The frontend. Inside it: the shell and the login first, then the **admission dialog and its access-conflict state** — the screen that shows CP 8's work to a reader — then the remaining staff screens, then the public pages (RGAA + mentions légales), then the accessibility pass. |
 | 3 | **29** — deployment | CP 10 and CP 11. Blocked on an open decision. |
 | 4 | **30**, **31**, **32** — the DP itself | Written throughout, finished last. |
@@ -112,9 +112,11 @@ step.
 
 ### Step 24 — Test plan and results  ·  CP 9
 
-- [ ] Written *plan de tests*.
-- [ ] *Compte rendu d'exécution*.
-- [ ] Acceptance tests — **decide how to do this honestly on a solo project.**
+- [x] *Plan de tests* **and** *compte rendu d'exécution* — `docs/tests/plan-de-tests.md` v1.0,
+      one document, because the two share the same table. Covers the backend only; the frontend
+      gets a v2.0.
+- [ ] Acceptance tests — **decision open.** How to do this honestly on a solo project, where the
+      maîtrise d'ouvrage is fictional.
 
 ### Step 25 — Load testing and fuzzing  ·  CP 9
 
