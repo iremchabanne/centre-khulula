@@ -1,0 +1,77 @@
+# Continuous integration — CP 11.
+#
+# WHAT THIS IS. A file GitHub reads on every push. GitHub starts a fresh Linux
+# machine, follows the steps below, and marks the commit with a green tick or a
+# red cross. Nobody has to remember to run anything.
+#
+# WHY IT IS WORTH HAVING. The tests and the linter already exist and already run
+# on Irem's machine. What CI adds is that they run on a machine that is NOT
+# Irem's: no leftover node_modules, no environment variable that happens to be
+# set, no "it works here". If the project only builds on one laptop, that is a
+# defect the laptop hides.
+#
+# WHAT IT DELIBERATELY DOES NOT DO. It runs the unit test only, not the three
+# integration tests. Those need a PostgreSQL with the five migrations applied
+# and the seed loaded; setting that up on every push means a database service, a
+# migration step and a seed step, and a failure there looks like a failing test
+# without being one. That machinery costs more than it gives on a project this
+# size. The integration tests are run locally with `npm test`, and the plan de
+# tests says so in writing.
+
+name: CI
+
+# Runs on every push, and on every pull request opened against main.
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+
+    # Every step below runs inside api/, so no command has to say so itself.
+    defaults:
+      run:
+        working-directory: api
+
+    # Two placeholder values, and they are never connected to.
+    #
+    # schema.prisma declares its datasource as env("DATABASE_URL"), so `prisma
+    # generate` refuses to start if the variable does not exist — even though it
+    # only reads the schema file and writes TypeScript types. vitest.config.ts
+    # reads api/.env, which is not in the repository and must not be: it holds
+    # the real passwords. These two lines give both tools something to find.
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      DATABASE_URL_APP: postgresql://ci:ci@localhost:5432/ci
+
+    steps:
+      # Copies the repository onto the machine. Nothing exists before this.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # `npm ci` and not `npm install`: it installs exactly the versions written
+      # in package-lock.json and fails if the lock file disagrees with
+      # package.json. That is what makes the run reproducible.
+      - name: Install dependencies
+        run: npm ci
+
+      # Prisma writes the TypeScript types of the seven tables into
+      # node_modules from schema.prisma. They are generated, so they are not in
+      # the repository — without this step the type check has no idea what a
+      # PrismaClient is. It reads the schema file only: no database is contacted.
+      - name: Generate the Prisma types
+        run: npx prisma generate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit test
+        run: npm run test:unit
