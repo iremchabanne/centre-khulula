@@ -100,6 +100,19 @@ with a 429. The fuzzing found a real defect on its first run — a non-JSON body
 instead of 400 — fixed the same day in `errorHandler`. Everything is written up in
 `docs/tests/plan-de-tests.md` v1.1.
 
+### Code quality — ESLint
+
+`npm run lint` in `api/`, clean. Configured in `api/eslint.config.js`: the two recommended rule
+sets, plus one adjusted rule so a parameter named `_next` is not reported — Express recognises an
+error handler by its four parameters.
+
+**`api/` runs TypeScript 6.0.3, not 7.0.2, and that is deliberate.** typescript-eslint refuses to
+start on TS 7, which was released seven weeks ago. TS 6 is the previous major, four months old,
+supported everywhere. `npm run typecheck` and `npm test` pass unchanged after the move.
+
+Known and not fixed: `npm audit` reports three high-severity advisories, all inside Prisma's own
+dependency `deepmerge-ts`. The only fix offered is a breaking downgrade of Prisma, so it waits.
+
 ### Frontend — does not exist
 
 `client/` has not been created.
@@ -108,8 +121,8 @@ instead of 400 — fixed the same day in `errorHandler`. Everything is written u
 
 ## 2. What is next
 
-**Step 26 — ESLint**, then 27 (CI) and 28 (backup and restore). Then the frontend. The order and
-the reasoning are in `PLAN.md`.
+**Step 27 — continuous integration**, then 28 (backup and restore). Then the frontend. The order
+and the reasoning are in `PLAN.md`.
 
 ---
 

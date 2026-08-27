@@ -7,6 +7,37 @@ Une entrée n'est retenue que si elle répond à *« qu'est-ce que cela change p
 
 ---
 
+## 27 août 2026
+
+### TypeScript 7 est sorti, et l'outillage n'a pas suivi
+
+| | |
+|---|---|
+| **Source** | Registre npm (`npm view typescript time`), message d'erreur de typescript-eslint, issue #10940 du dépôt typescript-eslint |
+| **CP** | 3, 11 |
+
+TypeScript 7.0.2 est publié le 08/07/2026, soit sept semaines avant cette entrée. `api/` avait été
+créé avec, par réflexe : la dernière version. À l'installation d'ESLint, le linter refuse de
+démarrer — non pas un avertissement de dépendance, mais un blocage explicite :
+*« typescript-eslint does not support TS 7.0 »*. Sa dernière version déclare encore
+`typescript >=4.8.4 <6.1.0`.
+
+**Ce que cela change pour Khulula.** `api/` est repassé à **TypeScript 6.0.3** (16/04/2026), le
+major précédent, âgé de quatre mois et supporté par tout l'écosystème. `npm run typecheck` et
+`npm test` ont été relancés juste après : aucun changement, le projet n'utilisait aucune
+nouveauté de TypeScript 7. Le contournement officiel — installer TypeScript 6 en parallèle pour
+le seul linter — a été écarté : deux versions de TypeScript dans `node_modules` pour un projet de
+cette taille est plus coûteux à expliquer qu'à éviter.
+
+**La leçon, et c'est elle qui compte.** Choisir « la dernière version » n'est pas une décision,
+c'est une absence de décision. Sur un projet réel, la question n'est pas *« quelle est la version
+la plus récente ? »* mais *« quelle est la version que toute ma chaîne d'outils supporte ? »*.
+Une major de TypeScript met des mois à se propager aux linters, aux greffons d'éditeur et aux
+générateurs de code. Le coût s'est limité ici à une ligne de `package.json` parce que le problème
+est apparu tôt.
+
+---
+
 ## 26 août 2026
 
 ### Express 5 — `req.query` devient non modifiable

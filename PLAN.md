@@ -146,8 +146,16 @@ the fix. That is the whole point of the step, and it is a *Difficultés rencontr
       needs an account, an organisation, a token and a CI integration before it prints anything.
       ESLint is the Node standard, runs offline with `npm run lint`, and its report is readable
       without a dashboard. CP 11 asks for *un outil de qualité de code*, not for a specific one.
-- [ ] Installed in `api/`, with the recommended TypeScript rules and **no custom rule set**.
-- [ ] `npm run lint` runs clean, and the before/after output is kept for the DP.
+- [x] Installed in `api/` — `eslint.config.js`, the two recommended rule sets and **one** adjusted
+      rule: a parameter named `_something` is unused on purpose. Express recognises an error
+      handler by its four parameters, so `errorHandler` must declare `_next` without calling it.
+- [x] `npm run lint` runs clean. The first run reported that `_next`, which is the reason for the
+      one adjusted rule.
+- [x] **TypeScript 6.0.3 instead of 7.0.2** — typescript-eslint refuses to run on TS 7, released
+      seven weeks ago. `npm run typecheck` and `npm test` pass unchanged after the move. Written
+      up in `docs/veille/journal.md`, 27/08/2026.
+
+**Done on 27/08/2026.**
 
 ### Step 27 — Continuous integration  ·  CP 11
 
