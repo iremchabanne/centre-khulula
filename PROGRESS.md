@@ -149,6 +149,12 @@ The rule for the whole frontend, decided 27 August: **plain React**. `useState`,
 `fetch`. Four libraries only — React Router, Tailwind, React Hook Form and its resolver. No state
 manager, no data-fetching library, no component library. See `PLAN.md`, Track D.
 
+> **Open, and to settle before writing the first form:** how the resolver is used in practice.
+> `@hookform/resolvers/zod` is the piece that lets React Hook Form validate with a Zod schema
+> instead of its own syntax. The schemas are **rewritten on the client**, short, never imported
+> from `api/` — importing them would mean turning the repository into a monorepo. Explained on
+> 27 August, to be gone through again before step 18.
+
 ---
 
 ## 3. Files
