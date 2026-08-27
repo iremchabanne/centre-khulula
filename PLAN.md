@@ -128,20 +128,35 @@ step.
 
 ### Step 25 — Load testing and fuzzing  ·  CP 9
 
-Two separate deliverables, both small, both easy to forget.
+Two separate deliverables, both small. **No new tool is installed for either.**
 
-- [ ] Load test on the public pages and the donation form (§6.5 du cahier des charges).
-- [ ] Fuzzing on the input forms.
+- [ ] **Load test with `ab`** (Apache Bench) — already on the machine, `/usr/sbin/ab`, nothing to
+      install. Two commands, one on a public list and one on the donation form, and the output
+      saved. Enough to answer §6.5 of the cahier des charges.
+- [ ] **Fuzzing with a short script of our own** — about forty lines, sending broken input to
+      `POST /api/donations`: negative amount, huge text, `null`, an SQL fragment, missing fields.
+      It checks **one thing**: the API answers 201 or 400 and never 500, and never crashes. That
+      is what fuzzing is for, and a ready-made fuzzer would add a dependency and a manual to read.
+- [ ] The results go into `docs/tests/plan-de-tests.md` as **v1.1**, not into a new document.
 
 ### Step 26 — Code quality tool  ·  CP 11
 
-- [ ] **Decision open** — SonarCloud, or something else.
-- [ ] Wired in and producing a report.
+- [x] **Decided 27/08/2026: ESLint.** SonarCloud was the other candidate and is dropped — it
+      needs an account, an organisation, a token and a CI integration before it prints anything.
+      ESLint is the Node standard, runs offline with `npm run lint`, and its report is readable
+      without a dashboard. CP 11 asks for *un outil de qualité de code*, not for a specific one.
+- [ ] Installed in `api/`, with the recommended TypeScript rules and **no custom rule set**.
+- [ ] `npm run lint` runs clean, and the before/after output is kept for the DP.
 
 ### Step 27 — Continuous integration  ·  CP 11
 
-- [ ] Pipeline: install, lint, test, build.
-- [ ] Runs on every push.
+One GitHub Actions file, about twenty lines, three steps.
+
+- [ ] `.github/workflows/ci.yml` — install, lint, run the unit test. Runs on every push.
+- [ ] **The three integration tests stay out of CI, on purpose.** They need a PostgreSQL with the
+      migrations applied and the seed loaded; rebuilding that on every push is more machinery than
+      the project needs. The limit is written down in the workflow file and in the DP — an honest
+      limit reads better than a pipeline nobody can explain.
 
 ---
 
@@ -149,13 +164,20 @@ Two separate deliverables, both small, both easy to forget.
 
 ### Step 28 — Backup and restore  ·  CP 7, easy to forget
 
-- [ ] Backup script, restore script.
-- [ ] **A demonstrated restore** — not just a script that exists.
+Two short shell scripts, plain commands, no functions and no options to parse.
+
+- [ ] `api/scripts/backup.sh` — `docker exec` + `pg_dump` into a dated `.sql` file.
+- [ ] `api/scripts/restore.sh` — the same in reverse, with `psql`.
+- [ ] **A demonstrated restore**, screenshotted: back up, delete an animal by hand, restore, show
+      the animal is back. A script that exists proves nothing; a restore that ran does.
 
 ### Step 29 — Deployment  ·  CP 10, CP 11
 
-- [ ] **Decision open** — deployment target.
-- [ ] Documented deployment procedure and scripts.
+- [ ] **Decision open** — the deployment target. Keep it beginner-level: the stack is already
+      `docker compose up`, so the simplest honest answer is one machine running the same Compose
+      file with a production `.env`. Anything with a cloud console, a managed database or a
+      Kubernetes manifest is out of scope for this project.
+- [ ] A written deployment procedure someone else could follow, plus the production Compose file.
 
 ---
 
@@ -163,12 +185,20 @@ Two separate deliverables, both small, both easy to forget.
 
 `client/` does not exist yet.
 
+> **The rule for the whole of this track, decided 27/08/2026: nothing advanced.**
+> Plain React — `useState`, `useEffect` and `fetch`. **No** state-management library (Redux,
+> Zustand), **no** data-fetching library (React Query, SWR), **no** form library, **no** component
+> library, **no** custom hooks beyond one for calling the API if it turns out to be needed twice.
+> Repeating a bit of `fetch` code on two screens is better than an abstraction Irem cannot read
+> back. React Router and Tailwind are the only two libraries added, and they were decided in
+> `docs/decisions.md`.
+
 ### Step 18 — React foundations  ·  CP 2
 
-- [ ] Project setup, routing, the two layouts (public site / staff app).
+- [ ] Project setup (Vite), routing, the two layouts (public site / staff app).
 - [ ] The charte graphique palette declared once in the Tailwind theme —
       **never a hardcoded colour**.
-- [ ] Shared components: table, pager, toolbar, tabs, modal, status pill.
+- [ ] Shared components, and only these six: table, pager, toolbar, tabs, modal, status pill.
 - [ ] The `api` and `client` Docker services, completing step 7.
 
 ### Step 20 — Staff shell
@@ -231,11 +261,10 @@ are the evidence for CP 4 and for the transversal *démarche de résolution de p
 | # | Decision | Blocks |
 |---|---|---|
 | 1 | Project-management tool for CP 4 | Track B |
-| 2 | Code-quality tool | Step 26 |
-| 3 | Deployment target | Step 29 |
-| 4 | *Comptes rendus de réunion* on a solo project | Step 31 |
-| 5 | Confirm the English UI with the formateur | — |
-| 6 | Irem's name for the *maître d'œuvre* line | — |
+| 2 | Deployment target | Step 29 |
+| 3 | *Comptes rendus de réunion* on a solo project | Step 31 |
+| 4 | Confirm the English UI with the formateur | — |
+| 5 | Irem's name for the *maître d'œuvre* line | — |
 
 ---
 
