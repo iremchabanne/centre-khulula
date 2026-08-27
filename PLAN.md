@@ -187,11 +187,14 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 
 > **The rule for the whole of this track, decided 27/08/2026: nothing advanced.**
 > Plain React — `useState`, `useEffect` and `fetch`. **No** state-management library (Redux,
-> Zustand), **no** data-fetching library (React Query, SWR), **no** form library, **no** component
-> library, **no** custom hooks beyond one for calling the API if it turns out to be needed twice.
-> Repeating a bit of `fetch` code on two screens is better than an abstraction Irem cannot read
-> back. React Router and Tailwind are the only two libraries added, and they were decided in
-> `docs/decisions.md`.
+> Zustand), **no** data-fetching library (React Query, SWR), **no** component library, **no**
+> custom hooks beyond one for calling the API if it turns out to be needed twice. Repeating a bit
+> of `fetch` code on two screens is better than an abstraction Irem cannot read back.
+>
+> Libraries added, and there are four: React Router, Tailwind, and — decided 27/08/2026 —
+> **React Hook Form** with `@hookform/resolvers` for the eight forms. Its Zod schemas are
+> **rewritten on the client**, short, never imported from `api/`: sharing them would turn the
+> repository into a monorepo. One single form pattern, used identically on all eight.
 
 ### Step 18 — React foundations  ·  CP 2
 
