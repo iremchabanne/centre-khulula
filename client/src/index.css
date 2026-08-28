@@ -1,0 +1,6 @@
+/* Temporary. Tailwind replaces this file at the next step, and the palette
+   will be declared there once, from docs/conception/charte-graphique.md. */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}

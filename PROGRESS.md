@@ -146,14 +146,12 @@ accident.
 the load test and fuzzing, ESLint, CI, and backup and restore. `client/` does not exist yet.
 
 The rule for the whole frontend, decided 27 August: **plain React**. `useState`, `useEffect`,
-`fetch`. Four libraries only — React Router, Tailwind, React Hook Form and its resolver. No state
-manager, no data-fetching library, no component library. See `PLAN.md`, Track D.
+`fetch`. Two libraries only — React Router and Tailwind. No state manager, no data-fetching
+library, no component library, **and no form library**. See `PLAN.md`, Track D.
 
-> **Open, and to settle before writing the first form:** how the resolver is used in practice.
-> `@hookform/resolvers/zod` is the piece that lets React Hook Form validate with a Zod schema
-> instead of its own syntax. The schemas are **rewritten on the client**, short, never imported
-> from `api/` — importing them would mean turning the repository into a monorepo. Explained on
-> 27 August, to be gone through again before step 18.
+The resolver question is closed, 28 August: there is no resolver, because there is no React Hook
+Form and no Zod on the client. The forms are written by hand and validated with plain `if` checks.
+The decision and its arithmetic are in `docs/decisions.md`, Tech stack.
 
 ---
 
