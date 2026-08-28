@@ -1,0 +1,3 @@
+# Never copied into the image. The container installs its own node_modules.
+node_modules
+dist

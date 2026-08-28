@@ -1,0 +1,8 @@
+# Never copied into the image.
+#
+# node_modules above all: some packages (argon2) are compiled for the machine
+# they were installed on. Copying the macOS build into a Linux container makes
+# the container refuse to start. The image installs its own.
+node_modules
+.env
+backups

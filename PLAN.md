@@ -60,7 +60,7 @@ Two rules that override the table:
       source of the veille system and it does not run until this is done.
 - [ ] **Irem:** create the Feedly account and add the feeds (step 5).
 - [ ] Decide the project-management tool for CP 4 and create the first tickets.
-- [ ] The `api` and `client` Docker services — added at step 18, once the React app exists.
+- [x] The `api` and `client` Docker services — done at step 18, 28/08/2026.
 
 ### Track C — Backend  ·  CP 2, CP 3, CP 8
 
@@ -219,18 +219,18 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 > client**; the reasoning is in `docs/decisions.md`. One single form pattern, used identically
 > on all eight.
 
-### Step 18 — React foundations  ·  CP 2
+### Step 18 — React foundations  ·  CP 2  ·  **done 28/08/2026**
 
-- [ ] Project setup (Vite), routing, the two layouts (public site / staff app).
-- [ ] The charte graphique palette declared once in the Tailwind theme —
+- [x] Project setup (Vite), routing, the two layouts (public site / staff app).
+- [x] The charte graphique palette declared once in the Tailwind theme —
       **never a hardcoded colour**.
-- [ ] Shared components, and only **three**: status pill, pager, modal. Decided 28/08/2026,
+- [x] Shared components, and only **three**: status pill, pager, modal. Decided 28/08/2026,
       down from six. A generic `Table` needs a column configuration to be learnt before a page
       can be read, `Toolbar` is a `<div>`, and `Tabs` is two buttons and a `useState` used on two
       screens. Those three are written again on each page as plain HTML. The answer to give the
       jury: repeating ten readable lines was preferred to an abstraction that would have to be
       decoded before the page could be understood.
-- [ ] The `api` and `client` Docker services, completing step 7.
+- [x] The `api` and `client` Docker services, completing step 7.
 
 ### Step 20 — Staff shell
 

@@ -1,9 +1,9 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 27 August 2026
+**Updated:** 28 August 2026
 **Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
 **07/10/2026 23:59** · exam **October 2026**.
-**Status:** conception complete · database and API complete · **no frontend yet**
+**Status:** conception, database and API complete · **frontend skeleton up, screens still empty**
 
 > **This file says where we are.** `PLAN.md` says what is left to do, and holds the open
 > decisions and the list of things not to forget. Design decisions live in the design documents.
@@ -134,16 +134,44 @@ because a backup that restores rows but not the hand-written SQL looks fine and 
 rather than picking the newest one: the newest backup is sometimes the one taken just after the
 accident.
 
-### Frontend — does not exist
+### Frontend — the skeleton stands, no screen has its content yet
 
-`client/` has not been created.
+`client/`, created 28 August with Vite, React 19 and TypeScript 6. Runs with `npm run dev`.
+
+- **13 pages**, one file each, in `src/pages/public/` (6) and `src/pages/staff/` (7). Every one
+  of them still says `Hello from X page`.
+- **Routing** in `src/App.tsx`, the whole address map in one file. `:id` for the two detail
+  pages, `*` for anything unknown, which lands on the error page.
+- **Two shells**: `PublicLayout` (header + footer) and `StaffLayout` (side menu). Both styled
+  from the mockup. The login page is deliberately outside `StaffLayout`.
+- **Tailwind**, palette declared once in `src/index.css` from `charte-graphique.md`. No hex value
+  anywhere else.
+- **Three shared components** — `StatusPill`, `Pager`, `Modal`. Down from six: `Table`,
+  `Toolbar` and `Tabs` are written as plain HTML on each page instead.
+- **No form library, and no Zod on the client.** Decided 28 August, see `docs/decisions.md`.
+
+### Docker — the whole stack in one command
+
+`docker compose up -d` now starts five containers: postgres, redis, adminer, **api** and
+**client**. `api/Dockerfile` and `client/Dockerfile` are development images; production gets its
+own at step 29.
+
+Inside the Compose network a service is reached by its name, so the container's `DATABASE_URL_APP`
+points at `postgres`, not `localhost`. Compose builds it from the root `.env`, which now also
+holds `APP_DB_PASSWORD` and `SESSION_SECRET` — the same two values as `api/.env`, in two
+git-ignored files.
 
 ---
 
 ## 2. What is next
 
-**Step 18 — the frontend.** Everything before it is done: the backend, the tests, the test plan,
-the load test and fuzzing, ESLint, CI, and backup and restore. `client/` does not exist yet.
+**Step 20 — the staff shell**: login, sign-out, session expiry, and the side menu filtered by
+`role` and `is_admin`. It is the first screen with real content, and the first `fetch` to the
+API — which is where the Vite proxy gets its one line, so that `/api/...` reaches the server.
+
+Open and undecided: **how many species the centre admits.** A real rehabilitation centre would
+not take both a lion and an African penguin, the enclosures cannot suit every animal, and an
+open-ended list is hard to keep coherent. To settle before the species screens.
 
 The rule for the whole frontend, decided 27 August: **plain React**. `useState`, `useEffect`,
 `fetch`. Two libraries only — React Router and Tailwind. No state manager, no data-fetching
