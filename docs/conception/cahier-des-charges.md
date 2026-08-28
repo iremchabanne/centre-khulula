@@ -14,12 +14,33 @@
 
 ### 1.1 Contexte
 
-Le Centre Khulula est un centre de réhabilitation de la faune sauvage situé en Afrique du Sud.
-*Khulula* signifie « libérer » en isiZulu, ce qui résume sa mission : recueillir des animaux
-sauvages blessés ou orphelins, les soigner, puis les relâcher.
+Le Centre Khulula est un centre de réhabilitation de la faune sauvage situé dans le **Limpopo**,
+en Afrique du Sud. *Khulula* signifie « libérer » en isiZulu, ce qui résume sa mission : recueillir
+des animaux sauvages blessés ou orphelins, les soigner, puis les relâcher.
 
 Le centre dispose d'un **nombre limité d'enclos**, et chaque animal admis en occupe un pendant
 toute la durée de ses soins. Cette contrainte matérielle est au cœur du fonctionnement du centre.
+
+### 1.1.1 Espèces accueillies — un périmètre borné, et pourquoi
+
+Le centre accueille **la petite et moyenne faune indigène du Limpopo**, et rien d'autre. Deux
+bornes, chacune pour une raison :
+
+- **Géographique.** Une espèce qui ne vit pas dans la région ne peut pas y être trouvée blessée,
+  ni y être relâchée. Un manchot du Cap n'a rien à faire dans un centre du Limpopo.
+- **De taille.** Éléphants et rhinocéros exigent des installations, un personnel et des protocoles
+  sans rapport avec ceux d'un centre de cette taille. Le modèle suivi est celui du *Johannesburg
+  Wildlife Veterinary Hospital*, qui se limite explicitement à la petite et moyenne faune indigène.
+
+Le référentiel compte donc **9 espèces**, liste fermée alimentée par le script d'initialisation
+(§2.2). Carnivores, herbivores, oiseaux et reptiles y coexistent : c'est le cas de tous les centres
+réels, puisque chaque animal occupe un enclos séparé, adapté à son type.
+
+**L'identité du centre est assumée : les espèces dont personne ne fait campagne.** Le pangolin de
+Temminck, mammifère le plus trafiqué au monde, dont le Limpopo est la première province de saisie ;
+les vautours du Cap, dont la colonie du Blouberg — la plus grande d'Afrique du Sud — se trouve dans
+la province ; le calao terrestre, la tortue léopard, la mangouste rayée. Aucun rhinocéros : ils sont
+déjà l'objet de centres spécialisés, et le besoin est ailleurs.
 
 Le suivi est aujourd'hui tenu sur un classeur papier et un tableur partagé, ce qui pose trois
 problèmes :

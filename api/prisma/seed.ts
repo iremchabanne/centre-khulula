@@ -1,21 +1,15 @@
-// Seed script — fills an empty database with realistic development data.
+// Seed script — fills an empty database with development data.  npm run seed
 //
-// Run it with:   npm run seed
+// Wipes the tables first, so running it twice gives the same result. Connects
+// as khulula_admin (DATABASE_URL).
 //
-// It wipes the tables first, so running it twice gives the same result rather
-// than a doubled database. It uses DATABASE_URL, the khulula_admin account.
+// The size is chosen, not random: 14 animals and 12 donations make two pages of
+// ten, so pagination is visibly needed. All five lifecycle states are present,
+// enclosures are free, occupied and under maintenance, and finished stays have
+// different lengths so the dashboard functions return real numbers.
 //
-// How much data, and why that much: 14 animals and 12 donations, which is two
-// pages of ten and no more. Enough that pagination and filters are visibly
-// needed, few enough that the whole seed stays readable.
-//
-// The data also has to make the screens honest: animals in all five lifecycle
-// states, enclosures free, occupied and under maintenance, and finished stays
-// of different lengths so the dashboard functions return real numbers.
-//
-// Note what this file does NOT set: enclosure.status. That column is written by
-// the trigger. The seed creates the stays and the statuses follow on their own —
-// which is a small proof that the trigger works.
+// It never writes enclosure.status — the trigger does. The seed creates stays
+// and the statuses follow, which is a small proof that the trigger works.
 
 import { PrismaClient } from '@prisma/client';
 import type { Sex, AgeClass, AnimalStatus, IucnStatus, EnclosureType } from '@prisma/client';
@@ -23,9 +17,8 @@ import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
-// The password of every seeded account. Development only: it is written here in
-// clear on purpose so it can be looked up, and it is hashed before it reaches
-// the database. Real accounts are created by an administrator, never by a seed.
+// The password of every seeded account. Development only, in clear on purpose
+// so it can be looked up, and hashed before it reaches the database.
 const DEV_PASSWORD = 'khulula-dev-password';
 
 // Dates are written as "how many days ago", which stays readable and keeps the
@@ -79,15 +72,48 @@ const speciesData: SpeciesSeed[] = [
     photo_url: '/images/species/serval.jpg',
   },
   {
-    common_name: 'African Penguin',
-    scientific_name: 'Spheniscus demersus',
-    iucn_status: 'endangered',
-    habitat: 'Coastal islands and beaches',
-    diet: 'Sardines and anchovies',
+    common_name: 'Spotted Eagle-Owl',
+    scientific_name: 'Bubo africanus',
+    iucn_status: 'least_concern',
+    habitat: 'Savanna, rocky hills and the edges of towns',
+    diet: 'Insects, small mammals and birds',
+    activity: 'Nocturnal',
+    description:
+      'The commonest owl of southern Africa, and the raptor most often brought in: it hunts along roadsides and near houses, so vehicle strikes and fence injuries are frequent.',
+    photo_url: '/images/species/spotted-eagle-owl.jpg',
+  },
+  {
+    common_name: 'Banded Mongoose',
+    scientific_name: 'Mungos mungo',
+    iucn_status: 'least_concern',
+    habitat: 'Savanna and open woodland',
+    diet: 'Insects, reptiles, eggs',
     activity: 'Daytime',
     description:
-      'The only penguin breeding in Africa. The population has fallen sharply with the collapse of its fish stocks, and oiled or underweight birds are a regular admission along the coast.',
-    photo_url: '/images/species/african-penguin.jpg',
+      'A small social carnivore living in troops of twenty or more. Admissions are usually orphaned pups and dog-bite injuries near villages.',
+    photo_url: '/images/species/banded-mongoose.jpg',
+  },
+  {
+    common_name: 'Leopard Tortoise',
+    scientific_name: 'Stigmochelys pardalis',
+    iucn_status: 'least_concern',
+    habitat: 'Dry savanna and grassland',
+    diet: 'Grasses and succulents',
+    activity: 'Daytime',
+    description:
+      'The largest tortoise of the region, named after the pattern on its shell. Most arrive with a cracked shell after a road or fire injury, or confiscated from the pet trade.',
+    photo_url: '/images/species/leopard-tortoise.jpg',
+  },
+  {
+    common_name: 'Common Duiker',
+    scientific_name: 'Sylvicapra grimmia',
+    iucn_status: 'least_concern',
+    habitat: 'Bush and wooded savanna',
+    diet: 'Leaves, fruit and shoots',
+    activity: 'Dawn, dusk and night',
+    description:
+      'A small antelope that hides rather than flees, which is why it is so often caught in snares. Duikers stress easily and are kept in the quietest enclosure available.',
+    photo_url: '/images/species/common-duiker.jpg',
   },
   {
     common_name: 'Cape Vulture',
@@ -149,7 +175,7 @@ const enclosureData: EnclosureSeed[] = [
   { code: 'E-02', type: 'small_mammal', notes: 'Heated floor, used for pangolins.', is_under_maintenance: false },
   { code: 'E-03', type: 'small_mammal', notes: null, is_under_maintenance: false },
   { code: 'E-04', type: 'small_mammal', notes: null, is_under_maintenance: false },
-  { code: 'E-05', type: 'aviary', notes: 'Salt-water pool, for seabirds.', is_under_maintenance: false },
+  { code: 'E-05', type: 'aviary', notes: 'Low-light cage, used for owls.', is_under_maintenance: false },
   { code: 'E-06', type: 'aviary', notes: 'Tall flight cage.', is_under_maintenance: false },
   { code: 'E-07', type: 'aviary', notes: null, is_under_maintenance: false },
   { code: 'E-08', type: 'large_mammal', notes: 'Double gate, mandatory two-keeper entry.', is_under_maintenance: false },
@@ -195,8 +221,8 @@ const currentAnimals: CurrentAnimalSeed[] = [
     status: 'admitted', admitted_days_ago: 2, enclosure: 'E-04',
   },
   {
-    name: 'Sindi', species: 'African Penguin', sex: 'female', age_class: 'adult',
-    found_near: 'Gqeberha', admission_reason: 'Oiled plumage after a harbour spill.',
+    name: 'Sindi', species: 'Spotted Eagle-Owl', sex: 'female', age_class: 'adult',
+    found_near: 'Modjadjiskloof', admission_reason: 'Vehicle strike on the R36, damaged left wing.',
     status: 'recovering', admitted_days_ago: 33, enclosure: 'E-05',
   },
   {
@@ -230,10 +256,10 @@ type PastAnimalSeed = {
 
 const pastAnimals: PastAnimalSeed[] = [
   {
-    name: 'Ayanda', species: 'Serval', sex: 'male', age_class: 'adult',
-    found_near: 'Tzaneen', admission_reason: 'Snare wound on the neck.',
+    name: 'Ayanda', species: 'Banded Mongoose', sex: 'male', age_class: 'adult',
+    found_near: 'Tzaneen', admission_reason: 'Dog bite, wound on the flank.',
     status: 'released', admitted_days_ago: 210, stay_days: 52, enclosure: 'E-01',
-    outcome_note: 'Released at the capture site, wound fully healed.',
+    outcome_note: 'Released with its troop at the capture site.',
   },
   {
     name: 'Bonga', species: 'Cape Vulture', sex: 'female', age_class: 'adult',
@@ -242,10 +268,10 @@ const pastAnimals: PastAnimalSeed[] = [
     outcome_note: 'Released at the Blouberg colony with a wing tag.',
   },
   {
-    name: 'Chuma', species: 'African Penguin', sex: 'male', age_class: 'adult',
-    found_near: 'Gqeberha', admission_reason: 'Underweight and unable to dive.',
-    status: 'released', admitted_days_ago: 180, stay_days: 27, enclosure: 'E-05',
-    outcome_note: 'Released with the colony after regaining weight.',
+    name: 'Chuma', species: 'Common Duiker', sex: 'male', age_class: 'adult',
+    found_near: 'Mokopane', admission_reason: 'Snare wound on the right hind leg.',
+    status: 'released', admitted_days_ago: 180, stay_days: 27, enclosure: 'E-08',
+    outcome_note: 'Released on the neighbouring reserve, wound fully closed.',
   },
   {
     name: 'Dumi', species: 'Black-backed Jackal', sex: 'male', age_class: 'subadult',
@@ -275,10 +301,10 @@ const pastAnimals: PastAnimalSeed[] = [
     outcome_note: 'Died of internal injuries despite surgery.',
   },
   {
-    name: 'Lindiwe', species: 'African Penguin', sex: 'female', age_class: 'adult',
-    found_near: 'Gqeberha', admission_reason: 'Heavily oiled, hypothermic on arrival.',
-    status: 'deceased', admitted_days_ago: 150, stay_days: 3, enclosure: 'E-05',
-    outcome_note: 'Did not survive the first washing session.',
+    name: 'Lindiwe', species: 'Leopard Tortoise', sex: 'female', age_class: 'adult',
+    found_near: 'Bela-Bela', admission_reason: 'Shell crushed by a vehicle.',
+    status: 'deceased', admitted_days_ago: 150, stay_days: 3, enclosure: 'E-09',
+    outcome_note: 'Internal injuries too severe; died on the third day.',
   },
 ];
 
@@ -330,9 +356,8 @@ async function main() {
   await prisma.donation.deleteMany();
   await prisma.staffMember.deleteMany();
 
-  // 2. Staff. The password is hashed once and reused: argon2 is deliberately
-  //    slow, and hashing the same string five times would slow the seed down
-  //    for nothing.
+  // 2. Staff. The password is hashed once and reused — argon2 is deliberately
+  //    slow, and hashing the same string five times would gain nothing.
   const passwordHash = await argon2.hash(DEV_PASSWORD);
   const staff = await prisma.staffMember.createManyAndReturn({
     data: staffData.map((person) => ({
