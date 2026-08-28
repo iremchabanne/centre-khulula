@@ -31,6 +31,7 @@ import {
 import { validate, requireAuth, requireAdmin, requireRole, rateLimit } from './middleware';
 import {
   speciesIdParamsSchema,
+  listSpeciesQuerySchema,
   createDonationSchema,
   loginSchema,
   enclosureIdParamsSchema,
@@ -82,7 +83,7 @@ apiRouter.get('/auth/me', requireAuth, getCurrentStaff);
 const PUBLIC_PAGES = rateLimit(60, 60);
 const DONATION_FORM = rateLimit(5, 60 * 60);
 
-apiRouter.get('/species', PUBLIC_PAGES, listSpecies);
+apiRouter.get('/species', PUBLIC_PAGES, validate({ query: listSpeciesQuerySchema }), listSpecies);
 apiRouter.get('/species/:id', PUBLIC_PAGES, validate({ params: speciesIdParamsSchema }), getSpecies);
 
 apiRouter.post(

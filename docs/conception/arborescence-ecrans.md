@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Version** | 1.7 — 20 août 2026 |
+| **Version** | 1.8 — 28 août 2026 |
 | **Maquettes** | `maquettes/prototype.html` |
 | **Couvre** | CP 5 — *« L'enchaînement des maquettes est formalisé par un schéma »* |
 
@@ -74,21 +74,27 @@ client »*.
 
 ### Recherche et pagination
 
-Les six listes sont paginées (§6.4). Celles dont l'usage est de *retrouver un élément précis*
-portent en plus une recherche.
+Cinq listes sont paginées (§6.4) ; l'inventaire des enclos ne l'est pas, son volume étant borné
+par le centre. **Deux écrans seulement portent une recherche**, ceux où l'on vient chercher un
+élément nommé.
 
-| Écran | Recherche / filtres |
-|---|---|
-| 2 · Les espèces | nom, statut de conservation |
-| 4 · Nos animaux | onglets *In our care* / *Released* |
-| 8 · Enclos *(Manage)* | code, statut, type |
-| 9 · Liste des animaux | nom, statut, espèce |
-| 11 · Liste des dons | période |
-| 12 · Comptes du personnel | nom ou e-mail, actif/désactivé, rôle |
+| Écran | Pagination | Recherche / filtres |
+|---|---|---|
+| 2 · Les espèces | ✔ | — |
+| 4 · Nos animaux | ✔ | onglets *In our care* / *Released* |
+| 8 · Enclos *(Manage)* | — | — |
+| 9 · Liste des animaux | ✔ | **recherche par nom** + filtre de statut |
+| 11 · Liste des dons | ✔ | — |
+| 12 · Comptes du personnel | ✔ | **recherche par nom ou e-mail** |
+
+> **Périmètre réduit le 28/08/2026.** Une version précédente annonçait un filtre par statut de
+> conservation, par code d'enclos, par type, par espèce, par période et par rôle. Chacun coûte un
+> champ de formulaire, une règle de validation, une branche de requête et une surface de test, pour
+> un gain nul sur un jeu de données de cette taille. Ne restent que les deux recherches qui servent
+> un usage réel. Le reste est hors périmètre, et c'est la réponse à donner au jury.
 
 L'écran 12 a une recherche et non des onglets par rôle : l'administrateur cherche *une personne
-nommée*, dont il ne connaît pas forcément le métier. Le filtre utile est *actif / désactivé*,
-puisqu'un compte n'est jamais supprimé (RG12) et que la liste s'allonge au fil des années.
+nommée*, dont il ne connaît pas forcément le métier.
 
 ### Menu latéral selon le compte
 

@@ -11,11 +11,14 @@
 import type { Request, Response } from 'express';
 import { SpeciesService } from '../services/species.service';
 import { prisma } from '../prisma';
+import type { ListSpeciesQuery } from '../schemas';
 
 const speciesService = new SpeciesService(prisma);
 
 export async function listSpecies(req: Request, res: Response): Promise<void> {
-  const species = await speciesService.findAll();
+  const query = res.locals.query as ListSpeciesQuery;
+
+  const species = await speciesService.findAll(query);
   res.json(species);
 }
 

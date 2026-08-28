@@ -1,28 +1,15 @@
 // Animals, and the operation the whole project is built around: admission.
 //
-// THE PROBLEM THIS FILE SOLVES, because it is the one the jury asks about.
+// THE PROBLEM. Two keepers, one free enclosure, both press "Admit". Each reads
+// "E-09 is free", both get yes, both insert — and the centre believes two
+// animals live in one enclosure. The check was right and the result is wrong.
 //
-// Two keepers are on screen 8 at the same time. One free enclosure is left.
-// Both press "Admit". The naive code reads "is E-09 free?", both get yes,
-// both insert, and the centre now believes two animals live in one enclosure.
-// The check was correct and the result is still wrong: nothing stopped the
-// second read from happening between the first read and the first write.
-//
-// Three things fix it, and they are deliberately different in nature:
-//
-//   1. The TRANSACTION. Creating the animal and creating the stay is one
-//      indivisible operation. If the second fails, the first is undone and no
-//      orphan animal is left behind (RG2).
-//
-//   2. SELECT ... FOR UPDATE. The first transaction locks the enclosure row.
-//      The second one does not read stale data — it WAITS at that line until
-//      the first commits, then reads the enclosure as `occupied` and gives up.
-//      This is the line that turns a race into a queue.
-//
-//   3. The partial unique index of the migration 20260822100651. Even if the
-//      lock were forgotten, PostgreSQL itself refuses a second open stay in
-//      the same enclosure. A defence that does not depend on the application
-//      being right.
+// Three defences, deliberately different in nature:
+//   1. TRANSACTION — animal and stay are created together or not at all (RG2).
+//   2. SELECT ... FOR UPDATE — the second transaction waits for the first,
+//      then reads the enclosure as occupied and gives up. Race becomes queue.
+//   3. The partial unique index of migration 20260822100651 — PostgreSQL
+//      refuses a second open stay even if the lock were forgotten.
 
 import { Prisma, type PrismaClient, type EnclosureStatus, type AnimalStatus } from '@prisma/client';
 import { AppError } from '../errors';
@@ -51,23 +38,13 @@ export class AnimalService {
 
   // The public list of animals — screen 4, no account needed.
   //
-  // WHAT A VISITOR IS ALLOWED TO SEE, and the reasoning belongs here rather
-  // than in the route:
-  //
-  //   - `deceased` animals never appear. The centre publishes the animals it
-  //     is helping and the ones it has set free, not the ones it lost.
-  //   - the enclosure is not returned. Which animal is in which enclosure is
-  //     staff information — decisions.md, the visitor role is deliberately
-  //     minimal.
-  //   - `admission_reason` and the outcome note stay out too: they are
-  //     clinical notes written by staff for staff.
-  //
-  // So the fields are listed one by one below instead of returning the row.
-  // A `select` that names what goes out cannot leak a column added later.
+  // A visitor never sees `deceased` animals, the enclosure, the admission
+  // reason or the outcome note: those are staff information (RG11). The fields
+  // are therefore named one by one in `select`, so a column added later cannot
+  // leak by accident.
   async findPublicList(query: ListAnimalsQuery) {
-    // The three clinical states a visitor sees as one. Someone reading the
-    // site does not need to know the difference between admitted and
-    // recovering; the centre does, which is why the database keeps them apart.
+    // The three clinical states a visitor sees as one. The centre needs the
+    // distinction, someone reading the site does not.
     const inCare: AnimalStatus[] = ['admitted', 'in_care', 'recovering'];
 
     const statuses = query.status === 'released' ? (['released'] as AnimalStatus[]) : inCare;
@@ -175,18 +152,14 @@ export class AnimalService {
     return animal;
   }
 
-  // Add an observation, and move the animal on in its care if the observation
-  // says so — S5.
+  // Add an observation, and move the animal on in its care if it says so — S5.
   //
-  // One method and one transaction, because the model made it one act:
-  // observation.status_after is "only filled when the observation makes the
-  // animal change status". Written separately, a crash between the two would
-  // leave a status change nobody can explain, or a note about a change that
-  // never happened.
+  // One transaction, because it is one act: a crash between the two would leave
+  // a status change nobody can explain, or a note about a change that never
+  // happened.
   //
-  // The observation table is append-only, and not only by convention: the
-  // khulula_app account has no UPDATE and no DELETE on it (migration
-  // 20260822105239). What is written here cannot be rewritten later.
+  // The observation table is append-only, enforced by the grants of migration
+  // 20260822105239: what is written here cannot be rewritten later.
   async addObservation(animalId: number, input: CreateObservationInput, staffId: number) {
     const observedAt = new Date();
 
@@ -336,12 +309,11 @@ export class AnimalService {
 
   // Move an animal to another enclosure — RG8.
   //
-  // Closing the old stay and opening the new one are "indissociables": if the
-  // second failed on its own, the animal would be recorded as living nowhere
-  // and both enclosures would read `free`. One transaction, or nothing.
+  // One transaction: if only the second half ran, the animal would be recorded
+  // as living nowhere and both enclosures would read `free`.
   //
-  // The old stay is closed FIRST and the new one opened after. Not a detail:
-  // done the other way round, the animal would briefly have two open stays.
+  // The old stay is closed FIRST. The other way round, the animal would briefly
+  // have two open stays.
   async move(animalId: number, input: MoveAnimalInput, staffId: number) {
     const movedAt = new Date();
 
@@ -435,18 +407,12 @@ export class AnimalService {
 
   // Pronounce the outcome of an animal: released, or deceased.
   //
-  // Three rules meet here, and they are enforced in three different places —
-  // worth knowing which is which:
+  // Three rules meet here, each enforced in a different layer:
+  //   RG6 — veterinarian only: requireRole, on the route (it is about WHO).
+  //   RG5 — terminal states are final: below (only this layer knows the state).
+  //   RG7 — the outcome frees the enclosure: the trigger. We close the stay.
   //
-  //   RG6, only a veterinarian may do this, is enforced by requireRole on the
-  //        route. It is about WHO is calling, so it belongs before the service.
-  //   RG5, released and deceased are terminal, is enforced below. It is about
-  //        the state of the animal, which only this layer knows.
-  //   RG7, the outcome frees the enclosure, is enforced by the trigger. We
-  //        close the stay; the database draws the consequence.
-  //
-  // staffId is the vet who pronounced it, taken from the session (RG6 again:
-  // the signature must be the person logged in).
+  // staffId is the vet who pronounced it, taken from the session, never the body.
   async recordOutcome(animalId: number, input: RecordOutcomeInput, staffId: number) {
     const outcomeAt = new Date();
 

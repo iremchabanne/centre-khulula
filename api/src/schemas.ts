@@ -1,18 +1,20 @@
-// Every validation rule of the API, in one file, grouped by resource.
+// Every validation rule of the API, in one file, grouped by resource: "what
+// does the API accept?" is answered by reading a single page.
 //
-// One file rather than one per resource: the rules are short, and having them
-// together means "what does the API accept?" is answered by reading a single
-// page. If the authentication rules arrive at step 13 and turn out to be long,
-// they get their own file — nothing else does.
+// Every rule is enforced on the SERVER. The browser forms repeat a few of them
+// to be helpful, but a form is a convenience, not a defence.
 //
-// Every rule below is enforced on the SERVER. The browser form will repeat some
-// of them to be helpful, but a form is a convenience, not a defence: anyone can
-// send a request straight to the API without ever loading the page.
-//
-// The types at the bottom are inferred from the schemas rather than written by
-// hand, so the rules and the types can never disagree.
+// The types are inferred from the schemas, so rules and types cannot disagree.
 
 import { z } from 'zod';
+
+// The ?page=N every list accepts, written once instead of five times.
+// A URL is text, so coerce converts before checking; no page at all means 1.
+const pageNumber = z.coerce
+  .number({ error: 'The page must be a whole number' })
+  .int({ error: 'The page must be a whole number' })
+  .positive({ error: 'The page must be greater than 0' })
+  .default(1);
 
 // ---------------------------------------------------------------------------
 // Authentication
@@ -48,6 +50,13 @@ export const speciesIdParamsSchema = z.strictObject({
     .int({ error: 'The species id must be a whole number' })
     .positive({ error: 'The species id must be greater than 0' }),
 });
+
+// The species list — screen 2. Paginated like the other lists (§6.4).
+export const listSpeciesQuerySchema = z.strictObject({
+  page: pageNumber,
+});
+
+export type ListSpeciesQuery = z.infer<typeof listSpeciesQuerySchema>;
 
 // ---------------------------------------------------------------------------
 // Enclosures
@@ -128,14 +137,12 @@ export const animalIdParamsSchema = z.strictObject({
 
 // Adding an observation — screen 10, S5.
 //
-// One request, not two. `status_after` is optional, and the model says why:
-// the column is "only filled when the observation makes the animal change
-// status". Writing a note and moving the animal on in its care are the same
-// act, so they are one call and one transaction.
+// `status_after` is optional: writing a note and moving the animal on in its
+// care are the same act, so they are one call and one transaction.
 //
 // Only the two intermediate statuses are here. `released` and `deceased` are
-// terminal and pronounced by a veterinarian on another route (RG5, RG6), and
-// `admitted` is where an animal starts and never returns to (RG4).
+// pronounced by a veterinarian on another route (RG5, RG6), and `admitted` is
+// where an animal starts and never returns to (RG4).
 export const createObservationSchema = z.strictObject({
   body: z
     .string({ error: 'The observation cannot be empty' })
@@ -152,10 +159,8 @@ export const createObservationSchema = z.strictObject({
 
 export type CreateObservationInput = z.infer<typeof createObservationSchema>;
 
-// The public list of animals — screen 4, "Nos animaux".
-//
-// One list and one filter, not two routes: arborescence-ecrans.md §1, *« même
-// liste, même requête, un seul filtre qui change »*.
+// The public list of animals — screen 4, "Nos animaux". One list and one
+// filter, not two routes: arborescence-ecrans.md §1.
 //
 // The two values a visitor may ask for are named here rather than taken from
 // the AnimalStatus enum. `admitted`, `in_care` and `recovering` are grouped
@@ -166,13 +171,7 @@ export const listAnimalsQuerySchema = z.strictObject({
     error: 'The filter must be in_care or released',
   }),
 
-  // Comes from the URL, so it arrives as text: coerce turns "2" into 2.
-  // Defaulting to 1 means a URL with no page is a valid request, not an error.
-  page: z.coerce
-    .number({ error: 'The page must be a whole number' })
-    .int({ error: 'The page must be a whole number' })
-    .positive({ error: 'The page must be greater than 0' })
-    .default(1),
+  page: pageNumber,
 });
 
 export type ListAnimalsQuery = z.infer<typeof listAnimalsQuerySchema>;
@@ -187,22 +186,14 @@ export const listStaffAnimalsQuerySchema = z.strictObject({
     })
     .optional(),
 
-  page: z.coerce
-    .number({ error: 'The page must be a whole number' })
-    .int({ error: 'The page must be a whole number' })
-    .positive({ error: 'The page must be greater than 0' })
-    .default(1),
+  page: pageNumber,
 });
 
 export type ListStaffAnimalsQuery = z.infer<typeof listStaffAnimalsQuerySchema>;
 
 // The donation list — screen 11.
 export const listDonationsQuerySchema = z.strictObject({
-  page: z.coerce
-    .number({ error: 'The page must be a whole number' })
-    .int({ error: 'The page must be a whole number' })
-    .positive({ error: 'The page must be greater than 0' })
-    .default(1),
+  page: pageNumber,
 });
 
 export type ListDonationsQuery = z.infer<typeof listDonationsQuerySchema>;
@@ -284,11 +275,9 @@ export type CreateDonationInput = z.infer<typeof createDonationSchema>;
 // ---------------------------------------------------------------------------
 // Staff accounts — screen 12, administrators only
 //
-// RG13 is enforced twice, and both are deliberate. The schemas below are
-// strictObject, so a request carrying `is_admin` is refused as an unrecognised
-// key rather than quietly ignored; and staff.service.ts never writes that
-// column whatever it receives. The validation gives a clear error, the service
-// makes the rule true even if the validation is ever changed.
+// RG13 is enforced twice, deliberately: strictObject refuses a request that
+// carries `is_admin`, and staff.service.ts never writes that column whatever it
+// receives. Clear error from one, rule still true if the other ever changes.
 // ---------------------------------------------------------------------------
 
 // Written once and reused by account creation and password reset (RG15), so
@@ -345,11 +334,7 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 // The staff list, paginated like every other list (§6.4).
 export const listStaffQuerySchema = z.strictObject({
-  page: z.coerce
-    .number({ error: 'The page must be a whole number' })
-    .int({ error: 'The page must be a whole number' })
-    .positive({ error: 'The page must be greater than 0' })
-    .default(1),
+  page: pageNumber,
 });
 
 export type ListStaffQuery = z.infer<typeof listStaffQuerySchema>;

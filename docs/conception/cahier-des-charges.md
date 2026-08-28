@@ -5,7 +5,7 @@
 | **Projet** | Application de gestion d'un centre de réhabilitation de la faune sauvage |
 | **Maître d'ouvrage** | Centre Khulula (organisme fictif) |
 | **Maître d'œuvre** | *(votre nom)* |
-| **Version** | 1.5 — 20 août 2026 |
+| **Version** | 1.6 — 28 août 2026 |
 | **Statut** | Brouillon, à valider |
 
 ---
@@ -260,11 +260,14 @@ Besoins portés par les deux comptes administrateurs (§3.2), quel que soit leur
 ### 6.4 Éco-conception
 
 - Images compressées et dimensionnées pour leur usage réel.
-- **Pagination systématique** : la clause `LIMIT` est appliquée côté serveur sur les six listes,
-  y compris celles qui tiennent sur une page — c'est la requête sans borne qui pose problème, pas
-  la liste courte. Le contrôle n'est affiché qu'au-delà d'une page.
-- Recherche sur les listes destinées à retrouver un élément précis, pour éviter une pagination
-  parcourue page par page.
+- **Pagination systématique** : la clause `LIMIT` est appliquée côté serveur sur les listes qui
+  s'allongent avec le temps — espèces, animaux (public et personnel), dons, comptes du personnel.
+  Y compris celles qui tiennent aujourd'hui sur une page : c'est la requête sans borne qui pose
+  problème, pas la liste courte. Le contrôle n'est affiché qu'au-delà d'une page.
+  **L'inventaire des enclos fait exception et n'est pas paginé** : son volume est borné par le
+  centre lui-même, et l'écran *Overview* les montre tous ensemble.
+- Recherche par nom sur les deux listes où l'on cherche un élément précis : animaux (écran 9) et
+  comptes du personnel (écran 12).
 - Mise en cache des données peu variables (enclos disponibles, fiches espèces).
 - Nombre de dépendances volontairement réduit ; aucune animation lourde.
 

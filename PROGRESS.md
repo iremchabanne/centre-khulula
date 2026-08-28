@@ -43,8 +43,9 @@ states present. The seed never writes `enclosure.status` — the reported `3 fre
 
 ### Backend — complete
 
-`api/src/`, four layers, run with `npm run dev`. Every screen of `arborescence-ecrans.md` has
-the routes it needs. Nothing is added until a frontend screen proves something is missing.
+`api/src/`, four layers, run with `npm run dev`. Every screen of `arborescence-ecrans.md` has the
+routes it needs, with **one thing still owed**: the search by name of screens 9 and 12, which is
+written when those screens are. Everything else waits for a frontend screen to prove it is missing.
 
 - **Structure:** routes → controllers → services → Prisma. A central error handler, so no
   technical error reaches the client. One JSON log line per request. The API connects as the

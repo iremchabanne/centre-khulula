@@ -65,7 +65,9 @@ services:
   api:
     build: ./api
     container_name: khulula-api
-    restart: unless-stopped
+    # No `restart` here, unlike postgres and redis: in development a crash is
+    # usually a mistake in the code, and restarting in a loop hides the error.
+    #
     # Inside this network a service is reached by its name, so the host is
     # `postgres` and `redis` here — not `localhost` as in api/.env, which is
     # what your machine uses when you run `npm run dev` outside Docker.
@@ -87,17 +89,21 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      # The /health route of routes.ts. wget is in the alpine image already.
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   client:
     build: ./client
     container_name: khulula-client
-    restart: unless-stopped
     ports:
       - "${CLIENT_PORT:-5173}:5173"
     volumes:
       - ./client/src:/app/src
-    depends_on:
-      - api
 
 volumes:
   postgres-data:

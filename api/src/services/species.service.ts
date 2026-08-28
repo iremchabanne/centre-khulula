@@ -13,6 +13,8 @@
 
 import type { PrismaClient } from '@prisma/client';
 import { AppError } from '../errors';
+import { pageQuery, pageResult } from '../pagination';
+import type { ListSpeciesQuery } from '../schemas';
 
 export class SpeciesService {
   private readonly prisma: PrismaClient;
@@ -21,9 +23,16 @@ export class SpeciesService {
     this.prisma = prisma;
   }
 
-  // Every species, for the public list.
-  async findAll() {
-    return this.prisma.species.findMany({ orderBy: { common_name: 'asc' } });
+  // The species list — screen 2, paginated like the other lists.
+  async findAll(query: ListSpeciesQuery) {
+    const species = await this.prisma.species.findMany({
+      orderBy: { common_name: 'asc' },
+      ...pageQuery(query.page),
+    });
+
+    const total = await this.prisma.species.count();
+
+    return pageResult(species, total, query.page);
   }
 
   // One species, with the two counters the species page shows.

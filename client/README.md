@@ -1,32 +1,18 @@
-# React + TypeScript + Vite
+# client — Centre Khulula
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The React frontend. Plain React: `useState`, `useEffect`, `fetch`. Two libraries only,
+React Router and Tailwind. No form library and no Zod here — see `docs/decisions.md`.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install       # once
+npm run dev       # http://localhost:5173
+npm run build     # production build, into dist/
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The whole stack, API and database included, starts from the repository root with
+`docker compose up -d`.
+
+- `src/pages/public/` — the six pages a visitor sees, no account needed
+- `src/pages/staff/` — the seven pages behind a login
+- `src/components/` — the two layouts and the three shared components
+- `src/index.css` — the palette of `docs/conception/charte-graphique.md`, declared once

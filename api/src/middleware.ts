@@ -17,34 +17,22 @@ const authService = new AuthService(prisma);
 // ---------------------------------------------------------------------------
 // Access control
 //
-// These three run BEFORE the controller and stop the request there if the
-// caller is not allowed. That is the point: the interface will also hide the
-// buttons a keeper must not see, but hiding a button is not a defence. Anyone
-// can send the request straight to the API, so the refusal has to happen on
-// the server. OWASP A01 — Broken Access Control.
+// These three stop a request before the controller. The interface will also
+// hide the buttons a keeper must not see, but hiding a button is not a defence:
+// anyone can call the API directly. OWASP A01 — Broken Access Control.
 //
-// They read the session, which lives in Redis — never a value sent by the
-// browser. A caller cannot claim to be an administrator; they can only present
-// a session id we issued, and the rights attached to it are ours.
+// The rights come from the session in Redis and the account row, never from a
+// value the browser sent.
 // ---------------------------------------------------------------------------
 
-// The check the three of them share: is anybody logged in at all, and is that
-// account still allowed to work?
+// Two questions, not one: is anybody logged in, and is that account still
+// active? The cookie only proves a session was opened at some point, so the
+// account is re-read from the database on every protected request and a
+// deactivated one is refused immediately (RG12). One extra read on a primary
+// key, deliberately not cached — a cache would grant exactly the extra seconds
+// this check exists to prevent.
 //
-// Two questions, not one. The cookie only proves a session was opened at some
-// point; it says nothing about now. So we also read the account from the
-// database on every protected request, and refuse a deactivated one (RG12).
-// Without that second question an account switched off by an administrator
-// would keep working until its session expired eight hours later.
-//
-// It costs one extra query per protected request, on the primary key — the
-// cheapest read a database does. We deliberately do not cache the answer:
-// a cache would give a deactivated account a few more seconds of access, and
-// that is exactly the thing this check exists to prevent.
-//
-// Repeated inside each of the three rather than assumed to have run before. If
-// a route is written one day with requireAdmin but without requireAuth, it must
-// still refuse an anonymous call instead of silently letting it through.
+// Called inside each of the three, never assumed to have run before.
 async function requireSession(req: Request) {
   if (!req.session.staffId) {
     throw new AppError('You must be logged in', 401);
@@ -98,17 +86,13 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
 // ---------------------------------------------------------------------------
 // Rate limiting — Redis's third and last job.
 //
-// The public pages have no account, so there is nothing to suspend when
-// somebody misuses them. A visitor can send the donation form a thousand times
-// a minute, or walk the whole animal list in a loop. Counting requests per IP
-// address and refusing past a limit is what stands in the way.
+// The public pages have no account, so there is nothing to suspend when someone
+// abuses them. Counting requests per IP address is what stands in the way.
 //
-// HOW IT WORKS, in three lines of Redis. INCR adds one to a counter and
-// returns the new value, creating it at 1 if it did not exist. The first time
-// we see an address we give that key an expiry, so the counter disappears on
-// its own and the visitor starts again with a clean slate. No cleanup job, no
-// stored table — this is exactly the kind of short-lived counting a key/value
-// database is for, and it is why Redis is in this project.
+// INCR adds one and returns the new value, creating the key at 1. The key is
+// given an expiry on the first request, so the counter disappears on its own:
+// no cleanup job and no table — the short-lived counting a key/value database
+// exists for.
 // ---------------------------------------------------------------------------
 
 export function rateLimit(maxRequests: number, windowSeconds: number) {
@@ -140,14 +124,10 @@ export function rateLimit(maxRequests: number, windowSeconds: number) {
   };
 }
 
-// Checks the input of a request against the schemas in schemas.ts, before the
-// controller runs. Written once here rather than repeated in each controller,
-// so every rejected request in the API looks the same to the client, and so
-// adding a route cannot accidentally skip validation in a new way.
+// Checks a request against the schemas of schemas.ts, before the controller
+// runs, so every rejected request looks the same to the client.
 //
 //     router.post('/donations', validate({ body: createDonationSchema }), createDonation)
-//                               ^^^^^^^^ runs first; the controller is only
-//                                        reached if the input was valid.
 export function validate(schemas: { params?: ZodType; body?: ZodType; query?: ZodType }) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (schemas.query) {
@@ -250,18 +230,13 @@ export function errorHandler(
     return;
   }
 
-  // A body that is not valid JSON at all. express.json() fails before any of
-  // our code runs, so this never reaches a Zod schema — without the branch
-  // below it fell through to the generic 500 underneath.
+  // A body that is not JSON at all: express.json() fails before our code runs,
+  // so it never reaches a Zod schema and used to fall through to the 500 below.
+  // Found by fuzzing on 27/08/2026 (api/scripts/fuzz-donation-form.sh) — nothing
+  // broke here, the caller sent rubbish, which is a 400.
   //
-  // Found by fuzzing on 27/08/2026 (api/scripts/fuzz-donation-form.sh). 500
-  // means "the server broke"; nothing broke here, the caller sent something
-  // that is not JSON. That is a 400, and saying so keeps the server logs about
-  // real failures.
-  //
-  // `type` is the property express.json() puts on the error; testing the class
-  // alone would also catch a SyntaxError thrown by a genuine bug in our code,
-  // which must stay a 500.
+  // `type` is what express.json() puts on the error. Testing the class alone
+  // would also catch a SyntaxError from a real bug, which must stay a 500.
   if (error instanceof SyntaxError && (error as { type?: string }).type === 'entity.parse.failed') {
     logger.warn('rejected request', { path: req.originalUrl, status: 400, reason: 'invalid JSON' });
     res.status(400).json({ error: 'The request body is not valid JSON' });
