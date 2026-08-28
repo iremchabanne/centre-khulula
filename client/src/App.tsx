@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import PublicLayout from './components/PublicLayout';
+import StaffLayout from './components/StaffLayout';
 
 import HomePage from './pages/public/HomePage';
 import SpeciesListPage from './pages/public/SpeciesListPage';
@@ -34,13 +35,17 @@ export default function App() {
           <Route path="/legal" element={<LegalPage />} />
         </Route>
 
-        {/* Staff area — will require a session later */}
+        {/* Login has no side menu, so it stays outside StaffLayout */}
         <Route path="/staff/login" element={<LoginPage />} />
-        <Route path="/staff/enclosures" element={<EnclosuresPage />} />
-        <Route path="/staff/animals" element={<AnimalListPage />} />
-        <Route path="/staff/animals/:id" element={<AnimalDetailPage />} />
-        <Route path="/staff/donations" element={<DonationListPage />} />
-        <Route path="/staff/accounts" element={<StaffAccountsPage />} />
+
+        {/* Staff area — will require a session later */}
+        <Route element={<StaffLayout />}>
+          <Route path="/staff/enclosures" element={<EnclosuresPage />} />
+          <Route path="/staff/animals" element={<AnimalListPage />} />
+          <Route path="/staff/animals/:id" element={<AnimalDetailPage />} />
+          <Route path="/staff/donations" element={<DonationListPage />} />
+          <Route path="/staff/accounts" element={<StaffAccountsPage />} />
+        </Route>
 
         {/* Any address that matches nothing above */}
         <Route path="*" element={<ErrorPage />} />
