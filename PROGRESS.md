@@ -188,7 +188,7 @@ The decision and its arithmetic are in `docs/decisions.md`, Tech stack.
 
 | File | Version | Purpose |
 |---|---|---|
-| `docs/decisions.md` | — | Project brief — subject, stack, CP mapping, working rules. Source of truth. |
+| `docs/decisions.md` | — | **Git-ignored**, on purpose — it names the working method. Project brief: subject, stack, CP mapping, working rules. Source of truth, and it lives only on Irem's machine, so **back it up by hand**. |
 | `PLAN.md` | — | What is left to do, in order. |
 | `PROGRESS.md` | — | This file — where we are. |
 | `docs/dp/00-referentiel-CP.md` | — | The 11 CPs and their critères de performance. **Never edit.** |
