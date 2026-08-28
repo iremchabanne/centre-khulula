@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Version** | 1.1 — 20 août 2026 |
+| **Version** | 1.2 — 28 août 2026 |
 | **Maquettes de référence** | `maquettes/prototype.html` (13 écrans) |
 | **Statut** | Validée |
 
@@ -43,6 +43,12 @@
 | `--primary` | `#1F4436` | Actions principales — vert forêt profond |
 | `--accent` | `#A85128` | Don, mise en avant — ocre brûlé |
 | `--accent-soft` | `#F6E9DD` | Fond d'encadré informatif |
+| `--on-dark` | `#C9D2CC` | Texte sur les barres sombres — pied de page, menu latéral |
+| `--on-dark-muted` | `#8FA096` | Surtitres et libellés secondaires sur fond sombre |
+
+> `--on-dark` et `--on-dark-muted` ont été ajoutées le 28/08/2026, à l'intégration des deux
+> coquilles. Le prototype employait quatre gris clairs sur fond sombre ; deux suffisent, l'écart
+> n'étant pas perceptible, et deux noms se retiennent mieux que quatre.
 
 **Intention.** Une base neutre chaude, un vert profond pour l'action, un ocre de savane pour
 l'accent. Deux couleurs seulement, jamais plus. La palette évoque le contexte sud-africain sans
@@ -83,8 +89,8 @@ texte courant.
 | Étiquette *Released* | 5,41 | ✔ |
 | Étiquette *Deceased* | 5,66 | ✔ |
 | Message d'erreur sur fond | 7,06 | ✔ |
-| Texte de barre latérale sur encre | 10,70 | ✔ |
-| Texte de pied de page sur encre | 7,80 | ✔ |
+| `--on-dark` sur encre | 10,70 | ✔ |
+| `--on-dark-muted` sur encre | 6,02 | ✔ |
 
 > **Traçabilité.** Le calcul a été effectué par script, et non à l'œil. Une première valeur de
 > `--muted` (`#6B7269`) atteignait 4,29 sur fond sable et a donc été rejetée puis corrigée en

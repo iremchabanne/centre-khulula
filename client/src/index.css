@@ -16,4 +16,15 @@
   --color-khulula-primary: #1f4436;
   --color-khulula-accent: #a85128;
   --color-khulula-accent-soft: #f6e9dd;
+
+  /* Text on the dark bars — the footer and the staff side menu.
+     Measured on --color-khulula-ink: 10.70:1 and 6.02:1, both AA. */
+  --color-khulula-on-dark: #c9d2cc;
+  --color-khulula-on-dark-muted: #8fa096;
+
+  /* §3 of the charte. No font is downloaded: both stacks use what the
+     machine already has. That is an éco-conception choice. */
+  --font-heading: ui-serif, Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto,
+    Helvetica, Arial, sans-serif;
 }
