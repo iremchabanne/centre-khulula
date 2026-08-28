@@ -224,7 +224,12 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 - [ ] Project setup (Vite), routing, the two layouts (public site / staff app).
 - [ ] The charte graphique palette declared once in the Tailwind theme —
       **never a hardcoded colour**.
-- [ ] Shared components, and only these six: table, pager, toolbar, tabs, modal, status pill.
+- [ ] Shared components, and only **three**: status pill, pager, modal. Decided 28/08/2026,
+      down from six. A generic `Table` needs a column configuration to be learnt before a page
+      can be read, `Toolbar` is a `<div>`, and `Tabs` is two buttons and a `useState` used on two
+      screens. Those three are written again on each page as plain HTML. The answer to give the
+      jury: repeating ten readable lines was preferred to an abstraction that would have to be
+      decoded before the page could be understood.
 - [ ] The `api` and `client` Docker services, completing step 7.
 
 ### Step 20 — Staff shell

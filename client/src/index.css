@@ -17,6 +17,18 @@
   --color-khulula-accent: #a85128;
   --color-khulula-accent-soft: #f6e9dd;
 
+  /* §2.2 — one text colour and one background per animal status */
+  --color-admitted: #4a5d6e;
+  --color-admitted-bg: #e8edf1;
+  --color-incare: #8a5a12;
+  --color-incare-bg: #f7ebd7;
+  --color-recovering: #14605f;
+  --color-recovering-bg: #dcebea;
+  --color-released: #2f6b33;
+  --color-released-bg: #e3efe1;
+  --color-deceased: #5b5b5b;
+  --color-deceased-bg: #eceae7;
+
   /* Text on the dark bars — the footer and the staff side menu.
      Measured on --color-khulula-ink: 10.70:1 and 6.02:1, both AA. */
   --color-khulula-on-dark: #c9d2cc;
