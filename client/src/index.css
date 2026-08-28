@@ -1,6 +1,19 @@
-/* Temporary. Tailwind replaces this file at the next step, and the palette
-   will be declared there once, from docs/conception/charte-graphique.md. */
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
+@import 'tailwindcss';
+
+/* The palette of docs/conception/charte-graphique.md, §2.1.
+   Declared once, only here. In a component we write a class built on these
+   names — bg-khulula-primary, text-khulula-muted — never a hex value.
+   The status colours of §2.2 will be added when we build the status pill. */
+@theme {
+  --color-khulula-bg: #faf7f2;
+  --color-khulula-surface: #ffffff;
+  --color-khulula-surface-alt: #f3eee5;
+  --color-khulula-ink: #16211c;
+  --color-khulula-body: #3d453f;
+  --color-khulula-muted: #646b62;
+  --color-khulula-line: #e4dcd0;
+  --color-khulula-line-strong: #d3c7b6;
+  --color-khulula-primary: #1f4436;
+  --color-khulula-accent: #a85128;
+  --color-khulula-accent-soft: #f6e9dd;
 }

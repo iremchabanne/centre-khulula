@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+import PublicLayout from './components/PublicLayout';
+
 import HomePage from './pages/public/HomePage';
 import SpeciesListPage from './pages/public/SpeciesListPage';
 import SpeciesDetailPage from './pages/public/SpeciesDetailPage';
@@ -21,13 +23,16 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public site — no account needed */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/species" element={<SpeciesListPage />} />
-        <Route path="/species/:id" element={<SpeciesDetailPage />} />
-        <Route path="/animals" element={<AnimalsPage />} />
-        <Route path="/donate" element={<DonatePage />} />
-        <Route path="/legal" element={<LegalPage />} />
+        {/* Public site — no account needed. The six pages are inside
+            PublicLayout, so they all get the same header and footer. */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/species" element={<SpeciesListPage />} />
+          <Route path="/species/:id" element={<SpeciesDetailPage />} />
+          <Route path="/animals" element={<AnimalsPage />} />
+          <Route path="/donate" element={<DonatePage />} />
+          <Route path="/legal" element={<LegalPage />} />
+        </Route>
 
         {/* Staff area — will require a session later */}
         <Route path="/staff/login" element={<LoginPage />} />
