@@ -38,7 +38,7 @@ export default function App() {
         {/* Login has no side menu, so it stays outside StaffLayout */}
         <Route path="/staff/login" element={<LoginPage />} />
 
-        {/* Staff area — will require a session later */}
+        {/* Staff area — StaffLayout refuses these pages without a session */}
         <Route element={<StaffLayout />}>
           <Route path="/staff/enclosures" element={<EnclosuresPage />} />
           <Route path="/staff/animals" element={<AnimalListPage />} />

@@ -1,4 +1,6 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+
+import type { StaffMember } from '../types';
 
 // Same idea as the public header: the page being shown is highlighted.
 function itemClasses({ isActive }: { isActive: boolean }) {
@@ -8,11 +10,21 @@ function itemClasses({ isActive }: { isActive: boolean }) {
   return 'rounded px-3 py-2';
 }
 
-// Every link is visible for now. Filtering by role and by is_admin comes once
-// a login gives us the account of the person signed in.
-export default function StaffSidebar() {
+type Props = {
+  staff: StaffMember;
+};
+
+export default function StaffSidebar({ staff }: Props) {
+  const navigate = useNavigate();
+
+  async function signOut() {
+    // Deletes the session in Redis, not only the cookie in the browser.
+    await fetch('/api/auth/logout', { method: 'POST' });
+    navigate('/staff/login', { replace: true });
+  }
+
   return (
-    <aside className="w-56 bg-khulula-ink p-4 text-sm text-khulula-on-dark">
+    <aside className="flex w-56 flex-col bg-khulula-ink p-4 text-sm text-khulula-on-dark">
       <p className="mb-6 font-heading text-lg text-white">Khulula</p>
 
       <p className="mb-2 px-3 text-xs uppercase tracking-widest text-khulula-on-dark-muted">
@@ -25,13 +37,36 @@ export default function StaffSidebar() {
         <NavLink to="/staff/animals" className={itemClasses}>
           Animals
         </NavLink>
-        <NavLink to="/staff/donations" className={itemClasses}>
-          Donations
-        </NavLink>
-        <NavLink to="/staff/accounts" className={itemClasses}>
-          Staff accounts
-        </NavLink>
+
+        {/* Both routes behind these links are requireAdmin on the server.
+            Hiding them is tidiness; the refusal is the server's. */}
+        {staff.is_admin && (
+          <NavLink to="/staff/donations" className={itemClasses}>
+            Donations
+          </NavLink>
+        )}
+        {staff.is_admin && (
+          <NavLink to="/staff/accounts" className={itemClasses}>
+            Staff accounts
+          </NavLink>
+        )}
       </nav>
+
+      {/* mt-auto pushes this block to the bottom of the menu. */}
+      <div className="mt-auto border-t border-khulula-on-dark-muted pt-4">
+        <p className="px-3 text-white">{staff.full_name}</p>
+        <p className="mb-3 px-3 text-xs text-khulula-on-dark-muted">
+          {staff.role === 'veterinarian' ? 'Veterinarian' : 'Keeper'}
+          {staff.is_admin && ' · Administrator'}
+        </p>
+        <button
+          type="button"
+          onClick={signOut}
+          className="rounded px-3 py-2 text-left underline"
+        >
+          Sign out
+        </button>
+      </div>
     </aside>
   );
 }

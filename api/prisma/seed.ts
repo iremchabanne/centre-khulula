@@ -330,7 +330,7 @@ const donationData = [
   { amount: 250.0, donor_name: 'Sarah Bergmann', donor_email: 'sarah.b@example.com', message: 'Keep up the work with the vultures.', consent_given: true, days_ago: 9 },
   { amount: 5.0, donor_name: null, donor_email: null, message: 'Every bit helps.', consent_given: false, days_ago: 11 },
   { amount: 50.0, donor_name: 'Thabo Mahlangu', donor_email: 'thabo.m@example.com', message: null, consent_given: true, days_ago: 14 },
-  { amount: 500.0, donor_name: 'Coastal Trust', donor_email: 'contact@example.org', message: 'Earmarked for penguin rehabilitation.', consent_given: true, days_ago: 18 },
+  { amount: 500.0, donor_name: 'Blouberg Trust', donor_email: 'contact@example.org', message: 'Earmarked for the Cape Vulture colony.', consent_given: true, days_ago: 18 },
   { amount: 20.0, donor_name: null, donor_email: null, message: null, consent_given: false, days_ago: 21 },
   { amount: 75.0, donor_name: 'Anna Kowalski', donor_email: 'anna.k@example.com', message: 'Visited last month — thank you.', consent_given: true, days_ago: 26 },
   { amount: 15.0, donor_name: null, donor_email: null, message: null, consent_given: false, days_ago: 30 },
