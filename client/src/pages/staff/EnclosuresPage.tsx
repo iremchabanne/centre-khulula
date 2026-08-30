@@ -3,24 +3,12 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import AdmissionDialog from './AdmissionDialog';
 import Button from '../../components/Button';
+import EnclosureOverview from './EnclosureOverview';
+import EnclosureTable from './EnclosureTable';
+import type { Dashboard, Enclosure } from './enclosureTypes';
 import type { StaffMember } from '../../types';
 
 // Screen 8 of arborescence-ecrans.md: Overview, and Manage for administrators.
-type Enclosure = {
-  id: number;
-  code: string;
-  type: string;
-  status: 'free' | 'occupied' | 'maintenance';
-  occupant: { animal_id: number; name: string; since: string } | null;
-};
-
-type Dashboard = {
-  occupied: number;
-  free: number;
-  maintenance: number;
-  occupancy_rate: number;
-  average_stay_days: number | null;
-};
 
 export default function EnclosuresPage() {
   const [enclosures, setEnclosures] = useState<Enclosure[]>([]);
@@ -153,12 +141,9 @@ export default function EnclosuresPage() {
       )}
 
       {tab === 'manage' ? (
-        <ManageTable enclosures={enclosures} onToggleMaintenance={toggleMaintenance} />
+        <EnclosureTable enclosures={enclosures} onToggleMaintenance={toggleMaintenance} />
       ) : (
-        <Overview
-          dashboard={dashboard}
-          enclosures={enclosures}
-        />
+        <EnclosureOverview dashboard={dashboard} enclosures={enclosures} />
       )}
 
       {showAdmission && (
@@ -179,137 +164,4 @@ function tabClasses(isActive: boolean) {
     return 'rounded border border-khulula-primary px-3 py-2 text-sm font-medium text-khulula-primary';
   }
   return 'rounded border border-khulula-line px-3 py-2 text-sm text-khulula-muted';
-}
-
-function Overview({
-  dashboard,
-  enclosures,
-}: {
-  dashboard: Dashboard | null;
-  enclosures: Enclosure[];
-}) {
-  return (
-    <div>
-      {dashboard && (
-        <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-5">
-          <Kpi value={String(dashboard.occupied)} label="Occupied" />
-          <Kpi value={String(dashboard.free)} label="Free" />
-          <Kpi value={String(dashboard.maintenance)} label="Maintenance" />
-          <Kpi value={`${dashboard.occupancy_rate}%`} label="Occupancy rate" />
-          <Kpi
-            // null means no stay has ended yet, which is not the same as zero.
-            value={dashboard.average_stay_days === null ? '—' : `${dashboard.average_stay_days} d`}
-            label="Average stay"
-          />
-        </div>
-      )}
-
-      <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {enclosures.map((enclosure) => (
-          <li
-            key={enclosure.id}
-            className="rounded-md border border-khulula-line bg-khulula-surface p-4"
-          >
-            <p className="font-heading text-lg text-khulula-ink">{enclosure.code}</p>
-            <p className="text-sm">
-              {/* The dot is decorative: the words next to it carry the
-                  information on their own (RGAA 3.1). */}
-              <span aria-hidden="true" className={`mr-2 ${dotClasses(enclosure.status)}`}>
-                ●
-              </span>
-              {occupantLabel(enclosure)}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// The administrators' table. Only the maintenance action is here: the API has
-// no route to create or edit an enclosure, and no CP asks for one.
-function ManageTable({
-  enclosures,
-  onToggleMaintenance,
-}: {
-  enclosures: Enclosure[];
-  onToggleMaintenance: (enclosure: Enclosure) => void;
-}) {
-  return (
-    // The table scrolls inside its own box rather than pushing the page wide.
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead className="bg-khulula-surface-alt text-left text-xs uppercase tracking-wide">
-          <tr>
-            <th scope="col" className="p-3">Code</th>
-            <th scope="col" className="p-3">Type</th>
-            <th scope="col" className="p-3">Status</th>
-            <th scope="col" className="p-3">Current occupant</th>
-            <th scope="col" className="p-3">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {enclosures.map((enclosure) => (
-            <tr key={enclosure.id} className="border-b border-khulula-line">
-              <th scope="row" className="p-3 text-left font-heading text-base text-khulula-ink">
-                {enclosure.code}
-              </th>
-              <td className="p-3">{enclosure.type}</td>
-              <td className="p-3">{statusLabel(enclosure.status)}</td>
-              <td className="p-3">{enclosure.occupant ? enclosure.occupant.name : '—'}</td>
-              <td className="p-3">
-                <Button
-                  variant="ghost"
-                  // RG16: an occupied enclosure cannot go under maintenance.
-                  disabled={enclosure.status === 'occupied'}
-                  onClick={() => onToggleMaintenance(enclosure)}
-                >
-                  {enclosure.status === 'maintenance' ? 'Return to service' : 'Maintenance'}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function statusLabel(status: Enclosure['status']) {
-  if (status === 'free') {
-    return 'Free';
-  }
-  if (status === 'maintenance') {
-    return 'Maintenance';
-  }
-  return 'Occupied';
-}
-
-function Kpi({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-md border border-khulula-line bg-khulula-surface p-4">
-      <p className="font-heading text-2xl text-khulula-ink">{value}</p>
-      <p className="mt-1 text-xs text-khulula-muted">{label}</p>
-    </div>
-  );
-}
-
-function dotClasses(status: Enclosure['status']) {
-  if (status === 'free') {
-    return 'text-enclosure-free';
-  }
-  if (status === 'maintenance') {
-    return 'text-enclosure-maintenance';
-  }
-  return 'text-khulula-accent';
-}
-
-function occupantLabel(enclosure: Enclosure) {
-  if (enclosure.status === 'maintenance') {
-    return 'Maintenance';
-  }
-  if (enclosure.occupant) {
-    return enclosure.occupant.name;
-  }
-  return 'Free';
 }
