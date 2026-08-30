@@ -255,12 +255,18 @@ Two short shell scripts, plain commands, no functions and no options to parse.
       Added `GET /api/dashboard`, the route that finally calls the two stored functions.
       Dropped from the mockup: search, filters, pagination and "New enclosure" — the API has no
       route for them and no CP asks for them.
-- [ ] Liste des animaux · Fiche animal
-- [ ] Fiches espèces · Liste des dons · Comptes du personnel
+- [x] **Liste des animaux** — filters: status, species, name, admission period. Done 30/08/2026.
+- [x] **Fiche animal** — observations, move (RG8), outcome (RG5, RG6). Done 30/08/2026.
+- [x] **Liste des dons** — administrators only. Done 30/08/2026.
+- [ ] **Comptes du personnel** — the last one, and the longest: create, activate/deactivate,
+      reset a password, search. RG13, RG14, RG15.
 
 ### Step 19 — The 6 public pages
 
-- [ ] Accueil · Les espèces · Fiche espèce · Nos animaux · Faire un don · Mentions légales.
+- [x] **Les espèces · Fiche espèce** — done 30/08/2026, with nine Wikimedia Commons photographs
+      (884 KB in total) credited in `docs/conception/credits-photos.md`.
+- [ ] Accueil · Nos animaux · Faire un don · **Mentions légales** — the credits go on that page:
+      CC BY and CC BY-SA require the photographers to be named.
 
 ### Step 22 — Accessibility pass  ·  RGAA, CP 2 and CP 5
 

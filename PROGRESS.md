@@ -3,8 +3,7 @@
 **Updated:** 30 August 2026
 **Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
 **07/10/2026 23:59** · exam **October 2026**.
-**Status:** conception, database and API complete · **the staff shell works, the 13 screens are
-still empty**
+**Status:** conception, database and API complete · **7 of the 13 screens built**
 
 > **This file says where we are.** `PLAN.md` says what is left to do, and holds the open
 > decisions and the list of things not to forget. Design decisions live in the design documents.
@@ -27,7 +26,7 @@ The repository is at https://github.com/iremchabanne/centre-khulula. Docker Comp
 
 ### Database — done
 
-Seven tables from `api/prisma/schema.prisma`, plus **five migrations whose last four are
+Seven tables from `api/prisma/schema.prisma`, plus **six migrations whose last five are
 hand-written SQL** — this is CP 8's graded part, and each one was demonstrated against the
 running database:
 
@@ -36,7 +35,11 @@ running database:
   lifecycle including a direct `UPDATE` that the trigger corrected back;
 - the two dashboard stored functions — occupancy rate and average stay length;
 - the two database accounts, with `khulula_app` proved unable to delete anything, rewrite an
-  observation, change a species or drop a table, while still able to do its normal work.
+  observation, change a species or drop a table, while still able to do its normal work;
+- **RG17**, 30 August — `species.enclosure_type` says what kind of enclosure a species belongs in.
+  Written by hand because the column is NOT NULL and the table already held nine rows: add it
+  empty, fill it, then make it required. A jackal can no longer be admitted into an aviary, and
+  the rule is checked on admission and on every move.
 
 `api/prisma/seed.ts` fills it: 14 animals and 12 donations, two pages of ten, all five lifecycle
 states present. The seed never writes `enclosure.status` — the reported `3 free / 6 occupied /
@@ -45,8 +48,12 @@ states present. The seed never writes `enclosure.status` — the reported `3 fre
 ### Backend — complete
 
 `api/src/`, four layers, run with `npm run dev`. Every screen of `arborescence-ecrans.md` has the
-routes it needs, with **one thing still owed**: the search by name of screens 9 and 12, which is
-written when those screens are. Everything else waits for a frontend screen to prove it is missing.
+routes it needs, with **one thing still owed**: the search of screen 12, written when that screen
+is. Everything else waits for a frontend screen to prove it is missing.
+
+Added on 30 August, each because a screen proved it missing: `GET /dashboard` (the route that
+finally calls the two stored functions), the four filters of the animal list, and a `species_id`
+filter on `/enclosures/free` and on the public animal list.
 
 - **Structure:** routes → controllers → services → Prisma. A central error handler, so no
   technical error reaches the client. One JSON log line per request. The API connects as the
@@ -136,32 +143,43 @@ because a backup that restores rows but not the hand-written SQL looks fine and 
 rather than picking the newest one: the newest backup is sometimes the one taken just after the
 accident.
 
-### Frontend — the staff shell works, the 13 screens are still empty
+### Frontend — 7 screens of 13 built
 
 `client/`, created 28 August with Vite, React 19 and TypeScript 6. Runs with `npm run dev`.
 
-- **13 pages**, one file each, in `src/pages/public/` (6) and `src/pages/staff/` (7). Every one
-  of them still says `Hello from X page`.
-- **Routing** in `src/App.tsx`, the whole address map in one file. `:id` for the two detail
-  pages, `*` for anything unknown, which lands on the error page.
-- **Two shells**: `PublicLayout` (header + footer) and `StaffLayout` (side menu). Both styled
-  from the mockup. The login page is deliberately outside `StaffLayout`.
-- **Tailwind**, palette declared once in `src/index.css` from `charte-graphique.md`. No hex value
-  anywhere else.
-- **Three shared components** — `StatusPill`, `Pager`, `Modal`. Down from six: `Table`,
-  `Toolbar` and `Tabs` are written as plain HTML on each page instead.
-- **No form library, and no Zod on the client.** Decided 28 August, see `docs/decisions.md`.
+**Built, and tested in the browser:**
 
-**Step 20 — done 30 August.** The shell around the empty pages:
+| Screen | What it carries |
+|---|---|
+| 7 · Login | Hand-written form. The pattern the other forms copy: `onSubmit`, `FormData`, plain `if` checks |
+| 8 · Enclosures | Dashboard numbers, admission dialog with its access-conflict state, maintenance table (admin) |
+| 9 · Animal list | Filters: status, species, name, admission period. Pagination |
+| 10 · Animal file | Observations, move (RG8), outcome (RG5, RG6, vet only) |
+| 11 · Donations | Admin only. A keeper who types the address lands on the access-denied screen |
+| 2 · Species list | Nine cards with their photographs |
+| 3 · Species page | Photograph, description, *At a glance*, and the animals of that species |
 
-- Vite proxy: `/api` goes to the API. One origin, so no CORS and no `credentials` option.
-- Login page. The pattern the seven other forms copy: a `FormData` action, three state
-  variables, plain `if` checks.
-- `StaffLayout` calls `GET /api/auth/me`, so the session survives a reload and an address typed
-  by hand lands on the login page.
-- Sidebar hides the two admin links. Those routes are `requireAdmin` on the server; hiding the
-  link is comfort, not security.
-- Error page: 404, 403, session expired.
+**Still empty:** 12 · Comptes du personnel · 1 · Accueil · 4 · Nos animaux · 5 · Faire un don ·
+6 · Mentions légales.
+
+**The rest of the frontend:**
+
+- **Routing** in `src/App.tsx`, the whole address map in one file.
+- **Two shells**: `PublicLayout` (header + footer) and `StaffLayout` (side menu). `StaffLayout` is
+  also the gate: it calls `GET /api/auth/me`, so the session survives a reload, an address typed
+  by hand lands on the login page, and the five staff screens are protected in one place.
+- **Vite proxy**: `/api` goes to the API, so the browser sees one origin — no CORS, and no
+  `credentials` option on any `fetch`.
+- **Tailwind**, palette declared once in `src/index.css`. No hex value anywhere else.
+- **Shared components**: `StatusPill`, `Pager`, `Modal`, `Button`, `FormField`, `SelectField`,
+  `IucnPill`. The rule for adding one: used on two screens **and** nothing to configure.
+- **No form library, and no Zod on the client.**
+- **Nine photographs** from Wikimedia Commons, 884 KB in total, credited in
+  `docs/conception/credits-photos.md`. The credits go on the mentions légales page — CC BY and
+  CC BY-SA require attribution.
+
+**Sidebar hides the two admin links.** Those routes are `requireAdmin` on the server; hiding the
+link is comfort, not security. Same answer for the vet-only outcome button.
 
 ### Docker — the whole stack in one command
 
@@ -178,14 +196,13 @@ git-ignored files.
 
 ## 2. What is next
 
-**Step 21 — the staff screens.** Enclosures first: the admission dialog and its access-conflict
-state are the best evidence for CP 8.
+**Step 21 — one screen left: Comptes du personnel.** The longest of the staff screens: four
+operations (create, activate/deactivate, reset a password, search) and three rules — RG13, RG14,
+RG15. It is also what the API still owes its last route to.
 
-Two things follow from the screens, not before them:
-
-- `/staff/denied` and `/staff/session-expired` get wired — a page that fetches can receive a 403
-  or a 401, an empty shell cannot.
-- The search by name of screens 9 and 12, the last route the API still owes.
+**Then step 19 — the four remaining public pages.** Accueil · Nos animaux · Faire un don ·
+Mentions légales. The mentions légales page carries `docs/conception/credits-photos.md`: CC BY
+and CC BY-SA require the photographers to be named.
 
 The frontend rule, 27 August: **plain React** — `useState`, `useEffect`, `fetch`. Two libraries
 only, React Router and Tailwind. No state manager, no data-fetching library, no component
@@ -206,14 +223,16 @@ library, no form library. See `PLAN.md`, Track D.
 | `docs/veille/journal.md` | — | The dated entries. **One a week — it cannot be reconstructed later.** |
 | `docs/conception/dossier-de-conception.md` | **1.0** | CP 5 deliverable. The design response. |
 | `docs/conception/cahier-des-charges.md` | **1.5** | The specification. 18 needs, RG1–RG16. |
-| `docs/conception/charte-graphique.md` | **1.1** | Colours with measured contrast, typography, RGAA, éco-conception. |
-| `docs/conception/modele-donnees.md` | **1.1** | MCD, MLD, MPD. Naming convention, RG1–RG16 coverage. |
+| `docs/conception/charte-graphique.md` | **1.3** | Colours with measured contrast, typography, RGAA, éco-conception. |
+| `docs/conception/modele-donnees.md` | **1.2** | MCD, MLD, MPD. Naming convention, RG1–RG17 coverage. |
+| `docs/conception/credits-photos.md` | — | The nine photographers and their licences. Goes on the mentions légales page. |
 | `docs/conception/arborescence-ecrans.md` | **1.7** | 13 screens, 4 diagrams, the six dialogs, animal lifecycle. |
 | `docs/conception/maquettes/prototype.html` | **v1.6** | 13 clickable screens, working tabs and dialogs. |
 | `api/prisma/schema.prisma` | — | The MPD in Prisma form. 7 models, 7 enums. |
-| `api/prisma/migrations/` | — | 5 migrations. The last 4 are hand-written SQL — CP 8's graded part. |
+| `api/prisma/migrations/` | — | 6 migrations. The last 5 are hand-written SQL — CP 8's graded part. |
 | `api/prisma/seed.ts` | — | Development data, sized at two pages of ten. |
 | `api/src/` | — | The API. `routes.ts` → `controllers/` → `services/` → Prisma. |
+| `client/src/` | — | The frontend. `App.tsx` holds every address; `components/` is shared, `pages/` is not. |
 | `api/tests/` | — | Vitest. Four files, five tests. |
 | `docs/tests/plan-de-tests.md` | **1.0** | CP 9 deliverable, in French. Plan and *compte rendu d'exécution* in one document. Backend only — the frontend gets a v2.0. |
 | `docs/audit.md` | — | **Git-ignored.** A full review of the code as it stands. |
@@ -234,6 +253,11 @@ These are the ones easy to break by accident. Everything else is in the document
 - **`observation` is append-only** — no `UPDATE`, no `DELETE`, enforced by the `khulula_app` grants.
 - **Nothing is ever deleted:** accounts are deactivated, animals and enclosures keep their history.
 - **Two DB accounts**, `khulula_admin` and a deliberately restricted `khulula_app`.
-- **Never hardcode a colour** — the palette is declared once in the Tailwind theme.
+- **Never hardcode a colour** — the palette is declared once in the Tailwind theme, and a new
+  colour is measured for contrast before it is added.
+- **RG17** — an animal only ever occupies an enclosure of the type its species needs.
+- **A shared component is written when it is used on two screens and has nothing to configure.**
+  That is why `Button` and `FormField` exist and a generic `Table` does not.
+- **Hiding a link is comfort, never security.** Every refusal comes from the server.
 - **Push at the end of every working day.** Decided 25 August, after the repository had been
   three days behind.
