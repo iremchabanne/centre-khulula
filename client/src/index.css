@@ -29,6 +29,9 @@
   --color-deceased: #5b5b5b;
   --color-deceased-bg: #eceae7;
 
+  /* §5 — form errors: the message under the field and the field border. */
+  --color-khulula-error: #a32020;
+
   /* Text on the dark bars — the footer and the staff side menu.
      Measured on --color-khulula-ink: 10.70:1 and 6.02:1, both AA. */
   --color-khulula-on-dark: #c9d2cc;
@@ -39,4 +42,11 @@
   --font-heading: ui-serif, Georgia, 'Iowan Old Style', 'Times New Roman', serif;
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto,
     Helvetica, Arial, sans-serif;
+}
+
+/* RGAA §6 — the focus outline, written once for the whole application so no
+   screen can forget it. It is never removed. */
+:focus-visible {
+  outline: 2px solid var(--color-khulula-accent);
+  outline-offset: 2px;
 }
