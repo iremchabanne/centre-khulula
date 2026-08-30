@@ -179,11 +179,33 @@ export type ListAnimalsQuery = z.infer<typeof listAnimalsQuerySchema>;
 // The staff list of animals — screen 9. Unlike the public one, every status is
 // a valid filter, `deceased` included, and the filter itself is optional: the
 // screen opens on the whole centre.
+// The free enclosures, optionally narrowed to those that suit one species.
+export const listFreeEnclosuresQuerySchema = z.strictObject({
+  species_id: z.coerce.number().int().positive().optional(),
+});
+
+export type ListFreeEnclosuresQuery = z.infer<typeof listFreeEnclosuresQuerySchema>;
+
 export const listStaffAnimalsQuerySchema = z.strictObject({
   status: z
     .enum(['admitted', 'in_care', 'recovering', 'released', 'deceased'], {
       error: 'Unknown status filter',
     })
+    .optional(),
+
+  species_id: z.coerce.number().int().positive().optional(),
+
+  // Capped at 100 like the column itself, so an enormous string never reaches
+  // the database. Prisma sends it as a parameter, never as SQL text.
+  search: z.string().trim().max(100).optional(),
+
+  // The admission period. Both ends are optional: "since 1 June" and
+  // "before 1 July" are useful on their own.
+  admitted_from: z.coerce
+    .date({ error: 'The start date must be written as YYYY-MM-DD' })
+    .optional(),
+  admitted_to: z.coerce
+    .date({ error: 'The end date must be written as YYYY-MM-DD' })
     .optional(),
 
   page: pageNumber,

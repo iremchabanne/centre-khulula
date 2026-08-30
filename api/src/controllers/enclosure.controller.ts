@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { EnclosureService } from '../services/enclosure.service';
 import { prisma } from '../prisma';
-import type { SetMaintenanceInput } from '../schemas';
+import type { SetMaintenanceInput, ListFreeEnclosuresQuery } from '../schemas';
 
 const enclosureService = new EnclosureService(prisma);
 
@@ -12,7 +12,9 @@ export async function listEnclosures(req: Request, res: Response): Promise<void>
 }
 
 export async function listFreeEnclosures(req: Request, res: Response): Promise<void> {
-  const enclosures = await enclosureService.findFree();
+  const query = res.locals.query as ListFreeEnclosuresQuery;
+
+  const enclosures = await enclosureService.findFree(query.species_id);
 
   res.json(enclosures);
 }

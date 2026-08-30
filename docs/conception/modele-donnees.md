@@ -107,7 +107,7 @@ jamais en clair. `role` vaut `keeper` ou `veterinarian` ; `is_admin` est le seco
 (§3.2 du cahier des charges) et n'est jamais accordé depuis l'interface (RG13). Un compte se
 désactive avec `is_active`, il ne se supprime pas (RG12).
 
-**species** (<u>id</u>, common_name, scientific_name, iucn_status, habitat, diet, activity, description, photo_url)
+**species** (<u>id</u>, common_name, scientific_name, iucn_status, habitat, diet, activity, description, photo_url, enclosure_type)
 
 `scientific_name` est unique. Aucune colonne de comptage : « soignés » et « relâchés » se
 calculent depuis `animal`, sinon les compteurs se désynchroniseraient.
@@ -287,3 +287,4 @@ migrations (`npx prisma migrate dev --create-only`) :
 | RG13, RG14 | `is_admin` hors interface + contrôle en service |
 | RG15 | réinitialisation par un administrateur ; aucune table de jeton |
 | RG16 | `is_under_maintenance` refusé si un séjour est en cours |
+| RG17 | `species.enclosure_type` comparé à `enclosure.type` à l'admission et au transfert |

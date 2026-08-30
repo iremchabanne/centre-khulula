@@ -132,6 +132,10 @@ model Species {
   description     String     @db.Text
   photo_url       String     @db.VarChar(255)
 
+  // The kind of enclosure this species belongs in (RG17). A jackal does not go
+  // in an aviary, and the rule needs a column to be checked against.
+  enclosure_type  EnclosureType
+
   animals Animal[]
 
   @@map("species")

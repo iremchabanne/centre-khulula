@@ -10,19 +10,39 @@ type Props = {
   options: Option[];
   error?: string;
   defaultValue?: string;
+  // Filters are optional; the fields of a form are usually not.
+  required?: boolean;
+  // Given when the page needs to react to the choice, as the admission form
+  // does: picking a species changes the list of enclosures.
+  onChange?: (value: string) => void;
 };
 
-export default function SelectField({ id, label, options, error, defaultValue }: Props) {
+export default function SelectField({
+  id,
+  label,
+  options,
+  error,
+  defaultValue,
+  required = true,
+  onChange,
+}: Props) {
+  function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    if (onChange) {
+      onChange(event.target.value);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={id} className="text-sm font-medium text-khulula-ink">
-        {label} <span aria-hidden="true">*</span>
+        {label} {required && <span aria-hidden="true">*</span>}
       </label>
 
       <select
         id={id}
         name={id}
         defaultValue={defaultValue}
+        onChange={handleChange}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
         className={

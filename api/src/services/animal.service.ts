@@ -11,7 +11,13 @@
 //   3. The partial unique index of migration 20260822100651 — PostgreSQL
 //      refuses a second open stay even if the lock were forgotten.
 
-import { Prisma, type PrismaClient, type EnclosureStatus, type AnimalStatus } from '@prisma/client';
+import {
+  Prisma,
+  type PrismaClient,
+  type EnclosureStatus,
+  type EnclosureType,
+  type AnimalStatus,
+} from '@prisma/client';
 import { AppError } from '../errors';
 import { pageQuery, pageResult } from '../pagination';
 import { forgetFreeEnclosures } from '../cache';
@@ -81,8 +87,35 @@ export class AnimalService {
   // deciding that from an argument is how a field ends up on a public page by
   // accident.
   async findStaffList(query: ListStaffAnimalsQuery) {
-    // No filter means the whole centre, which is how the screen opens.
-    const where = query.status ? { status: query.status } : {};
+    // No filter at all means the whole centre, which is how the screen opens.
+    // Each criterion is added only when it was sent.
+    const where: Prisma.AnimalWhereInput = {};
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.species_id) {
+      where.species_id = query.species_id;
+    }
+
+    if (query.search) {
+      // `contains` becomes a parameterised LIKE, so a name full of quotes is
+      // searched for, never executed. insensitive: "nala" finds "Nala".
+      where.name = { contains: query.search, mode: 'insensitive' };
+    }
+
+    if (query.admitted_from || query.admitted_to) {
+      // A date arrives at midnight, so "up to 1 July" would drop everything
+      // admitted that day. Compare with the day after instead.
+      let dayAfter: Date | undefined;
+      if (query.admitted_to) {
+        dayAfter = new Date(query.admitted_to);
+        dayAfter.setDate(dayAfter.getDate() + 1);
+      }
+
+      where.admitted_at = { gte: query.admitted_from, lt: dayAfter };
+    }
 
     const animals = await this.prisma.animal.findMany({
       where,
@@ -224,8 +257,10 @@ export class AnimalService {
       // Written as raw SQL because Prisma has no way to express FOR UPDATE.
       // The value is passed as a parameter by the tagged template, not glued
       // into the string, so this is not an SQL injection (OWASP A03).
-      const rows = await tx.$queryRaw<{ id: number; code: string; status: EnclosureStatus }[]>`
-        SELECT id, code, status
+      const rows = await tx.$queryRaw<
+        { id: number; code: string; status: EnclosureStatus; type: EnclosureType }[]
+      >`
+        SELECT id, code, status, type
         FROM enclosure
         WHERE id = ${input.enclosure_id}
         FOR UPDATE
@@ -249,6 +284,15 @@ export class AnimalService {
 
       if (!species) {
         throw new AppError(`No species with id ${input.species_id}`, 404);
+      }
+
+      // RG17 — a jackal does not go in an aviary. The screen only offers
+      // suitable enclosures; this is what refuses a request that skips it.
+      if (species.enclosure_type !== enclosure.type) {
+        throw new AppError(
+          `A ${species.common_name} cannot be housed in enclosure ${enclosure.code}`,
+          409,
+        );
       }
 
       try {
@@ -325,8 +369,10 @@ export class AnimalService {
       // enclosures at the same instant can therefore deadlock — PostgreSQL
       // detects it and aborts one of them with an error rather than hanging.
       // Rare enough in a centre with ten enclosures to be left as is.
-      const rows = await tx.$queryRaw<{ id: number; code: string; status: EnclosureStatus }[]>`
-        SELECT id, code, status
+      const rows = await tx.$queryRaw<
+        { id: number; code: string; status: EnclosureStatus; type: EnclosureType }[]
+      >`
+        SELECT id, code, status, type
         FROM enclosure
         WHERE id = ${input.enclosure_id}
         FOR UPDATE
@@ -368,6 +414,16 @@ export class AnimalService {
 
       if (destination.status !== 'free') {
         throw new AppError(`Enclosure ${destination.code} is no longer free`, 409);
+      }
+
+      // RG17 — the destination has to suit the species, exactly as at admission.
+      const species = await tx.species.findUnique({ where: { id: animal.species_id } });
+
+      if (species && species.enclosure_type !== destination.type) {
+        throw new AppError(
+          `A ${species.common_name} cannot be housed in enclosure ${destination.code}`,
+          409,
+        );
       }
 
       // Closing this stay frees the enclosure the animal is leaving, through

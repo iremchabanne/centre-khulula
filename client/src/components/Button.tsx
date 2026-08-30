@@ -4,7 +4,8 @@ import type { ReactNode } from 'react';
 // min-h-11 is the 44 px minimum click area the same section asks for.
 type Props = {
   children: ReactNode;
-  type?: 'button' | 'submit';
+  // "reset" empties the fields of the form it sits in, without any code.
+  type?: 'button' | 'submit' | 'reset';
   variant?: 'primary' | 'accent' | 'ghost';
   disabled?: boolean;
   onClick?: () => void;
@@ -24,7 +25,7 @@ export default function Button({
   }
 
   if (variant === 'ghost') {
-    variantClasses = 'border border-khulula-line-strong text-khulula-ink';
+    variantClasses = 'border border-khulula-line-strong bg-khulula-surface-alt text-khulula-ink';
   }
 
   return (

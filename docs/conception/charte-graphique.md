@@ -147,7 +147,7 @@ limitée à 60–70 caractères.
 |---|---|---|---|
 | `btn-primary` | `--primary` | blanc | Action principale d'un écran |
 | `btn-accent` | `--accent` | blanc | Don uniquement |
-| `btn-ghost` | transparent | `--ink` | Action secondaire, annulation |
+| `btn-ghost` | `--surface-alt` | `--ink` | Action secondaire, annulation |
 
 Un seul bouton primaire par écran. Zone de clic minimale 44 × 44 px sur mobile.
 

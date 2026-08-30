@@ -57,7 +57,12 @@ const createdAnimalIds: number[] = [];
 
 beforeAll(async () => {
   const enclosure = await appPrisma.enclosure.findFirst({ where: { status: 'free' } });
-  const species = await appPrisma.species.findFirst();
+
+  // RG17 — the species has to suit the enclosure, otherwise both admissions are
+  // refused for the wrong reason and the race is never played.
+  const species = enclosure
+    ? await appPrisma.species.findFirst({ where: { enclosure_type: enclosure.type } })
+    : null;
   const staff = await appPrisma.staffMember.findFirst({ where: { is_active: true } });
 
   if (!enclosure || !species || !staff) {

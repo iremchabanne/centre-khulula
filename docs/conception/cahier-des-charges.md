@@ -243,6 +243,7 @@ Besoins portés par les deux comptes administrateurs (§3.2), quel que soit leur
 | **RG14** | Un administrateur ne peut ni désactiver son propre compte, ni désactiver le **dernier administrateur actif** — sinon plus aucun compte ne pourrait être créé. |
 | **RG15** | Un mot de passe oublié est réinitialisé par un administrateur. Aucune procédure par e-mail. |
 | **RG16** | Un enclos ne passe en `maintenance` que s'il est **libre**. |
+| **RG17** | Un animal n'occupe qu'un enclos du type prévu pour son espèce. |
 
 ---
 

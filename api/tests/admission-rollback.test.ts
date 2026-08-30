@@ -45,7 +45,12 @@ let speciesId: number;
 
 beforeAll(async () => {
   const enclosure = await appPrisma.enclosure.findFirst({ where: { status: 'free' } });
-  const species = await appPrisma.species.findFirst();
+
+  // RG17 — the species has to suit the enclosure, or the admission is refused
+  // before it can be interrupted halfway.
+  const species = enclosure
+    ? await appPrisma.species.findFirst({ where: { enclosure_type: enclosure.type } })
+    : null;
 
   if (!enclosure || !species) {
     throw new Error('The database has no free enclosure or species. Run `npm run seed`.');

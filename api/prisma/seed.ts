@@ -57,6 +57,8 @@ type SpeciesSeed = {
   activity: string;
   description: string;
   photo_url: string;
+  // RG17 — the kind of enclosure this species belongs in.
+  enclosure_type: EnclosureType;
 };
 
 const speciesData: SpeciesSeed[] = [
@@ -70,6 +72,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'A slender wild cat with very long legs and oversized ears, which it uses to locate rodents in tall grass before leaping on them. Servals reaching the centre are usually young animals caught in snares.',
     photo_url: '/images/species/serval.jpg',
+    enclosure_type: 'small_mammal',
   },
   {
     common_name: 'Spotted Eagle-Owl',
@@ -81,6 +84,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'The commonest owl of southern Africa, and the raptor most often brought in: it hunts along roadsides and near houses, so vehicle strikes and fence injuries are frequent.',
     photo_url: '/images/species/spotted-eagle-owl.jpg',
+    enclosure_type: 'aviary',
   },
   {
     common_name: 'Banded Mongoose',
@@ -92,6 +96,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'A small social carnivore living in troops of twenty or more. Admissions are usually orphaned pups and dog-bite injuries near villages.',
     photo_url: '/images/species/banded-mongoose.jpg',
+    enclosure_type: 'small_mammal',
   },
   {
     common_name: 'Leopard Tortoise',
@@ -103,6 +108,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'The largest tortoise of the region, named after the pattern on its shell. Most arrive with a cracked shell after a road or fire injury, or confiscated from the pet trade.',
     photo_url: '/images/species/leopard-tortoise.jpg',
+    enclosure_type: 'reptile',
   },
   {
     common_name: 'Common Duiker',
@@ -114,6 +120,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'A small antelope that hides rather than flees, which is why it is so often caught in snares. Duikers stress easily and are kept in the quietest enclosure available.',
     photo_url: '/images/species/common-duiker.jpg',
+    enclosure_type: 'large_mammal',
   },
   {
     common_name: 'Cape Vulture',
@@ -125,6 +132,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'A large colonial vulture endemic to southern Africa. Poisoning and collisions with power lines are the two reasons it arrives here, usually with wing injuries that take months to heal.',
     photo_url: '/images/species/cape-vulture.jpg',
+    enclosure_type: 'aviary',
   },
   {
     common_name: 'Temminck’s Pangolin',
@@ -136,6 +144,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'A scaled, ant-eating mammal and the most trafficked wild mammal in the world. Animals recovered from the illegal trade arrive severely dehydrated and need a long, quiet recovery.',
     photo_url: '/images/species/pangolin.jpg',
+    enclosure_type: 'small_mammal',
   },
   {
     common_name: 'Southern Ground Hornbill',
@@ -147,6 +156,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'A large ground-dwelling bird that lives in family groups and breeds very slowly, which makes every lost adult hard to replace. Road collisions are the usual cause of admission.',
     photo_url: '/images/species/ground-hornbill.jpg',
+    enclosure_type: 'aviary',
   },
   {
     common_name: 'Black-backed Jackal',
@@ -158,6 +168,7 @@ const speciesData: SpeciesSeed[] = [
     description:
       'A small, adaptable canid, easily recognised by the dark saddle on its back. Most admissions are snare injuries and orphaned pups.',
     photo_url: '/images/species/black-backed-jackal.jpg',
+    enclosure_type: 'small_mammal',
   },
 ];
 

@@ -67,7 +67,23 @@ export class EnclosureService {
   //
   // This is the one cached read of the application — see cache.ts for why this
   // list and no other, and why a stale answer cannot cause a wrong admission.
-  async findFree() {
+  async findFree(speciesId?: number) {
+    // Asked for one species: only the enclosures that suit it (RG17). Not
+    // cached, because the cache holds one list and this one changes with the
+    // species. The query is small and runs when a dialog opens, not on a page.
+    if (speciesId) {
+      const species = await this.prisma.species.findUnique({ where: { id: speciesId } });
+
+      if (!species) {
+        throw new AppError(`No species with id ${speciesId}`, 404);
+      }
+
+      return this.prisma.enclosure.findMany({
+        where: { status: 'free', type: species.enclosure_type },
+        orderBy: { code: 'asc' },
+      });
+    }
+
     const cached = await readFreeEnclosures();
 
     if (cached) {

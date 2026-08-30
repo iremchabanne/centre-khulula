@@ -35,6 +35,7 @@ import {
   listSpeciesQuerySchema,
   createDonationSchema,
   loginSchema,
+  listFreeEnclosuresQuerySchema,
   enclosureIdParamsSchema,
   setMaintenanceSchema,
   createAdmissionSchema,
@@ -110,7 +111,12 @@ apiRouter.get(
 // Putting an enclosure under maintenance is an administrator's decision, so
 // that one route asks for more than a session.
 apiRouter.get('/enclosures', requireAuth, listEnclosures);
-apiRouter.get('/enclosures/free', requireAuth, listFreeEnclosures);
+apiRouter.get(
+  '/enclosures/free',
+  requireAuth,
+  validate({ query: listFreeEnclosuresQuerySchema }),
+  listFreeEnclosures,
+);
 
 // The five numbers of the Enclosures dashboard. Two of them are computed by
 // the stored functions, so this route is where the application uses them.

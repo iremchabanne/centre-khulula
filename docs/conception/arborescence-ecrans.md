@@ -83,15 +83,22 @@ par le centre. **Deux écrans seulement portent une recherche**, ceux où l'on v
 | 2 · Les espèces | ✔ | — |
 | 4 · Nos animaux | ✔ | onglets *In our care* / *Released* |
 | 8 · Enclos *(Manage)* | — | — |
-| 9 · Liste des animaux | ✔ | **recherche par nom** + filtre de statut |
+| 9 · Liste des animaux | ✔ | **statut · espèce · nom · période d'admission** |
 | 11 · Liste des dons | ✔ | — |
 | 12 · Comptes du personnel | ✔ | **recherche par nom ou e-mail** |
 
-> **Périmètre réduit le 28/08/2026.** Une version précédente annonçait un filtre par statut de
-> conservation, par code d'enclos, par type, par espèce, par période et par rôle. Chacun coûte un
-> champ de formulaire, une règle de validation, une branche de requête et une surface de test, pour
-> un gain nul sur un jeu de données de cette taille. Ne restent que les deux recherches qui servent
-> un usage réel. Le reste est hors périmètre, et c'est la réponse à donner au jury.
+> **Pourquoi ces filtres et pas d'autres.** L'écran 9 est le seul où l'on cherche un animal parmi
+> tous ceux que le centre a connus, et la liste ne fait que grandir : un relâché y reste. Quatre
+> critères y suffisent, et chacun répond à une question posée pour de vrai — *dans quel état ?*,
+> *quelle espèce ?*, *lequel, nommément ?*, *admis quand ?*. L'espèce est le premier réflexe : avec
+> trente tortues, personne ne retient trente noms.
+>
+> Sont écartés le sexe et la classe d'âge, qu'on ne cherche jamais ; le lieu de découverte, qui
+> relève de l'étude et non de la consultation quotidienne ; le statut de conservation, qui décrit
+> l'espèce et non l'animal ; et le **code d'enclos**, parce que l'écran 8 liste déjà les dix enclos
+> avec leur occupant : *« qui est en E-04 ? »* y est répondu d'un coup d'œil. Chaque filtre coûte
+> une règle de validation, une branche de requête et une surface de test — c'est la réponse à
+> donner au jury.
 
 L'écran 12 a une recherche et non des onglets par rôle : l'administrateur cherche *une personne
 nommée*, dont il ne connaît pas forcément le métier.

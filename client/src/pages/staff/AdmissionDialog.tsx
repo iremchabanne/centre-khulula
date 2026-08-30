@@ -26,26 +26,43 @@ export default function AdmissionDialog({ onClose, onAdmitted }: Props) {
   const [submitting, setSubmitting] = useState(false);
   // Needed so the "centre is full" message is not shown while still loading.
   const [choicesLoaded, setChoicesLoaded] = useState(false);
+  // Which species is selected. The enclosure list depends on it (RG17).
+  const [speciesId, setSpeciesId] = useState('');
 
-  // The two dropdowns are filled from the server when the dialog opens.
-  async function loadChoices() {
-    const speciesResponse = await fetch('/api/species');
-    const enclosuresResponse = await fetch('/api/enclosures/free');
-
-    if (speciesResponse.ok) {
-      const page = await speciesResponse.json();
-      setSpecies(page.items);
+  // The species list never changes, so it is fetched once.
+  useEffect(() => {
+    async function loadSpecies() {
+      const response = await fetch('/api/species');
+      if (response.ok) {
+        const page = await response.json();
+        setSpecies(page.items);
+        // The dropdown shows the first species, so that is the one selected.
+        if (page.items.length > 0) {
+          setSpeciesId(String(page.items[0].id));
+        }
+      }
     }
-    if (enclosuresResponse.ok) {
-      setFreeEnclosures(await enclosuresResponse.json());
+
+    loadSpecies();
+  }, []);
+
+  // Only the enclosures that suit the chosen species (RG17). Runs again when
+  // the species changes, and after a 409 to refresh the list.
+  async function loadFreeEnclosures() {
+    if (speciesId === '') {
+      return;
     }
 
+    const response = await fetch(`/api/enclosures/free?species_id=${speciesId}`);
+    if (response.ok) {
+      setFreeEnclosures(await response.json());
+    }
     setChoicesLoaded(true);
   }
 
   useEffect(() => {
-    loadChoices();
-  }, []);
+    loadFreeEnclosures();
+  }, [speciesId]);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     // Without this the browser reloads the page and the dialog disappears.
@@ -105,7 +122,7 @@ export default function AdmissionDialog({ onClose, onAdmitted }: Props) {
       }
 
       if (response.status === 409) {
-        loadChoices();
+        loadFreeEnclosures();
       }
     } catch {
       setFormError('The server cannot be reached. Please try again.');
@@ -134,6 +151,7 @@ export default function AdmissionDialog({ onClose, onAdmitted }: Props) {
         <SelectField
           id="species_id"
           label="Species"
+          onChange={setSpeciesId}
           options={species.map((one) => ({
             value: String(one.id),
             label: one.common_name,
@@ -142,8 +160,8 @@ export default function AdmissionDialog({ onClose, onAdmitted }: Props) {
 
         {centreIsFull ? (
           <p role="status" className="rounded border border-khulula-line-strong p-3 text-sm">
-            No enclosure is free. Nothing can be admitted until one is released or comes out of
-            maintenance.
+            No enclosure of the right kind is free for this species. Nothing can be admitted until
+            one is released or comes out of maintenance.
           </p>
         ) : (
           <SelectField
