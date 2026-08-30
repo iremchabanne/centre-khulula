@@ -70,6 +70,17 @@ est toujours accompagnée du libellé écrit (RGAA 3.1).
 Enclos : `free` `#3F8A4B` · `occupied` `#A85128` · `maintenance` `#9AA096` — également doublés
 d'un libellé texte.
 
+**Échelle UICN** — les cinq degrés de l'écran 3, du moins au plus menacé. Le libellé est toujours
+écrit : la couleur classe, elle n'informe pas seule.
+
+| Degré | Texte | Fond |
+|---|---|---|
+| `least_concern` | `#2F6B33` | `#E3EFE1` |
+| `near_threatened` | `#14605F` | `#DCEBEA` |
+| `vulnerable` | `#8A5A12` | `#F7EBD7` |
+| `endangered` | `#A85128` | `#F6E9DD` |
+| `critically_endangered` | `#A32020` | `#F7E3E3` |
+
 ### 2.3 Contrôle de contraste
 
 Tous les couples ont été mesurés selon la formule WCAG 2.1. **Seuil retenu : AA (4,5:1)** pour le
@@ -89,6 +100,11 @@ texte courant.
 | Étiquette *Released* | 5,41 | ✔ |
 | Étiquette *Deceased* | 5,66 | ✔ |
 | Message d'erreur sur fond | 7,06 | ✔ |
+| UICN *least concern* | 5,41 | ✔ |
+| UICN *near threatened* | 5,97 | ✔ |
+| UICN *vulnerable* | 5,02 | ✔ |
+| UICN *endangered* | 4,55 | ✔ |
+| UICN *critically endangered* | 6,12 | ✔ |
 | `--on-dark` sur encre | 10,70 | ✔ |
 | `--on-dark-muted` sur encre | 6,02 | ✔ |
 

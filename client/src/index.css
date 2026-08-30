@@ -34,6 +34,18 @@
   --color-enclosure-free: #3f8a4b;
   --color-enclosure-maintenance: #9aa096;
 
+  /* §2.2, the IUCN scale of screen 3. Contrast measured, all AA. */
+  --color-iucn-least: #2f6b33;
+  --color-iucn-least-bg: #e3efe1;
+  --color-iucn-near: #14605f;
+  --color-iucn-near-bg: #dcebea;
+  --color-iucn-vulnerable: #8a5a12;
+  --color-iucn-vulnerable-bg: #f7ebd7;
+  --color-iucn-endangered: #a85128;
+  --color-iucn-endangered-bg: #f6e9dd;
+  --color-iucn-critical: #a32020;
+  --color-iucn-critical-bg: #f7e3e3;
+
   /* §5 — form errors: the message under the field and the field border. */
   --color-khulula-error: #a32020;
 

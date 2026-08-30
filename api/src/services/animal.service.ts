@@ -53,9 +53,20 @@ export class AnimalService {
     // distinction, someone reading the site does not.
     const inCare: AnimalStatus[] = ['admitted', 'in_care', 'recovering'];
 
-    const statuses = query.status === 'released' ? (['released'] as AnimalStatus[]) : inCare;
+    let statuses: AnimalStatus[] = [...inCare, 'released'];
 
-    const where = { status: { in: statuses } };
+    if (query.status === 'released') {
+      statuses = ['released'];
+    }
+    if (query.status === 'in_care') {
+      statuses = inCare;
+    }
+
+    const where: Prisma.AnimalWhereInput = { status: { in: statuses } };
+
+    if (query.species_id) {
+      where.species_id = query.species_id;
+    }
 
     const animals = await this.prisma.animal.findMany({
       where,

@@ -167,9 +167,17 @@ export type CreateObservationInput = z.infer<typeof createObservationSchema>;
 // under `in_care` for the public — a visitor does not need the clinical detail
 // — and `deceased` is deliberately absent: it is never shown publicly.
 export const listAnimalsQuerySchema = z.strictObject({
-  status: z.enum(['in_care', 'released'], {
-    error: 'The filter must be in_care or released',
-  }),
+  // Optional: screen 4 always sends one of the two tabs, screen 3 sends none
+  // and gets both. `deceased` is not offered here and never will be — the
+  // centre communicates on its work, not on individual failures.
+  status: z
+    .enum(['in_care', 'released'], {
+      error: 'The filter must be in_care or released',
+    })
+    .optional(),
+
+  // Screen 3 — the animals of one species.
+  species_id: z.coerce.number().int().positive().optional(),
 
   page: pageNumber,
 });
