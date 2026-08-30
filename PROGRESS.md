@@ -152,12 +152,16 @@ accident.
   `Toolbar` and `Tabs` are written as plain HTML on each page instead.
 - **No form library, and no Zod on the client.** Decided 28 August, see `docs/decisions.md`.
 
-**Step 20, done 30 August — the shell around those pages works.** The Vite proxy forwards `/api`,
-so the browser sees one origin and no `fetch` needs a `credentials` option. The login page is the
-pattern the seven other forms copy: a `FormData` action, three state variables, plain `if` checks.
-`StaffLayout` asks `GET /api/auth/me` on load, so the session survives a reload and an address
-typed by hand lands on the login page. The menu hides the two administrator links — tidiness, not
-security: those routes are `requireAdmin` on the server. The error page carries its three states.
+**Step 20 — done 30 August.** The shell around the empty pages:
+
+- Vite proxy: `/api` goes to the API. One origin, so no CORS and no `credentials` option.
+- Login page. The pattern the seven other forms copy: a `FormData` action, three state
+  variables, plain `if` checks.
+- `StaffLayout` calls `GET /api/auth/me`, so the session survives a reload and an address typed
+  by hand lands on the login page.
+- Sidebar hides the two admin links. Those routes are `requireAdmin` on the server; hiding the
+  link is comfort, not security.
+- Error page: 404, 403, session expired.
 
 ### Docker — the whole stack in one command
 
@@ -174,21 +178,18 @@ git-ignored files.
 
 ## 2. What is next
 
-**Step 21 — the staff screens.** Enclosures first, because the admission dialog and its
-access-conflict state are what show CP 8's work to a reader. Each screen is also what finally
-wires `/staff/denied` and `/staff/session-expired`: a page that fetches can receive a 403 or a
-401, an empty shell cannot.
+**Step 21 — the staff screens.** Enclosures first: the admission dialog and its access-conflict
+state are the best evidence for CP 8.
 
-Still owed on the pages themselves: the search by name of screens 9 and 12, written when those
-screens are.
+Two things follow from the screens, not before them:
 
-The rule for the whole frontend, decided 27 August: **plain React**. `useState`, `useEffect`,
-`fetch`. Two libraries only — React Router and Tailwind. No state manager, no data-fetching
-library, no component library, **and no form library**. See `PLAN.md`, Track D.
+- `/staff/denied` and `/staff/session-expired` get wired — a page that fetches can receive a 403
+  or a 401, an empty shell cannot.
+- The search by name of screens 9 and 12, the last route the API still owes.
 
-The resolver question is closed, 28 August: there is no resolver, because there is no React Hook
-Form and no Zod on the client. The forms are written by hand and validated with plain `if` checks.
-The decision and its arithmetic are in `docs/decisions.md`, Tech stack.
+The frontend rule, 27 August: **plain React** — `useState`, `useEffect`, `fetch`. Two libraries
+only, React Router and Tailwind. No state manager, no data-fetching library, no component
+library, no form library. See `PLAN.md`, Track D.
 
 ---
 

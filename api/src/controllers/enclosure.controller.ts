@@ -17,6 +17,12 @@ export async function listFreeEnclosures(req: Request, res: Response): Promise<v
   res.json(enclosures);
 }
 
+export async function getDashboard(req: Request, res: Response): Promise<void> {
+  const dashboard = await enclosureService.getDashboard();
+
+  res.json(dashboard);
+}
+
 export async function setEnclosureMaintenance(req: Request, res: Response): Promise<void> {
   // Both have been parsed by the validate middleware before this line ran.
   const { id } = req.params as unknown as { id: number };

@@ -224,31 +224,39 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 - [x] Project setup (Vite), routing, the two layouts (public site / staff app).
 - [x] The charte graphique palette declared once in the Tailwind theme —
       **never a hardcoded colour**.
-- [x] Shared components, and only **three**: status pill, pager, modal. Decided 28/08/2026,
-      down from six. A generic `Table` needs a column configuration to be learnt before a page
-      can be read, `Toolbar` is a `<div>`, and `Tabs` is two buttons and a `useState` used on two
-      screens. Those three are written again on each page as plain HTML. The answer to give the
-      jury: repeating ten readable lines was preferred to an abstraction that would have to be
-      decoded before the page could be understood.
+- [x] Shared components: status pill, pager, modal. Decided 28/08/2026, down from six.
+      A generic `Table` was refused: its column configuration has to be learnt before a page can
+      be read.
+
+      **Revised 30/08/2026 — two more, and the rule that decides the next ones.** A component is
+      written when it is used on two screens **and** has nothing to configure. `Button` and
+      `FormField` qualify; a `Table` does not. `SearchBox` and `Tabs` come when their second
+      screen exists.
+
+      `FormField` is the one that matters: it holds the label, the error and the
+      `aria-invalid` / `aria-describedby` wiring, so the RGAA rules are written once instead of
+      eight times.
 - [x] The `api` and `client` Docker services, completing step 7.
 
 ### Step 20 — Staff shell  ·  **done 30/08/2026**
 
-- [x] The Vite proxy: `/api` is forwarded to the API, so the browser sees one origin and the
-      session cookie needs no `credentials` option.
-- [x] Login, sign-out, and the session kept across a reload — `StaffLayout` asks
-      `GET /api/auth/me` and sends anyone without a session back to the login page.
-- [x] Sidebar filtered by `is_admin`. `role` filters no link: it guards an action, not a page.
-- [x] The error page, one screen and three states — 404, 403, session expired.
+- [x] Vite proxy: `/api` goes to the API. One origin, so no CORS and no `credentials` option.
+- [x] Login and sign-out.
+- [x] The session survives a reload — `StaffLayout` calls `GET /api/auth/me`.
+- [x] Sidebar filtered by `is_admin`. `role` hides no link: it guards actions, not pages.
+- [x] Error page: one screen, three states (404, 403, session expired).
 
-> **Written limit:** `/staff/denied` and `/staff/session-expired` exist but nothing navigates to
-> them yet. The staff pages are still empty shells, so no `fetch` can receive a 403 or a 401.
-> Step 21 wires them.
+> **Limit:** nothing navigates to `/staff/denied` or `/staff/session-expired` yet. The staff
+> pages fetch nothing, so they cannot receive a 403 or a 401. Step 21 wires them.
 
 ### Step 21 — The staff screens
 
-- [ ] Enclos (Overview + Manage tabs) · Liste des animaux · Fiche animal · **Admission and its
-      access-conflict state** · Fiches espèces · Liste des dons · Comptes du personnel.
+- [x] **Enclos — Overview, Manage, admission and its access-conflict state.** Done 30/08/2026.
+      Added `GET /api/dashboard`, the route that finally calls the two stored functions.
+      Dropped from the mockup: search, filters, pagination and "New enclosure" — the API has no
+      route for them and no CP asks for them.
+- [ ] Liste des animaux · Fiche animal
+- [ ] Fiches espèces · Liste des dons · Comptes du personnel
 
 ### Step 19 — The 6 public pages
 

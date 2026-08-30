@@ -29,6 +29,11 @@
   --color-deceased: #5b5b5b;
   --color-deceased-bg: #eceae7;
 
+  /* §2.2, enclosures. `occupied` is the accent colour itself, so it is not
+     declared twice: write text-khulula-accent for that one. */
+  --color-enclosure-free: #3f8a4b;
+  --color-enclosure-maintenance: #9aa096;
+
   /* §5 — form errors: the message under the field and the field border. */
   --color-khulula-error: #a32020;
 

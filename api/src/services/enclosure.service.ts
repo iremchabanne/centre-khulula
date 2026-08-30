@@ -122,4 +122,31 @@ export class EnclosureService {
 
     return updated;
   }
+
+  // The five numbers of the Enclosures dashboard.
+  //
+  // The last two come from the stored functions of the migration
+  // 20260822103015, not from TypeScript: what counts as a usable enclosure,
+  // and how a stay is measured, belong next to the data.
+  async getDashboard() {
+    const occupied = await this.prisma.enclosure.count({ where: { status: 'occupied' } });
+    const free = await this.prisma.enclosure.count({ where: { status: 'free' } });
+    const maintenance = await this.prisma.enclosure.count({ where: { status: 'maintenance' } });
+
+    // ::float because both functions return NUMERIC, which Prisma hands back as
+    // a string. The average stays null when no stay has ended yet — "no data"
+    // and "zero days" are different facts.
+    const rows = await this.prisma.$queryRaw<
+      { occupancy_rate: number; average_stay_days: number | null }[]
+    >`SELECT occupancy_rate()::float AS occupancy_rate,
+             average_stay_length_days()::float AS average_stay_days`;
+
+    return {
+      occupied,
+      free,
+      maintenance,
+      occupancy_rate: rows[0].occupancy_rate,
+      average_stay_days: rows[0].average_stay_days,
+    };
+  }
 }

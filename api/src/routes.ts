@@ -11,6 +11,7 @@ import { login, logout, getCurrentStaff } from './controllers/auth.controller';
 import {
   listEnclosures,
   listFreeEnclosures,
+  getDashboard,
   setEnclosureMaintenance,
 } from './controllers/enclosure.controller';
 import {
@@ -110,6 +111,10 @@ apiRouter.get(
 // that one route asks for more than a session.
 apiRouter.get('/enclosures', requireAuth, listEnclosures);
 apiRouter.get('/enclosures/free', requireAuth, listFreeEnclosures);
+
+// The five numbers of the Enclosures dashboard. Two of them are computed by
+// the stored functions, so this route is where the application uses them.
+apiRouter.get('/dashboard', requireAuth, getDashboard);
 apiRouter.patch(
   '/enclosures/:id/maintenance',
   requireAdmin,

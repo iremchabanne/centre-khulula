@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import Button from '../../components/Button';
+import FormField from '../../components/FormField';
+
 // One message per field, so an error can be shown under the field it belongs to.
 type FieldErrors = {
   email?: string;
@@ -78,62 +81,25 @@ export default function LoginPage() {
             </p>
           )}
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-khulula-ink">
-              Email <span aria-hidden="true">*</span>
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              // These two tie the field to its error message for a screen reader.
-              aria-invalid={fieldErrors.email ? true : undefined}
-              aria-describedby={fieldErrors.email ? 'email-error' : undefined}
-              className={
-                fieldErrors.email
-                  ? 'rounded border border-khulula-error px-3 py-2'
-                  : 'rounded border border-khulula-line-strong px-3 py-2'
-              }
-            />
-            {fieldErrors.email && (
-              <p id="email-error" className="text-sm text-khulula-error">
-                {fieldErrors.email}
-              </p>
-            )}
-          </div>
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            autoComplete="email"
+            error={fieldErrors.email}
+          />
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-khulula-ink">
-              Password <span aria-hidden="true">*</span>
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              aria-invalid={fieldErrors.password ? true : undefined}
-              aria-describedby={fieldErrors.password ? 'password-error' : undefined}
-              className={
-                fieldErrors.password
-                  ? 'rounded border border-khulula-error px-3 py-2'
-                  : 'rounded border border-khulula-line-strong px-3 py-2'
-              }
-            />
-            {fieldErrors.password && (
-              <p id="password-error" className="text-sm text-khulula-error">
-                {fieldErrors.password}
-              </p>
-            )}
-          </div>
+          <FormField
+            id="password"
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            error={fieldErrors.password}
+          />
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="rounded bg-khulula-primary px-4 py-2 font-medium text-white"
-          >
+          <Button type="submit" disabled={submitting}>
             {submitting ? 'Signing in…' : 'Sign in'}
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-xs text-khulula-muted">
