@@ -1,9 +1,10 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 28 August 2026
+**Updated:** 30 August 2026
 **Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
 **07/10/2026 23:59** · exam **October 2026**.
-**Status:** conception, database and API complete · **frontend skeleton up, screens still empty**
+**Status:** conception, database and API complete · **the staff shell works, the 13 screens are
+still empty**
 
 > **This file says where we are.** `PLAN.md` says what is left to do, and holds the open
 > decisions and the list of things not to forget. Design decisions live in the design documents.
@@ -135,7 +136,7 @@ because a backup that restores rows but not the hand-written SQL looks fine and 
 rather than picking the newest one: the newest backup is sometimes the one taken just after the
 accident.
 
-### Frontend — the skeleton stands, no screen has its content yet
+### Frontend — the staff shell works, the 13 screens are still empty
 
 `client/`, created 28 August with Vite, React 19 and TypeScript 6. Runs with `npm run dev`.
 
@@ -150,6 +151,13 @@ accident.
 - **Three shared components** — `StatusPill`, `Pager`, `Modal`. Down from six: `Table`,
   `Toolbar` and `Tabs` are written as plain HTML on each page instead.
 - **No form library, and no Zod on the client.** Decided 28 August, see `docs/decisions.md`.
+
+**Step 20, done 30 August — the shell around those pages works.** The Vite proxy forwards `/api`,
+so the browser sees one origin and no `fetch` needs a `credentials` option. The login page is the
+pattern the seven other forms copy: a `FormData` action, three state variables, plain `if` checks.
+`StaffLayout` asks `GET /api/auth/me` on load, so the session survives a reload and an address
+typed by hand lands on the login page. The menu hides the two administrator links — tidiness, not
+security: those routes are `requireAdmin` on the server. The error page carries its three states.
 
 ### Docker — the whole stack in one command
 
@@ -166,13 +174,13 @@ git-ignored files.
 
 ## 2. What is next
 
-**Step 20 — the staff shell**: login, sign-out, session expiry, and the side menu filtered by
-`role` and `is_admin`. It is the first screen with real content, and the first `fetch` to the
-API — which is where the Vite proxy gets its one line, so that `/api/...` reaches the server.
+**Step 21 — the staff screens.** Enclosures first, because the admission dialog and its
+access-conflict state are what show CP 8's work to a reader. Each screen is also what finally
+wires `/staff/denied` and `/staff/session-expired`: a page that fetches can receive a 403 or a
+401, an empty shell cannot.
 
-Open and undecided: **how many species the centre admits.** A real rehabilitation centre would
-not take both a lion and an African penguin, the enclosures cannot suit every animal, and an
-open-ended list is hard to keep coherent. To settle before the species screens.
+Still owed on the pages themselves: the search by name of screens 9 and 12, written when those
+screens are.
 
 The rule for the whole frontend, decided 27 August: **plain React**. `useState`, `useEffect`,
 `fetch`. Two libraries only — React Router and Tailwind. No state manager, no data-fetching

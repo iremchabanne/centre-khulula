@@ -38,6 +38,9 @@ export default function App() {
         {/* Login has no side menu, so it stays outside StaffLayout */}
         <Route path="/staff/login" element={<LoginPage />} />
 
+        {/* Outside StaffLayout too: there is no session left to draw a menu from */}
+        <Route path="/staff/session-expired" element={<ErrorPage kind="session-expired" />} />
+
         {/* Staff area — StaffLayout refuses these pages without a session */}
         <Route element={<StaffLayout />}>
           <Route path="/staff/enclosures" element={<EnclosuresPage />} />
@@ -45,6 +48,8 @@ export default function App() {
           <Route path="/staff/animals/:id" element={<AnimalDetailPage />} />
           <Route path="/staff/donations" element={<DonationListPage />} />
           <Route path="/staff/accounts" element={<StaffAccountsPage />} />
+          {/* Where a staff page sends the user when the API answers 403 */}
+          <Route path="/staff/denied" element={<ErrorPage kind="denied" />} />
         </Route>
 
         {/* Any address that matches nothing above */}

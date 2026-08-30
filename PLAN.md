@@ -232,11 +232,18 @@ Two short shell scripts, plain commands, no functions and no options to parse.
       decoded before the page could be understood.
 - [x] The `api` and `client` Docker services, completing step 7.
 
-### Step 20 — Staff shell
+### Step 20 — Staff shell  ·  **done 30/08/2026**
 
-- [ ] Login, sign-out, session expiry.
-- [ ] Sidebar filtered by role and by `is_admin`.
-- [ ] The access-denied / not-found / session-expired page.
+- [x] The Vite proxy: `/api` is forwarded to the API, so the browser sees one origin and the
+      session cookie needs no `credentials` option.
+- [x] Login, sign-out, and the session kept across a reload — `StaffLayout` asks
+      `GET /api/auth/me` and sends anyone without a session back to the login page.
+- [x] Sidebar filtered by `is_admin`. `role` filters no link: it guards an action, not a page.
+- [x] The error page, one screen and three states — 404, 403, session expired.
+
+> **Written limit:** `/staff/denied` and `/staff/session-expired` exist but nothing navigates to
+> them yet. The staff pages are still empty shells, so no `fetch` can receive a 403 or a 401.
+> Step 21 wires them.
 
 ### Step 21 — The staff screens
 
