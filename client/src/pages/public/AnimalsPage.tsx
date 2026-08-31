@@ -63,7 +63,7 @@ export default function AnimalsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <h1 className="mb-2 font-heading text-3xl text-khulula-ink">Rescues</h1>
-      <p className="mb-8 max-w-2xl text-khulula-muted">
+      <p className="mb-8 text-khulula-muted">
         Who we are treating today, and who has already gone home. Every animal here was found
         injured, orphaned or confiscated somewhere in Limpopo, and every one of them is meant to
         go back home.
