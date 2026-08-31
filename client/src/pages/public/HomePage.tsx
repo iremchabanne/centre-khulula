@@ -55,21 +55,21 @@ export default function HomePage() {
     <div>
       {/* Edge to edge: the negative margins cancel the padding PublicLayout
           puts around every page, so the banner touches the window. */}
-      <img
-        src="/images/limpopo.jpg"
-        alt="The Limpopo bushveld, the region the centre works in"
-        className="-mx-8 -mt-8 mb-10 h-72 w-[calc(100%+4rem)] object-cover"
-      />
+      <div className="-mx-8 -mt-8 mb-10">
+        <img
+          src="/images/limpopo.jpg"
+          alt="The Limpopo bushveld, the region the centre works in"
+          className="h-72 w-full object-cover"
+        />
+      </div>
 
-      <div className="mx-auto max-w-5xl">
-        <div className="text-center">
+      <div className="mx-auto max-w-5xl text-center">
         <p className="type-eyebrow">Limpopo · South Africa</p>
 
         <h1 className="type-display mx-auto mt-4 max-w-[15ch]">
-          Every animal we treat is meant to go home
+          Every animal we treat is meant to go home.
         </h1>
 
-        {/* mx-auto keeps the paragraph narrow enough to read and still centred. */}
         <p className="type-lede mx-auto mt-5 max-w-[52ch]">
           The centre runs on donations alone.
         </p>
@@ -84,64 +84,65 @@ export default function HomePage() {
         </p>
       </div>
 
-      <div className="mt-12 flex flex-wrap gap-5">
-        <Stat number={inCareTotal} label="Animals in our care" />
-        <Stat number={releasedTotal} label="Released back to the wild" />
-        <Stat number={speciesTotal} label="Species we take in" />
-      </div>
+      <div className="mx-auto max-w-5xl">
+        <div className="flex flex-wrap gap-5">
+          <Stat number={inCareTotal} label="Animals in our care" />
+          <Stat number={releasedTotal} label="Released back to the wild" />
+          <Stat number={speciesTotal} label="Species we take in" />
+        </div>
 
-      <section className="mt-[60px]">
-        <p className="type-eyebrow">Our mission</p>
+        <section className="mt-[60px]">
+          <p className="type-eyebrow">Our mission</p>
 
-        <p className="type-mission mt-3 max-w-[60ch]">
-          We take in wildlife that is <em>injured</em>, <em>orphaned</em> or{' '}
-          <em>confiscated</em>, and we give it back to the wild.
-        </p>
-      </section>
+          <p className="type-mission mt-3 max-w-[60ch]">
+            We take in wildlife that is <em>injured</em>, <em>orphaned</em> or{' '}
+            <em>confiscated</em>, and we give it back to the wild.
+          </p>
+        </section>
 
-      <section className="mt-12 rounded-lg bg-khulula-surface-alt p-8">
-        {/* The heading is the link to the full list. The arrow is what says
-            so; aria-hidden keeps it out of the reading. */}
-        <h2 className="type-section mb-6">
-          <Link to="/animals">
-            Currently recovering <span aria-hidden="true">›</span>
-          </Link>
-        </h2>
+        <section className="mt-12 rounded-lg bg-khulula-surface-alt p-8">
+          {/* The heading is the link to the full list. The arrow is what says
+              so; aria-hidden keeps it out of the reading. */}
+          <h2 className="type-section mb-6">
+            <Link to="/animals" className="text-khulula-primary">
+              Currently recovering <span aria-hidden="true">›</span>
+            </Link>
+          </h2>
 
-        {/* Grid, not flex: the cards have to line up in both directions. They
-            carry no link — there is no public animal page (RG11). */}
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {inCare.map((animal) => (
-            <li
-              key={animal.id}
-              className="overflow-hidden rounded-lg border border-khulula-line bg-khulula-surface"
-            >
-              <div className="h-40 bg-khulula-surface-alt">
-                <img
-                  src={animal.species.photo_url}
-                  alt=""
-                  className="h-40 w-full object-cover object-top"
-                  onError={(event) => {
-                    event.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
+          {/* Grid, not flex: the cards have to line up in both directions. They
+              carry no link — there is no public animal page (RG11). */}
+          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {inCare.map((animal) => (
+              <li
+                key={animal.id}
+                className="overflow-hidden rounded-lg border border-khulula-line bg-khulula-surface"
+              >
+                <div className="h-40 bg-khulula-surface-alt">
+                  <img
+                    src={animal.species.photo_url}
+                    alt=""
+                    className="h-40 w-full object-cover object-top"
+                    onError={(event) => {
+                      event.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
 
-              <div className="p-4">
-                <StatusPill status={animal.status} />
+                <div className="p-4">
+                  <StatusPill status={animal.status} />
 
-                <p className="mt-2 font-heading text-lg text-khulula-ink">
-                  {animal.name}{' '}
-                  <span className="text-base font-normal italic text-khulula-muted">
-                    · {animal.species.common_name}
-                  </span>
-                </p>
+                  <p className="mt-2 font-heading text-lg text-khulula-ink">
+                    {animal.name}{' '}
+                    <span className="text-base font-normal italic text-khulula-muted">
+                      · {animal.species.common_name}
+                    </span>
+                  </p>
 
-                <p className="mt-2 text-sm text-khulula-muted">{animal.admission_reason}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+                  <p className="mt-2 text-sm text-khulula-muted">{animal.admission_reason}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </div>

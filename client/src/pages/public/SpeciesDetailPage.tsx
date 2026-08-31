@@ -106,8 +106,8 @@ export default function SpeciesDetailPage() {
           </p>
 
           <p className="mt-2">
-            <Link to="/animals" className="underline decoration-1 underline-offset-4">
-              See every animal we have taken in
+            <Link to="/animals" className="font-medium text-khulula-primary">
+              See our rescues <span aria-hidden="true">›</span>
             </Link>
           </p>
         </div>
