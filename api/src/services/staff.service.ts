@@ -34,13 +34,26 @@ export class StaffService {
   }
 
   async findAll(query: ListStaffQuery) {
+    const where: Prisma.StaffMemberWhereInput = {};
+
+    if (query.search) {
+      // OR: kept if the text matches the name or the email.
+      // `contains` becomes a parameterised LIKE — the text is never executed.
+      where.OR = [
+        { full_name: { contains: query.search, mode: 'insensitive' } },
+        { email: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+
     const staff = await this.prisma.staffMember.findMany({
+      where,
       orderBy: { full_name: 'asc' },
       select: publicFields,
       ...pageQuery(query.page),
     });
 
-    const total = await this.prisma.staffMember.count();
+    // The same `where`, or the pager would count the whole table.
+    const total = await this.prisma.staffMember.count({ where });
 
     return pageResult(staff, total, query.page);
   }

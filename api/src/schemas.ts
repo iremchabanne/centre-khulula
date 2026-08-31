@@ -364,6 +364,9 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 // The staff list, paginated like every other list (§6.4).
 export const listStaffQuerySchema = z.strictObject({
+  // Searched in the name and the email. Capped at 100 like the column itself.
+  search: z.string().trim().max(100).optional(),
+
   page: pageNumber,
 });
 

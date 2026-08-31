@@ -33,7 +33,7 @@ export default function Button({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`min-h-11 rounded px-4 py-2 font-medium disabled:opacity-60 ${variantClasses}`}
+      className={`min-h-11 rounded px-3 py-2 font-medium disabled:opacity-60 ${variantClasses}`}
     >
       {children}
     </button>
