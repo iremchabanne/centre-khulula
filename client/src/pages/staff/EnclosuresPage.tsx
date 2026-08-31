@@ -95,7 +95,7 @@ export default function EnclosuresPage() {
     <div>
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-heading text-2xl text-khulula-ink">Enclosures</h1>
+          <h1 className="mb-2 font-heading text-2xl text-khulula-ink">Enclosures</h1>
           <p className="text-sm text-khulula-muted">
             Live occupancy. Status is derived automatically from current stays (RG3).
           </p>

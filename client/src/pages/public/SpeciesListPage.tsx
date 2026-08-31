@@ -50,10 +50,12 @@ export default function SpeciesListPage() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="font-heading text-3xl text-khulula-ink">The species we take in</h1>
-      <p className="mb-8 max-w-2xl text-khulula-muted">
-        Khulula treats small and medium indigenous wildlife of Limpopo. Nine species, and every
-        one of them lives here.
+      <h1 className="mb-2 font-heading text-3xl text-khulula-ink">The species we take in</h1>
+      <p className="mb-8 text-khulula-muted">
+        Khulula treats small and medium indigenous wildlife. All nine species are native to
+        Limpopo, and our centre only takes in animals we can return to the province they came
+        from. None of them is the animal on the poster. They’re overlooked species, but each
+        plays a vital role in the ecosystem.
       </p>
 
       <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -89,10 +91,12 @@ export default function SpeciesListPage() {
 function SpeciesPhoto({ url }: { url: string }) {
   return (
     <div className="h-40 bg-khulula-surface-alt">
+      {/* object-top: the crop keeps the top of the photograph, where the
+          animal's head usually is. */}
       <img
         src={url}
         alt=""
-        className="h-40 w-full object-cover"
+        className="h-40 w-full object-cover object-top"
         onError={(event) => {
           event.currentTarget.style.display = 'none';
         }}

@@ -34,7 +34,7 @@ export default function SiteHeader() {
           Species
         </NavLink>
         <NavLink to="/animals" className={linkClasses}>
-          Our animals
+          Rescues
         </NavLink>
       </nav>
 

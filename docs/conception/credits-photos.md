@@ -18,3 +18,7 @@ contre 6 Mo pour les originaux. C'est une mesure d'éco-conception, pas un déta
 | Southern Ground Hornbill | Bernard DUPONT from FRANCE | CC BY-SA 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Southern_Ground_Hornbill_(Bucorvus_leadbeateri)_male_(12714625605),_crop.jpg) |
 | Spotted Eagle-Owl | Charles J. Sharp | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:Spotted_eagle_owl_bubo_africanus.jpg) |
 | Temminck's Pangolin | U.S. Fish and Wildlife Service Headquarters | CC BY 2.0 | [Commons](https://commons.wikimedia.org/wiki/File:Manis_temminckii_(29645803646).jpg) |
+
+**Modifications.** La photographie du pangolin de Temminck a été recadrée (800 × 533 → 800 × 420)
+pour tenir dans les cartes du site. Les licences CC BY et CC BY-SA imposent d'indiquer qu'une
+œuvre a été modifiée ; les huit autres photographies sont utilisées telles quelles.

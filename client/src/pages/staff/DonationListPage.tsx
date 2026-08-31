@@ -62,7 +62,7 @@ export default function DonationListPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl text-khulula-ink">Donations</h1>
+      <h1 className="mb-2 font-heading text-2xl text-khulula-ink">Donations</h1>
       <p className="mb-6 text-sm text-khulula-muted">
         Recorded intentions to give. The centre takes no payment here: no card is ever asked for.
         The email address is the only way to thank a donor or come back to them.

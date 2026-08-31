@@ -116,7 +116,7 @@ export default function StaffAccountsPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl text-khulula-ink">Staff accounts</h1>
+      <h1 className="mb-2 font-heading text-2xl text-khulula-ink">Staff accounts</h1>
       <p className="mb-6 text-sm text-khulula-muted">
         An account is never deleted, only deactivated: the stays and observations it signed keep
         pointing at a real name.

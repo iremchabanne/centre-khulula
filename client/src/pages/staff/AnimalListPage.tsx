@@ -118,7 +118,7 @@ export default function AnimalListPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl text-khulula-ink">Animals</h1>
+      <h1 className="mb-2 font-heading text-2xl text-khulula-ink">Animals</h1>
       <p className="mb-6 text-sm text-khulula-muted">
         Every animal the centre has taken in, including those released and deceased.
       </p>

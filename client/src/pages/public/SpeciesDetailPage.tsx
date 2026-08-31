@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import IucnPill from './IucnPill';
-import StatusPill from '../../components/StatusPill';
 import { iucnLabel } from './speciesLabels';
 import type { IucnStatus } from './speciesLabels';
 
@@ -21,20 +20,12 @@ type Species = {
   released: number;
 };
 
-// The animals of this species the centre has had. `deceased` is never among
-// them: the API does not return it publicly.
-type Animal = {
-  id: number;
-  name: string;
-  status: 'admitted' | 'in_care' | 'recovering' | 'released';
-  admitted_at: string;
-  outcome_at: string | null;
-};
-
 export default function SpeciesDetailPage() {
   const { id } = useParams();
   const [species, setSpecies] = useState<Species | null>(null);
-  const [animals, setAnimals] = useState<Animal[]>([]);
+  // The names of this species currently in care. Only the names: the sentence
+  // below needs nothing else.
+  const [inCareNames, setInCareNames] = useState<string[]>([]);
   const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
@@ -49,10 +40,10 @@ export default function SpeciesDetailPage() {
 
         setSpecies(await response.json());
 
-        const animalsResponse = await fetch(`/api/animals?species_id=${id}`);
+        const animalsResponse = await fetch(`/api/animals?status=in_care&species_id=${id}`);
         if (animalsResponse.ok) {
           const page = await animalsResponse.json();
-          setAnimals(page.items);
+          setInCareNames(page.items.map((animal: { name: string }) => animal.name));
         }
       } catch {
         setLoadError('The server cannot be reached.');
@@ -72,15 +63,7 @@ export default function SpeciesDetailPage() {
 
   return (
     <article className="mx-auto max-w-5xl">
-      {/* A fixed height so all nine frame the same way, and `contain` rather
-          than `cover`: the whole photograph is shown, never cropped. */}
-      <img
-        src={species.photo_url}
-        alt={`A ${species.common_name} photographed in the wild`}
-        className="h-72 w-full rounded-lg bg-khulula-surface-alt object-contain"
-      />
-
-      <p className="mt-5 text-sm text-khulula-muted">
+      <p className="text-sm text-khulula-muted">
         <Link to="/species" className="underline">
           Species
         </Link>
@@ -90,71 +73,92 @@ export default function SpeciesDetailPage() {
         {species.common_name}
       </p>
 
-      <div className="mt-4 grid gap-8 md:grid-cols-[2fr_1fr]">
-        <div>
-          <IucnPill status={species.iucn_status} />
+      {/* Two halves: the photograph on the left, what the species is on the
+          right. Below them, "At a glance" runs the full width. */}
+      <div className="mt-4 grid gap-8 md:grid-cols-2">
+        {/* A fixed height and `cover`, so all nine photographs frame the same
+            way whatever their own proportions. */}
+        <img
+          src={species.photo_url}
+          alt={`A ${species.common_name} photographed in the wild`}
+          className="h-80 w-full rounded-lg bg-khulula-surface-alt object-cover object-top"
+        />
 
-          <h1 className="mt-3 font-heading text-3xl font-semibold text-khulula-ink">
+        <div>
+          <h1 className="font-heading text-3xl font-semibold text-khulula-ink">
             {species.common_name}
           </h1>
           <p className="mt-1 italic text-khulula-muted">{species.scientific_name}</p>
 
+          <p className="mt-3">
+            <IucnPill status={species.iucn_status} />
+          </p>
+
           <p className="mt-5">{species.description}</p>
+
+          {/* A sentence, not cards: naming the animals in a line of text says
+              the same thing without looking like something to click. There is
+              no public animal page — RG11. */}
+          <p className="mt-5">
+            {inCareNames.length > 0
+              ? `Right now we are caring for ${nameList(inCareNames)}.`
+              : `No ${species.common_name.toLowerCase()} is in our care right now.`}
+          </p>
+
+          <p className="mt-2">
+            <Link to="/animals" className="underline decoration-1 underline-offset-4">
+              See every animal we have taken in
+            </Link>
+          </p>
         </div>
-
-        <aside className="rounded-lg border border-khulula-line bg-khulula-surface p-5">
-          <h2 className="mb-4 font-heading text-lg font-semibold text-khulula-ink">At a glance</h2>
-
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-            <Row term="Habitat" value={species.habitat} />
-            <Row term="Diet" value={species.diet} />
-            <Row term="Activity" value={species.activity} />
-            <Row term="IUCN status" value={iucnLabel(species.iucn_status)} />
-            <Row term="Treated here" value={`${species.treated} ${plural(species.treated)}`} />
-            <Row term="Released" value={`${species.released} ${plural(species.released)}`} />
-          </dl>
-        </aside>
       </div>
 
-      {animals.length > 0 && (
-        <section className="mt-12">
-          <h2 className="mb-4 font-heading text-2xl font-semibold text-khulula-ink">
-            Animals we have cared for
-          </h2>
-
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {animals.map((animal) => (
-              <li
-                key={animal.id}
-                className="rounded-lg border border-khulula-line bg-khulula-surface p-4"
-              >
-                <StatusPill status={animal.status} />
-                <p className="mt-2 font-heading text-lg text-khulula-ink">{animal.name}</p>
-                <p className="text-sm text-khulula-muted">
-                  {animal.outcome_at
-                    ? `Released ${animal.outcome_at.slice(0, 10)}`
-                    : `Admitted ${animal.admitted_at.slice(0, 10)}`}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      {/* No visible heading: each term labels itself. aria-label still names
+          the region, which a screen reader announces when it reaches it. */}
+      <aside
+        aria-label="At a glance"
+        className="mt-8 rounded-lg border border-khulula-line bg-khulula-surface p-5"
+      >
+        {/* Six columns side by side on a wide screen, stacking as it narrows.
+            Each pair is a small block: the term, the value under it. */}
+        <dl className="grid gap-4 text-sm sm:grid-cols-3 lg:grid-cols-6">
+          <Row term="Habitat" value={species.habitat} />
+          <Row term="Diet" value={species.diet} />
+          <Row term="Activity" value={species.activity} />
+          <Row term="IUCN status" value={iucnLabel(species.iucn_status)} />
+          <Row term="Treated here" value={`${species.treated} ${plural(species.treated)}`} />
+          <Row term="Released" value={`${species.released} ${plural(species.released)}`} />
+        </dl>
+      </aside>
     </article>
   );
 }
 
-// One <dl> row. The two tags are returned loose, with no wrapper, because a
-// <dl> only accepts <dt> and <dd> as its direct children.
+// One cell of "At a glance": the term, the value under it. HTML allows a <div>
+// around a <dt>/<dd> pair inside a <dl>, which is what keeps each pair together
+// as one grid cell.
 function Row({ term, value }: { term: string; value: string }) {
   return (
-    <>
+    <div>
       <dt className="font-semibold text-khulula-ink">{term}</dt>
-      <dd className="text-khulula-body">{value}</dd>
-    </>
+      <dd className="mt-1 text-khulula-body">{value}</dd>
+    </div>
   );
 }
 
 function plural(count: number) {
   return count === 1 ? 'animal' : 'animals';
+}
+
+// ["Zola"] → "Zola" · ["Zola", "Amara"] → "Zola and Amara"
+// ["Zola", "Amara", "Nala"] → "Zola, Amara and Nala"
+function nameList(names: string[]) {
+  if (names.length === 1) {
+    return names[0];
+  }
+
+  const last = names[names.length - 1];
+  const others = names.slice(0, -1);
+
+  return `${others.join(', ')} and ${last}`;
 }

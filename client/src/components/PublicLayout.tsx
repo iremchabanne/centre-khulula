@@ -8,10 +8,12 @@ import SiteFooter from './SiteFooter';
 // address, so the header and the footer are written once and not six times.
 export default function PublicLayout() {
   return (
-    <div className="min-h-screen bg-khulula-bg text-khulula-body">
+    // A column as tall as the window, where <main> takes all the space left:
+    // the footer is pushed to the bottom even when the page is short.
+    <div className="flex min-h-screen flex-col bg-khulula-bg text-khulula-body">
       <SiteHeader />
 
-      <main className="p-8">
+      <main className="flex-1 p-8">
         <Outlet />
       </main>
 

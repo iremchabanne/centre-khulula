@@ -44,9 +44,9 @@ export class AnimalService {
 
   // The public list of animals — screen 4, no account needed.
   //
-  // A visitor never sees `deceased` animals, the enclosure, the admission
-  // reason or the outcome note: those are staff information (RG11). The fields
-  // are therefore named one by one in `select`, so a column added later cannot
+  // A visitor never sees `deceased` animals, the enclosure, `found_near` or
+  // the outcome note. `found_near` is the one RG11 names. The fields are
+  // therefore listed one by one in `select`, so a column added later cannot
   // leak by accident.
   async findPublicList(query: ListAnimalsQuery) {
     // The three clinical states a visitor sees as one. The centre needs the
@@ -79,7 +79,12 @@ export class AnimalService {
         status: true,
         admitted_at: true,
         outcome_at: true,
-        species: { select: { id: true, common_name: true } },
+        // Why the animal was brought in. It says nothing about a person, so
+        // RG11 does not cover it, and it is what a visitor comes to read.
+        admission_reason: true,
+        // The photograph belongs to the species, not to the animal: the centre
+        // keeps no photograph of each individual.
+        species: { select: { id: true, common_name: true, photo_url: true } },
       },
       ...pageQuery(query.page),
     });
