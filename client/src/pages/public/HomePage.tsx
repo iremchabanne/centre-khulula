@@ -71,7 +71,7 @@ export default function HomePage() {
         </h1>
 
         <p className="type-lede mx-auto mt-5 max-w-[52ch]">
-          The centre runs on donations alone.
+          Each one here is fed, treated and released on donations alone.
         </p>
 
         <p className="mt-6">
@@ -85,7 +85,7 @@ export default function HomePage() {
       </div>
 
       <div className="mx-auto max-w-5xl">
-        <div className="flex flex-wrap gap-5">
+        <div className="mt-12 flex flex-wrap gap-5">
           <Stat number={inCareTotal} label="Animals in our care" />
           <Stat number={releasedTotal} label="Released back to the wild" />
           <Stat number={speciesTotal} label="Species we take in" />
@@ -155,7 +155,7 @@ function Stat({ number, label }: { number: number; label: string }) {
   return (
     <div className="flex-1 border-t-2 border-khulula-accent pt-3 text-center">
       <p className="type-stat">{number}</p>
-      <p className="mt-1 text-[0.8125rem] text-khulula-muted">{label}</p>
+      <p className="mt-1 text-sm text-khulula-body">{label}</p>
     </div>
   );
 }

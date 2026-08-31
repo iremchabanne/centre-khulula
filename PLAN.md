@@ -266,6 +266,11 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 - [x] **Accueil · Nos animaux · Faire un don · Mentions légales** — done 31/08/2026. The nine
       photographers are named on the legal notice page, as CC BY and CC BY-SA require.
 
+### Step 33 — Tidy up  ·  next session
+
+- [ ] Move the *New account* button (screen 12) and the *Admit an animal* button (screen 8).
+- [ ] Shorten the code, the comments and the documents across the project. Less to read.
+
 ### Step 22 — Accessibility pass  ·  RGAA, CP 2 and CP 5
 
 - [ ] Semantic HTML, coherent heading order.

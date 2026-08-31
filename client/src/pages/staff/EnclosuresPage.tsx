@@ -93,46 +93,48 @@ export default function EnclosuresPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="mb-2 font-heading text-2xl text-khulula-ink">Enclosures</h1>
-          <p className="text-sm text-khulula-muted">
-            Live occupancy. Status is derived automatically from current stays (RG3).
+      <div className="mb-6">
+        <h1 className="mb-2 font-heading text-2xl text-khulula-ink">Enclosures</h1>
+        <p className="text-sm text-khulula-muted">
+          Live occupancy. Status is derived automatically from current stays (RG3).
+        </p>
+        {centreIsFull && (
+          <p role="status" className="mt-2 text-sm text-khulula-error">
+            No enclosure is free. Nothing can be admitted until one is released or comes out of
+            maintenance.
           </p>
-          {centreIsFull && (
-            <p role="status" className="mt-2 text-sm text-khulula-error">
-              No enclosure is free. Nothing can be admitted until one is released or comes out of
-              maintenance.
-            </p>
-          )}
-        </div>
+        )}
+      </div>
+
+      {/* The tabs and the admission button on one row. The Maintenance tab is
+          administrators only; hiding it is comfort, the route itself is
+          requireAdmin. The button is for everyone, so it sits outside. */}
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        {staff.is_admin && (
+          <div role="tablist" aria-label="Enclosure views" className="flex gap-2">
+            <button
+              role="tab"
+              aria-selected={tab === 'overview'}
+              onClick={() => setTab('overview')}
+              className={tabClasses(tab === 'overview')}
+            >
+              Overview
+            </button>
+            <button
+              role="tab"
+              aria-selected={tab === 'manage'}
+              onClick={() => setTab('manage')}
+              className={tabClasses(tab === 'manage')}
+            >
+              Maintenance
+            </button>
+          </div>
+        )}
+
         <Button onClick={() => setShowAdmission(true)} disabled={centreIsFull}>
           Admit an animal
         </Button>
       </div>
-
-      {/* Two buttons and a state variable. The Manage tab is administrators
-          only; hiding it is comfort, the route itself is requireAdmin. */}
-      {staff.is_admin && (
-        <div role="tablist" aria-label="Enclosure views" className="mb-6 flex gap-2">
-          <button
-            role="tab"
-            aria-selected={tab === 'overview'}
-            onClick={() => setTab('overview')}
-            className={tabClasses(tab === 'overview')}
-          >
-            Overview
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === 'manage'}
-            onClick={() => setTab('manage')}
-            className={tabClasses(tab === 'manage')}
-          >
-            Manage the park
-          </button>
-        </div>
-      )}
 
       {actionError !== '' && (
         <p role="status" className="mb-4 text-sm text-khulula-error">
