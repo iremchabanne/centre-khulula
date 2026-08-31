@@ -17,7 +17,7 @@ finished piece proves. A step that is finished collapses here to one line — th
 | Order | Steps | Why here |
 |---|---|---|
 | 1 | **23**, **24**, **25**, **26**, **27**, **28** | Deliberately **before** the frontend. Each covers a criterion nothing else covers: tests (CP 9), load testing and fuzzing (CP 9, two separate items), code-quality tool (CP 11), CI (CP 11), backup and restore demonstrated (CP 7). None needs the frontend — they run against the API, which already exists. Left at the end, these are the ones that get dropped. |
-| 2 | **18**, **20**, then **21**, **19**, **22** | The frontend. Inside it: the shell and the login first, then the **admission dialog and its access-conflict state** — the screen that shows CP 8's work to a reader — then the remaining staff screens, then the public pages (RGAA + mentions légales), then the accessibility pass. |
+| 2 | ~~18, 20, 21, 19~~ · **22** | The frontend, **built**. Only the accessibility pass is left. Inside it: the shell and the login first, then the **admission dialog and its access-conflict state** — the screen that shows CP 8's work to a reader — then the remaining staff screens, then the public pages (RGAA + mentions légales), then the accessibility pass. |
 | 3 | **29** — deployment | CP 10 and CP 11. Blocked on an open decision. |
 | 4 | **30**, **31**, **32** — the DP itself | Written throughout, finished last. |
 
@@ -203,9 +203,7 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 
 ---
 
-## Track D — Frontend  ·  after Track E
-
-`client/` does not exist yet.
+## Track D — Frontend  ·  **the 13 screens are built**
 
 > **The rule for the whole of this track, decided 27/08/2026: nothing advanced.**
 > Plain React — `useState`, `useEffect` and `fetch`. **No** state-management library (Redux,
@@ -258,15 +256,15 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 - [x] **Liste des animaux** — filters: status, species, name, admission period. Done 30/08/2026.
 - [x] **Fiche animal** — observations, move (RG8), outcome (RG5, RG6). Done 30/08/2026.
 - [x] **Liste des dons** — administrators only. Done 30/08/2026.
-- [ ] **Comptes du personnel** — the last one, and the longest: create, activate/deactivate,
-      reset a password, search. RG13, RG14, RG15.
+- [x] **Comptes du personnel** — create, activate/deactivate, reset a password, search.
+      Done 31/08/2026. Added the `search` filter the staff list API was missing.
 
 ### Step 19 — The 6 public pages
 
 - [x] **Les espèces · Fiche espèce** — done 30/08/2026, with nine Wikimedia Commons photographs
       (884 KB in total) credited in `docs/conception/credits-photos.md`.
-- [ ] Accueil · Nos animaux · Faire un don · **Mentions légales** — the credits go on that page:
-      CC BY and CC BY-SA require the photographers to be named.
+- [x] **Accueil · Nos animaux · Faire un don · Mentions légales** — done 31/08/2026. The nine
+      photographers are named on the legal notice page, as CC BY and CC BY-SA require.
 
 ### Step 22 — Accessibility pass  ·  RGAA, CP 2 and CP 5
 

@@ -1,9 +1,9 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 30 August 2026
+**Updated:** 31 August 2026
 **Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
 **07/10/2026 23:59** · exam **October 2026**.
-**Status:** conception, database and API complete · **7 of the 13 screens built**
+**Status:** conception, database and API complete · **all 13 screens built**
 
 > **This file says where we are.** `PLAN.md` says what is left to do, and holds the open
 > decisions and the list of things not to forget. Design decisions live in the design documents.
@@ -143,43 +143,43 @@ because a backup that restores rows but not the hand-written SQL looks fine and 
 rather than picking the newest one: the newest backup is sometimes the one taken just after the
 accident.
 
-### Frontend — 7 screens of 13 built
+### Frontend — all 13 screens built
 
 `client/`, created 28 August with Vite, React 19 and TypeScript 6. Runs with `npm run dev`.
 
-**Built, and tested in the browser:**
-
 | Screen | What it carries |
 |---|---|
-| 7 · Login | Hand-written form. The pattern the other forms copy: `onSubmit`, `FormData`, plain `if` checks |
-| 8 · Enclosures | Dashboard numbers, admission dialog with its access-conflict state, maintenance table (admin) |
-| 9 · Animal list | Filters: status, species, name, admission period. Pagination |
+| 1 · Home | Banner, three live figures, mission, the animals in care |
+| 2 · Species | Nine cards with their photographs |
+| 3 · Species page | Photograph, description, *At a glance*, who is in care today |
+| 4 · Rescues | Two tabs, *In our care* / *Released*. Cards deliberately not clickable (RG11) |
+| 5 · Donate | Hand-written form, then the acknowledgement. No card field, ever |
+| 6 · Legal notice | RGPD notice + the photograph credits the licences require |
+| 7 · Login | The form pattern the other seven copy |
+| 8 · Enclosures | Dashboard, admission dialog with its access-conflict state, maintenance |
+| 9 · Animal list | Four filters, pagination |
 | 10 · Animal file | Observations, move (RG8), outcome (RG5, RG6, vet only) |
-| 11 · Donations | Admin only. A keeper who types the address lands on the access-denied screen |
-| 2 · Species list | Nine cards with their photographs |
-| 3 · Species page | Photograph, description, *At a glance*, and the animals of that species |
-
-**Still empty:** 12 · Comptes du personnel · 1 · Accueil · 4 · Nos animaux · 5 · Faire un don ·
-6 · Mentions légales.
+| 11 · Donations | Admin only |
+| 12 · Staff accounts | Create, activate/deactivate, reset a password, search. RG13–RG15 |
+| 13 · Error | 404, 403, session expired |
 
 **The rest of the frontend:**
 
 - **Routing** in `src/App.tsx`, the whole address map in one file.
 - **Two shells**: `PublicLayout` (header + footer) and `StaffLayout` (side menu). `StaffLayout` is
-  also the gate: it calls `GET /api/auth/me`, so the session survives a reload, an address typed
-  by hand lands on the login page, and the five staff screens are protected in one place.
-- **Vite proxy**: `/api` goes to the API, so the browser sees one origin — no CORS, and no
-  `credentials` option on any `fetch`.
-- **Tailwind**, palette declared once in `src/index.css`. No hex value anywhere else.
+  also the gate: it calls `GET /api/auth/me`, so the session survives a reload and the six staff
+  screens are protected in one place.
+- **Vite proxy**: `/api` goes to the API, so the browser sees one origin — no CORS.
+- **Tailwind**, palette **and type scale** declared once in `src/index.css`. No hex value and no
+  font size anywhere else.
 - **Shared components**: `StatusPill`, `Pager`, `Modal`, `Button`, `FormField`, `SelectField`,
   `IucnPill`. The rule for adding one: used on two screens **and** nothing to configure.
 - **No form library, and no Zod on the client.**
-- **Nine photographs** from Wikimedia Commons, 884 KB in total, credited in
-  `docs/conception/credits-photos.md`. The credits go on the mentions légales page — CC BY and
-  CC BY-SA require attribution.
+- **Flex for one-directional layouts, grid only where rows and columns must line up.**
+- **Ten photographs** from Wikimedia Commons, credited on the legal notice page — CC BY and
+  CC BY-SA require it.
 
-**Sidebar hides the two admin links.** Those routes are `requireAdmin` on the server; hiding the
-link is comfort, not security. Same answer for the vet-only outcome button.
+**The API gained one thing all day:** a `search` filter on the staff list, for screen 12.
 
 ### Docker — the whole stack in one command
 
@@ -196,19 +196,12 @@ git-ignored files.
 
 ## 2. What is next
 
-**Step 21 — one screen left: Comptes du personnel.** The longest of the staff screens: four
-operations (create, activate/deactivate, reset a password, search) and three rules — RG13, RG14,
-RG15. It is also what the API still owes its last route to.
+**Step 22 — the accessibility pass.** Keyboard, focus, heading order, alt text. The legal notice
+page already claims *partially compliant*; this is where that claim gets its list of limitations.
 
-**Then step 19 — the four remaining public pages.** Accueil · Nos animaux · Faire un don ·
-Mentions légales. The mentions légales page carries `docs/conception/credits-photos.md`: CC BY
-and CC BY-SA require the photographers to be named.
+**Step 29 — deployment.** Blocked on an open decision, see `PLAN.md`.
 
-The frontend rule, 27 August: **plain React** — `useState`, `useEffect`, `fetch`. Two libraries
-only, React Router and Tailwind. No state manager, no data-fetching library, no component
-library, no form library. See `PLAN.md`, Track D.
-
----
+**Track G — the DP itself.** The six prep files, the difficulties table, the meeting notes.
 
 ## 3. Files
 
