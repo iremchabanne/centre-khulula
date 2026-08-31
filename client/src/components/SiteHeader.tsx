@@ -13,14 +13,12 @@ export default function SiteHeader() {
   return (
     <header className="flex items-center justify-between gap-6 border-b border-khulula-line bg-khulula-surface px-8 py-4">
       <Link to="/" className="flex items-center gap-3">
-        <span className="grid h-8 w-8 place-items-center rounded-full bg-khulula-primary font-heading text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-khulula-primary font-heading text-white">
           K
         </span>
-        <span>
-          <span className="block font-heading text-lg font-semibold text-khulula-ink">
-            Khulula
-          </span>
-          <span className="block text-xs uppercase tracking-widest text-khulula-muted">
+        <span className="flex flex-col">
+          <span className="font-heading text-lg font-semibold text-khulula-ink">Khulula</span>
+          <span className="text-xs uppercase tracking-widest text-khulula-muted">
             Wildlife Rehabilitation
           </span>
         </span>

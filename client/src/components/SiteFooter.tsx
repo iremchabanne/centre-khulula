@@ -5,7 +5,7 @@ export default function SiteFooter() {
     <footer className="bg-khulula-ink px-8 py-8 text-sm text-khulula-on-dark">
       {/* Three blocks of equal width: flex-1 gives each a third, so the two
           hairlines fall exactly at a third and two thirds. */}
-      <div className="mx-auto flex max-w-5xl items-center">
+      <div className="flex items-center">
         <div className="flex-1 px-8">
           <h2 className="mb-2 font-heading text-white">Khulula</h2>
           <p>A wildlife rehabilitation centre in Limpopo, South Africa.</p>
