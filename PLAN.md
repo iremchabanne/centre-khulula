@@ -327,6 +327,30 @@ Every example page has the same five fields:
 | 4 | Context: organisation, service, période d'exercice | Centre Khulula (fictif), with real dates |
 | 5 | Optional | **the only place an image goes** |
 
+### The eleven CPs, and where each one is proved
+
+**This is the constraint everything else answers to.** The référentiel binds each CP to an
+activité-type — AT1 holds CP 1 to 4, AT2 holds CP 5 to 8, AT3 holds CP 9 to 11 — so a CP cannot
+be moved to a page where it would fit better. Six pages, eleven CPs, no gap:
+
+| Page | CP | The evidence it rests on |
+|---|---|---|
+| AT1 — Ex. 1 | CP 1 | the containerised stack, the configuration kept out of the repository |
+| | CP 4 | `PLAN.md` as the planning, the three review sessions, Git |
+| AT1 — Ex. 2 | CP 2 | the 13 screens, the eight hand-written forms, the accessibility pass |
+| | CP 3 | the six service classes, and a business rule refused server-side |
+| AT2 — Ex. 1 | CP 5 | the 18 besoins, the prototype, the screen-flow diagram |
+| | CP 6 | the four layers, and what was deliberately left out |
+| AT2 — Ex. 2 | CP 7 | the seven tables, the two database accounts, backup and restore |
+| | CP 8 | the trigger, the two stored functions, the transaction, Redis |
+| AT3 — Ex. 1 | CP 9 | the four tests, the load test, the fuzzing, the 18 acceptance results |
+| AT3 — Ex. 2 | CP 10 | the deployment procedure and the production images |
+| | CP 11 | the CI workflow and ESLint |
+
+**An example is chosen because it proves its CPs' critères de performance, never because it is
+the nicest piece of work.** Before calling a page done, read those criteria in
+`docs/dp/00-referentiel-CP.md` and check them off one by one.
+
 ### Step 30 — The five remaining prep files
 
 Written from the validated `AT1-exemple-1.md`. Each one is preparation for fields 1 and 2 of its
