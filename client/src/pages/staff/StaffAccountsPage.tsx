@@ -122,32 +122,31 @@ export default function StaffAccountsPage() {
         pointing at a real name.
       </p>
 
-      {/* The search and the button on one row, the button set a little apart.
-          flex-wrap drops it onto its own line when the screen is narrow. */}
-      <div className="mb-6 flex flex-wrap items-end gap-3">
-        <form onSubmit={applySearch} className="flex flex-wrap items-end gap-3">
-          <FormField id="search" label="Name or email" required={false} />
-
-          <Button type="submit">Search</Button>
-
-          <Button
-            type="reset"
-            variant="ghost"
-            onClick={() => {
-              setSearch('');
-              setPage(1);
-            }}
-          >
-            Clear
-          </Button>
-        </form>
-
-        <div className="ml-4">
-          <Button variant="accent" onClick={() => setCreating(true)}>
-            New account
-          </Button>
-        </div>
+      {/* The action row, like the Enclosures screen: the one button that adds
+          something sits on its own line, above the search. Next to a field it
+          read as part of the form. */}
+      <div className="mb-6">
+        <Button variant="accent" onClick={() => setCreating(true)}>
+          New account
+        </Button>
       </div>
+
+      <form onSubmit={applySearch} className="mb-6 flex flex-wrap items-end gap-3">
+        <FormField id="search" label="Name or email" required={false} />
+
+        <Button type="submit">Search</Button>
+
+        <Button
+          type="reset"
+          variant="ghost"
+          onClick={() => {
+            setSearch('');
+            setPage(1);
+          }}
+        >
+          Clear
+        </Button>
+      </form>
 
       {creating && (
         <CreateStaffDialog

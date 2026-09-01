@@ -1,8 +1,6 @@
-// The routing layer — which URL calls which controller function, and what has
-// to pass before it does.
-//
-// Nothing else. No "if", no database, no rules. Reading this file should tell
-// you the whole surface of the API and nothing about how it works.
+// The routing layer — which URL calls which controller, and what has to pass
+// before it does. No "if", no database, no rules: this file is the surface of
+// the API and says nothing about how it works.
 
 import { Router } from 'express';
 import { listSpecies, getSpecies } from './controllers/species.controller';
@@ -55,62 +53,42 @@ import {
 
 export const apiRouter = Router();
 
-// Says the API is alive. Used by us to check the server started, and by the
-// Docker healthcheck once the api service exists.
+// The limits are ours — the cahier des charges asks for rate limiting without
+// fixing a figure. 60 reads a minute is one page a second, which nobody does by
+// hand; the donation form gets 5 an hour, being the easiest thing on the site
+// to abuse with no account behind it.
+const PUBLIC_PAGES = rateLimit(60, 60);
+const DONATION_FORM = rateLimit(5, 60 * 60);
+
+// Says the API is alive. Used by the Docker healthcheck.
 apiRouter.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Authentication. There is no /auth/register: staff accounts are created by an
-// administrator (RG13), and visitors have no account.
-// Rate limited against brute force: without it, an attacker can try passwords
-// as fast as the network allows. argon2 is deliberately slow, which already
-// makes that expensive, but slow is not the same as refused — OWASP A07.
-//
-// 10 attempts per quarter of an hour. A member of staff who mistypes their
-// password three times in a row is not inconvenienced; a script is stopped.
-// The counter is per IP address, so one person being locked out never locks
-// out the whole centre.
+// --- Authentication --------------------------------------------------------
+// There is no /auth/register: accounts are created by an administrator (RG13).
+// The login is rate limited against brute force — argon2 is deliberately slow,
+// but slow is not refused (OWASP A07). Ten attempts a quarter of an hour never
+// inconveniences someone who mistypes, and the counter is per IP, so one person
+// being locked out never locks out the centre.
 apiRouter.post('/auth/login', rateLimit(10, 15 * 60), validate({ body: loginSchema }), login);
 apiRouter.post('/auth/logout', logout);
 apiRouter.get('/auth/me', requireAuth, getCurrentStaff);
 
-// The public routes below are rate limited. The numbers are ours — the cahier
-// des charges asks for rate limiting without fixing a figure — and they are
-// chosen to be invisible to a real visitor and quickly reached by a script.
-//
-// 60 reads a minute is one page every second, sustained, which nobody does by
-// hand. The donation form gets 5 an hour instead: a real donor sends one, and
-// a form with no account behind it is the easiest thing on the site to abuse.
-const PUBLIC_PAGES = rateLimit(60, 60);
-const DONATION_FORM = rateLimit(5, 60 * 60);
-
+// --- Public ----------------------------------------------------------------
 apiRouter.get('/species', PUBLIC_PAGES, validate({ query: listSpeciesQuerySchema }), listSpecies);
 apiRouter.get('/species/:id', PUBLIC_PAGES, validate({ params: speciesIdParamsSchema }), getSpecies);
 
-apiRouter.post(
-  '/donations',
-  DONATION_FORM,
-  validate({ body: createDonationSchema }),
-  createDonation,
-);
+apiRouter.post('/donations', DONATION_FORM, validate({ body: createDonationSchema }), createDonation);
 
-// The public list of animals — no session, screen 4. One route and one filter
-// for "in care" and "released": same list, same query, one filter that changes.
-apiRouter.get(
-  '/animals',
-  PUBLIC_PAGES,
-  validate({ query: listAnimalsQuerySchema }),
-  listPublicAnimals,
-);
+// Screen 4 — one route and one filter for "in care" and "released".
+apiRouter.get('/animals', PUBLIC_PAGES, validate({ query: listAnimalsQuerySchema }), listPublicAnimals);
 
-// Enclosures — staff only. A visitor has no reason to know how full the centre
-// is, and the occupant of an enclosure is an animal we may not be showing
-// publicly yet.
-//
-// Putting an enclosure under maintenance is an administrator's decision, so
-// that one route asks for more than a session.
+// --- Enclosures, staff only ------------------------------------------------
+// A visitor has no reason to know how full the centre is, and the occupant of
+// an enclosure may be an animal not shown publicly yet.
 apiRouter.get('/enclosures', requireAuth, listEnclosures);
+
 apiRouter.get(
   '/enclosures/free',
   requireAuth,
@@ -118,9 +96,8 @@ apiRouter.get(
   listFreeEnclosures,
 );
 
-// The five numbers of the Enclosures dashboard. Two of them are computed by
-// the stored functions, so this route is where the application uses them.
-apiRouter.get('/dashboard', requireAuth, getDashboard);
+// Maintenance is an administrator's decision, so this route asks for more than
+// a session.
 apiRouter.patch(
   '/enclosures/:id/maintenance',
   requireAdmin,
@@ -128,17 +105,16 @@ apiRouter.patch(
   setEnclosureMaintenance,
 );
 
-// Admission — the transaction of RG2. Any member of staff may admit an animal;
-// only a veterinarian may later pronounce its outcome (RG6), which is a
-// different route and comes next.
+// The five numbers of the dashboard. Two come from the stored functions, so
+// this route is where the application uses them.
+apiRouter.get('/dashboard', requireAuth, getDashboard);
+
+// --- Animals, staff only ---------------------------------------------------
+// Admission — the transaction of RG2. Any member of staff may admit an animal.
 apiRouter.post('/animals', requireAuth, validate({ body: createAdmissionSchema }), admitAnimal);
 
-// Screen 9 — the staff list of animals. Every status, the enclosure, and no
-// filter needed.
-//
-// Declared BEFORE /animals/:id and the order matters: Express tries routes in
-// the order they are registered, and ":id" would otherwise match the word
-// "all" and answer "the animal id must be a whole number".
+// Declared BEFORE /animals/:id, and the order matters: Express tries routes in
+// the order they are registered, so ":id" would otherwise match "all".
 apiRouter.get(
   '/animals/all',
   requireAuth,
@@ -146,16 +122,9 @@ apiRouter.get(
   listStaffAnimals,
 );
 
-// Screen 10 — the animal file. Staff only: it carries the enclosure, the
-// clinical status and the notes, none of which a visitor sees.
-apiRouter.get(
-  '/animals/:id',
-  requireAuth,
-  validate({ params: animalIdParamsSchema }),
-  getAnimal,
-);
+apiRouter.get('/animals/:id', requireAuth, validate({ params: animalIdParamsSchema }), getAnimal);
 
-// An observation, and the status change when there is one — S5, RG4, RG5.
+// An observation, and the status change when there is one — RG4, RG5.
 apiRouter.post(
   '/animals/:id/observations',
   requireAuth,
@@ -163,7 +132,7 @@ apiRouter.post(
   addObservation,
 );
 
-// The move — RG8. Any member of staff may move an animal.
+// The move — RG8.
 apiRouter.patch(
   '/animals/:id/enclosure',
   requireAuth,
@@ -171,8 +140,18 @@ apiRouter.patch(
   moveAnimal,
 );
 
-// Screen 11 — the donation list, administrators only. The donor's name and
-// email appear here, which is the one place they were collected for.
+// The outcome — RG6, and where requireRole earns its place: a keeper is refused
+// here by the server, whatever the interface shows them.
+apiRouter.patch(
+  '/animals/:id/outcome',
+  requireRole('veterinarian'),
+  validate({ params: animalIdParamsSchema, body: recordOutcomeSchema }),
+  recordAnimalOutcome,
+);
+
+// --- Administrators only ---------------------------------------------------
+// Screen 11 — the donor's name and email appear here, the one place they were
+// collected for.
 apiRouter.get(
   '/donations',
   requireAdmin,
@@ -180,8 +159,8 @@ apiRouter.get(
   listDonations,
 );
 
-// Staff accounts — screen 12, administrators only. RG13, RG14 and RG15 are in
-// StaffService; requireAdmin is what keeps a keeper out of all four routes.
+// Screen 12 — RG13, RG14 and RG15 live in StaffService; requireAdmin is what
+// keeps a keeper out of all four routes.
 apiRouter.get('/staff', requireAdmin, validate({ query: listStaffQuerySchema }), listStaff);
 
 apiRouter.post('/staff', requireAdmin, validate({ body: createStaffSchema }), createStaff);
@@ -198,14 +177,4 @@ apiRouter.patch(
   requireAdmin,
   validate({ params: staffIdParamsSchema, body: resetPasswordSchema }),
   resetStaffPassword,
-);
-
-// The outcome — RG6, reserved for a veterinarian. This is where requireRole
-// earns its place: a keeper is refused here by the server, whatever the
-// interface shows them.
-apiRouter.patch(
-  '/animals/:id/outcome',
-  requireRole('veterinarian'),
-  validate({ params: animalIdParamsSchema, body: recordOutcomeSchema }),
-  recordAnimalOutcome,
 );

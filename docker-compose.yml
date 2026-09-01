@@ -107,6 +107,9 @@ services:
       VITE_API_TARGET: http://api:3000
     volumes:
       - ./client/src:/app/src
+      # Shared too, because it holds the /api proxy. Without it the container
+      # keeps the config baked into the image and the pages come back empty.
+      - ./client/vite.config.ts:/app/vite.config.ts
 
 volumes:
   postgres-data:

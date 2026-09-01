@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../../components/Button';
 import FormField from '../../components/FormField';
@@ -24,6 +25,7 @@ export default function AdmissionDialog({ onClose, onAdmitted }: Props) {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
   // Needed so the "centre is full" message is not shown while still loading.
   const [choicesLoaded, setChoicesLoaded] = useState(false);
   // Which species is selected. The enclosure list depends on it (RG17).
@@ -109,9 +111,12 @@ export default function AdmissionDialog({ onClose, onAdmitted }: Props) {
         return;
       }
 
-      // 409 means another member of staff took that enclosure while this form
-      // was open. The dialog stays open and keeps what was typed: the whole
-      // admission was rolled back, so nothing is lost but the enclosure.
+      // An ended session is not a form error: it gets its own screen.
+      if (response.status === 401) {
+        navigate('/staff/session-expired', { replace: true });
+        return;
+      }
+
       // On a 400 the server lists the fields it refused; "Invalid request"
       // alone would tell the user nothing.
       const body = await response.json();
@@ -121,6 +126,8 @@ export default function AdmissionDialog({ onClose, onAdmitted }: Props) {
         setFormError(body.error);
       }
 
+      // Somebody took that enclosure while the form was open. The dialog stays
+      // open and keeps what was typed: the admission was rolled back whole.
       if (response.status === 409) {
         loadFreeEnclosures();
       }

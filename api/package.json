@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:unit": "vitest run tests/pagination.test.ts",
-    "dev:docker": "tsx watch src/server.ts"
+    "dev:docker": "prisma generate && tsx watch src/server.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

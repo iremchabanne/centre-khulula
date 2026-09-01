@@ -49,11 +49,14 @@ export default function EnclosureOverview({
 // The administrators' table. Only the maintenance action is here: the API has
 // no route to create or edit an enclosure, and no CP asks for one.
 
+// The green border and the darker label are what separate the five numbers from
+// the enclosure cards underneath, which keep the plain line colour. The label
+// uses the same size and colour as the figures on the home page.
 function Kpi({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-md border border-khulula-line bg-khulula-surface p-4">
+    <div className="rounded-md border border-khulula-primary bg-khulula-surface p-4">
       <p className="font-heading text-2xl text-khulula-ink">{value}</p>
-      <p className="mt-1 text-xs text-khulula-muted">{label}</p>
+      <p className="mt-1 text-sm text-khulula-body">{label}</p>
     </div>
   );
 }

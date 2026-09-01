@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Pager from '../../components/Pager';
+import SpeciesPhoto from '../../components/SpeciesPhoto';
 import StatusPill from '../../components/StatusPill';
 
 // Screen 4 of arborescence-ecrans.md. Public: no account, no session.
@@ -176,26 +177,6 @@ function daysInCare(animal: Animal) {
   const end = new Date(animal.outcome_at).getTime();
 
   return Math.round((end - start) / 86_400_000);
-}
-
-// The same block as the species cards: the sand square shows while the
-// photograph loads, or instead of a broken-image icon if it is missing. The
-// alt is empty because the species name is written right under it.
-function SpeciesPhoto({ url }: { url: string }) {
-  return (
-    <div className="h-40 bg-khulula-surface-alt">
-      {/* object-top: the crop keeps the top of the photograph, where the
-          animal's head usually is. */}
-      <img
-        src={url}
-        alt=""
-        className="h-40 w-full object-cover object-top"
-        onError={(event) => {
-          event.currentTarget.style.display = 'none';
-        }}
-      />
-    </div>
-  );
 }
 
 function tabClasses(isActive: boolean) {

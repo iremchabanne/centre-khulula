@@ -15,13 +15,9 @@ export class AuthService {
     this.prisma = prisma;
   }
 
-  // The account behind an open session.
-  //
-  // Read from the database rather than from the session, on purpose. The
-  // session was written at login and does not change afterwards; the database
-  // is current. So an account deactivated while its owner was logged in stops
-  // working on the next request instead of at the end of the eight hours.
-  // That is RG12 enforced for the whole life of the session, not only at login.
+  // The account behind an open session, read from the database and not from
+  // the session: the session is what was true at login. This is RG12 enforced
+  // for the whole life of the session rather than only at login.
   async findActiveById(staffId: number) {
     const staff = await this.prisma.staffMember.findUnique({ where: { id: staffId } });
 
@@ -49,26 +45,21 @@ export class AuthService {
       throw new AppError('Email or password is incorrect', 401);
     }
 
-    // argon2.verify re-hashes the submitted password with the salt stored
-    // inside password_hash and compares the results. The clear password is
-    // never stored and never logged, here or anywhere else.
+    // Re-hashes the submitted password with the salt stored inside
+    // password_hash. The clear password is never stored and never logged.
     const passwordMatches = await argon2.verify(staff.password_hash, password);
 
     if (!passwordMatches) {
       throw new AppError('Email or password is incorrect', 401);
     }
 
-    // RG12 — a deactivated account cannot log in.
-    //
-    // Checked AFTER the password on purpose: telling someone their account is
-    // deactivated before they have proved who they are would confirm that the
-    // address exists.
+    // RG12. Checked after the password: saying an account is deactivated
+    // before the caller has proved who they are confirms the address exists.
     if (!staff.is_active) {
       throw new AppError('This account has been deactivated', 403);
     }
 
-    // password_hash is deliberately left out. It has no business leaving this
-    // method, and a value that never travels cannot leak.
+    // password_hash is left out: a value that never travels cannot leak.
     return {
       id: staff.id,
       full_name: staff.full_name,

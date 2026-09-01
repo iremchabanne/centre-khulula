@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../../components/Button';
 import FormField from '../../components/FormField';
@@ -23,6 +24,7 @@ export default function CreateStaffDialog({ onClose, onCreated }: Props) {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   async function submit(formData: FormData) {
     const fullName = String(formData.get('full_name') ?? '').trim();
@@ -62,6 +64,12 @@ export default function CreateStaffDialog({ onClose, onCreated }: Props) {
 
       if (response.ok) {
         onCreated();
+        return;
+      }
+
+      // An ended session is not a form error: it gets its own screen.
+      if (response.status === 401) {
+        navigate('/staff/session-expired', { replace: true });
         return;
       }
 

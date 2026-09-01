@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import SpeciesPhoto from '../../components/SpeciesPhoto';
 import StatusPill from '../../components/StatusPill';
 
 // Screen 1 of arborescence-ecrans.md. Public: no account, no session.
@@ -19,11 +20,9 @@ export default function HomePage() {
   const [releasedTotal, setReleasedTotal] = useState(0);
   const [speciesTotal, setSpeciesTotal] = useState(0);
 
-  // Three requests, and no new API route: the numbers are the `total` the
-  // paginated lists already answer with.
-  //
-  // allSettled and not all: the three are independent, so they are sent at the
-  // same time, and one of them failing must not take the other two down.
+  // Three requests and no new API route: the numbers are the `total` the
+  // paginated lists already answer with. allSettled and not all, so one failing
+  // does not take the other two down.
   useEffect(() => {
     async function load() {
       const [care, released, species] = await Promise.allSettled([
@@ -104,7 +103,7 @@ export default function HomePage() {
           {/* The heading is the link to the full list. The arrow is what says
               so; aria-hidden keeps it out of the reading. */}
           <h2 className="type-section mb-6">
-            <Link to="/animals" className="text-khulula-primary">
+            <Link to="/animals" className="text-khulula-accent hover:underline">
               Currently recovering <span aria-hidden="true">›</span>
             </Link>
           </h2>
@@ -117,16 +116,7 @@ export default function HomePage() {
                 key={animal.id}
                 className="overflow-hidden rounded-lg border border-khulula-line bg-khulula-surface"
               >
-                <div className="h-40 bg-khulula-surface-alt">
-                  <img
-                    src={animal.species.photo_url}
-                    alt=""
-                    className="h-40 w-full object-cover object-top"
-                    onError={(event) => {
-                      event.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
+                <SpeciesPhoto url={animal.species.photo_url} />
 
                 <div className="p-4">
                   <StatusPill status={animal.status} />

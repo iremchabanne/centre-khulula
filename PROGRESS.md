@@ -1,6 +1,6 @@
 # Progress — Dossier Professionnel CDA
 
-**Updated:** 31 August 2026
+**Updated:** 1 September 2026
 **Deadline:** Khulula finished by **mid-September 2026** · everything on the drive by
 **07/10/2026 23:59** · exam **October 2026**.
 **Status:** conception, database and API complete · **all 13 screens built**
@@ -181,6 +181,13 @@ accident.
 
 **The API gained one thing all day:** a `search` filter on the staff list, for screen 12.
 
+**Layout and session pass, 1 September.** The three staff screens open the same way — title, then
+one accent button on its own row, then the filters. Screen 10 is two columns on a wide screen and
+keeps its identity and its stays in a single box. `SelectField` hides the browser's arrow and
+draws its own, the only way to control the gap before the border. The five dialogs now send a 401
+to `/staff/session-expired` instead of writing it under a field, which closes the limit left open
+at step 20.
+
 ### Docker — the whole stack in one command
 
 `docker compose up -d` now starts five containers: postgres, redis, adminer, **api** and
@@ -191,6 +198,11 @@ Inside the Compose network a service is reached by its name, so the container's 
 points at `postgres`, not `localhost`. Compose builds it from the root `.env`, which now also
 holds `APP_DB_PASSWORD` and `SESSION_SECRET` — the same two values as `api/.env`, in two
 git-ignored files.
+
+**What is mounted follows the machine; what is not dates from the last `build`.** `client` shares
+`src/` **and** `vite.config.ts`, added on 1 September after the container spent a session serving
+a config written before the `/api` proxy existed — every public page came back empty. `package.json`
+and the Dockerfiles stay unmounted on purpose and still need a `--build`.
 
 ---
 

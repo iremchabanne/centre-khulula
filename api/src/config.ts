@@ -17,16 +17,11 @@ function required(name: string): string {
 export const config = {
   port: Number(process.env.PORT ?? 3000),
 
-  // Note WHICH account this is: khulula_app, the restricted one.
-  //
-  // Prisma migrations keep using DATABASE_URL (khulula_admin), because creating
-  // tables needs full rights. The running API does not create tables, so it
-  // does not get those rights. See the migration
-  // 20260822105239_application_database_account.
+  // khulula_app, the restricted account. Migrations keep using DATABASE_URL
+  // (khulula_admin) because creating tables needs full rights; the running API
+  // does not create tables, so it does not get them.
   databaseUrl: required('DATABASE_URL_APP'),
 
-  // Redis holds the staff sessions. See src/session.ts for why they live there
-  // rather than in PostgreSQL or in the cookie itself.
   redisUrl: required('REDIS_URL'),
 
   // The secret that signs the session cookie. Required, never has a default:

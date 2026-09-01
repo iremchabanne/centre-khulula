@@ -1,22 +1,16 @@
-// Staff sessions, stored in Redis.
+// Staff sessions, stored in Redis — Redis's first job.
 //
-// HOW A SESSION WORKS HERE, in one paragraph. When a member of staff logs in,
-// the server creates a random session id, stores the session DATA in Redis
-// under that id, and sends the id back in a cookie. The browser returns that
-// cookie on every following request, and express-session looks the id up in
-// Redis and fills req.session. The browser therefore never holds the role or
-// the id of the staff member — only an opaque random string. Everything that
-// decides what someone is allowed to do is read from Redis, server-side.
+// At login the server creates a random session id, stores the data in Redis
+// under it, and sends the id back in a cookie. The browser holds nothing but
+// that opaque string: everything deciding what someone may do is read
+// server-side.
 //
-// WHY REDIS rather than a token (JWT) the browser keeps. A token cannot be
-// taken back: once handed out it stays valid until it expires. RG12 says a
-// deactivated account must not be able to work, and the only way to enforce
-// that immediately is for the server to hold the session and be able to
-// delete it. Deleting a key in Redis logs someone out instantly.
+// Redis rather than a token the browser keeps (JWT): a token cannot be taken
+// back once handed out, and RG12 says a deactivated account must stop working
+// immediately. Deleting a key in Redis logs someone out instantly.
 //
-// WHY NOT write the session code ourselves. Session handling is security code,
-// and hand-written security code is how mistakes get in. express-session is
-// the standard library for this and connect-redis is its Redis store.
+// express-session and connect-redis rather than our own code: session handling
+// is security code, and hand-written security code is how mistakes get in.
 
 import session from 'express-session';
 import { RedisStore } from 'connect-redis';
@@ -25,12 +19,8 @@ import type { StaffRole } from '@prisma/client';
 import { redis } from './redis';
 import { config } from './config';
 
-// Tells TypeScript what we put inside req.session. Without this block,
-// req.session.staffId would be an error: the library cannot guess our fields.
-//
-// Only these three. A session is a cache of rights, so it stays small and
-// holds nothing personal — no name, no email. RGPD, and one less thing to
-// keep in step with the database.
+// Tells TypeScript what we put inside req.session; the library cannot guess.
+// Only these three: a session holds nothing personal — no name, no email.
 declare module 'express-session' {
   interface SessionData {
     staffId: number;
@@ -52,35 +42,29 @@ export const sessionMiddleware = session({
   }),
 
   // Signs the cookie, so a browser cannot invent a session id and have it
-  // accepted. It does not encrypt anything — the id is not a secret to hide,
-  // it is a value to prove we issued.
+  // accepted. It encrypts nothing: the id is a value to prove we issued it.
   secret: config.sessionSecret,
 
-  // The cookie name. The default is "connect.sid", which announces the library
-  // being used; a neutral name tells an attacker one thing less.
+  // The default is "connect.sid", which announces the library being used.
   name: 'khulula.sid',
 
-  // Do not rewrite the session in Redis on every single request, only when it
-  // actually changed.
+  // Rewrite the session in Redis only when it actually changed.
   resave: false,
 
-  // Do not create a session for a visitor who never logged in. The public
-  // pages are anonymous and must not cost a Redis key each.
+  // No session for a visitor who never logged in: the public pages are
+  // anonymous and must not cost a Redis key each.
   saveUninitialized: false,
 
   cookie: {
-    // The cookie is invisible to JavaScript in the page. If an XSS flaw ever
-    // gets through, the injected script still cannot read the session id.
-    // OWASP A03 — Injection.
+    // Invisible to JavaScript, so an injected script cannot read the session id
+    // even if an XSS flaw got through.
     httpOnly: true,
 
-    // CSRF defence. "lax" means the browser does not attach this cookie to a
-    // request started by another site, so a form on evil.com cannot make an
-    // authenticated call to our API in the background. OWASP A01.
+    // CSRF defence: the browser does not attach this cookie to a request
+    // started by another site, so a form on evil.com cannot call our API.
     sameSite: 'lax',
 
-    // In production the cookie travels over HTTPS only. Left off in
-    // development, where the server is plain http://localhost.
+    // HTTPS only in production; off in development, which is plain localhost.
     secure: config.environment === 'production',
 
     maxAge: SESSION_DURATION_MS,
@@ -88,8 +72,7 @@ export const sessionMiddleware = session({
 });
 
 // express-session is older than promises: regenerate() and destroy() take a
-// callback. These two wrappers let the controllers use await, like the rest of
-// the code, instead of nesting callbacks.
+// callback. These wrappers let the controllers use await like everywhere else.
 
 export function regenerateSession(req: Request): Promise<void> {
   return new Promise((resolve, reject) => {

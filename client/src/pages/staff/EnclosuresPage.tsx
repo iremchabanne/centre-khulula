@@ -106,35 +106,36 @@ export default function EnclosuresPage() {
         )}
       </div>
 
-      {/* The tabs and the admission button on one row. The Maintenance tab is
-          administrators only; hiding it is comfort, the route itself is
-          requireAdmin. The button is for everyone, so it sits outside. */}
-      <div className="mb-6 flex flex-wrap items-center gap-2">
-        {staff.is_admin && (
-          <div role="tablist" aria-label="Enclosure views" className="flex gap-2">
-            <button
-              role="tab"
-              aria-selected={tab === 'overview'}
-              onClick={() => setTab('overview')}
-              className={tabClasses(tab === 'overview')}
-            >
-              Overview
-            </button>
-            <button
-              role="tab"
-              aria-selected={tab === 'manage'}
-              onClick={() => setTab('manage')}
-              className={tabClasses(tab === 'manage')}
-            >
-              Maintenance
-            </button>
-          </div>
-        )}
-
-        <Button onClick={() => setShowAdmission(true)} disabled={centreIsFull}>
+      {/* The action row, like the Staff accounts screen: the one button that
+          adds something sits on its own line, above the tabs. */}
+      <div className="mb-6">
+        <Button variant="accent" onClick={() => setShowAdmission(true)} disabled={centreIsFull}>
           Admit an animal
         </Button>
       </div>
+
+      {/* The Maintenance tab is administrators only; hiding it is comfort, the
+          route itself is requireAdmin. */}
+      {staff.is_admin && (
+        <div role="tablist" aria-label="Enclosure views" className="mb-6 flex gap-2">
+          <button
+            role="tab"
+            aria-selected={tab === 'overview'}
+            onClick={() => setTab('overview')}
+            className={tabClasses(tab === 'overview')}
+          >
+            Overview
+          </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'manage'}
+            onClick={() => setTab('manage')}
+            className={tabClasses(tab === 'manage')}
+          >
+            Maintenance
+          </button>
+        </div>
+      )}
 
       {actionError !== '' && (
         <p role="status" className="mb-4 text-sm text-khulula-error">

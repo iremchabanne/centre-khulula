@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../../components/Button';
 import FormField from '../../components/FormField';
@@ -18,6 +19,7 @@ export default function OutcomeDialog({ animalId, animalName, onClose, onRecorde
   const [noteError, setNoteError] = useState('');
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,6 +46,12 @@ export default function OutcomeDialog({ animalId, animalName, onClose, onRecorde
 
       if (response.ok) {
         onRecorded();
+        return;
+      }
+
+      // An ended session is not a form error: it gets its own screen.
+      if (response.status === 401) {
+        navigate('/staff/session-expired', { replace: true });
         return;
       }
 

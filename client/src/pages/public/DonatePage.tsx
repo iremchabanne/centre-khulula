@@ -4,12 +4,9 @@ import { Link, useLocation } from 'react-router-dom';
 import Button from '../../components/Button';
 import FormField from '../../components/FormField';
 
-// Screen 5 of arborescence-ecrans.md, in two states: the form, then the
-// acknowledgement. The second is not another page — it is what this one shows
-// once the API has answered.
-//
-// No payment, ever. The form records an intention to give: no card field, no
-// payment provider. That is an explicit decision of the cahier des charges.
+// Screen 5, in two states: the form, then the acknowledgement it shows once the
+// API has answered. No payment, ever — the form records an intention to give,
+// with no card field and no provider (cahier des charges).
 type FieldErrors = {
   amount?: string;
   consent?: string;

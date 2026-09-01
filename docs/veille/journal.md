@@ -7,6 +7,36 @@ Une entrée n'est retenue que si elle répond à *« qu'est-ce que cela change p
 
 ---
 
+## 1er septembre 2026
+
+### Ce qu'un montage Docker couvre, et ce qui reste figé dans l'image
+
+| | |
+|---|---|
+| **Source** | Documentation Docker Compose, section *Volumes* ; incident rencontré le jour même sur `khulula-client` |
+| **CP** | 1, 11 |
+
+Toutes les pages publiques se sont affichées vides. La base contenait bien les données et l'API
+les renvoyait sur son propre port ; la même requête passée par le serveur de développement du
+client renvoyait l'`index.html`. Le proxy `/api` de Vite ne s'appliquait pas.
+
+Le service `client` ne montait que `./client/src`. `vite.config.ts` est à côté de ce dossier, pas
+dedans : le conteneur exécutait donc la version copiée dans l'image au moment du `build`, écrite
+avant l'ajout du proxy. Le fichier corrigé existait sur la machine et n'était lu par personne.
+
+**Ce que cela change pour Khulula.** `vite.config.ts` est ajouté aux volumes du service. La règle
+est désormais explicite : ce qui est monté suit la machine, ce qui ne l'est pas date du dernier
+`build`. `package.json` et le `Dockerfile` restent volontairement non montés — leur traitement se
+fait pendant la construction de l'image — et exigent donc un `--build` après modification.
+
+**La leçon.** Un montage partiel ne prévient jamais qu'il est partiel. Le conteneur ne signale pas
+qu'il travaille sur une version périmée : il fonctionne, sans erreur, avec l'ancien fichier. Le
+symptôme est apparu à l'autre bout de la chaîne, sur des pages sans données, ce qui a d'abord fait
+soupçonner le jeu de données. La méthode qui a tranché est la vérification par le bas : la base,
+puis l'API directement, puis l'API à travers le proxy — le défaut est apparu à la troisième étape.
+
+---
+
 ## 27 août 2026
 
 ### TypeScript 7 est sorti, et l'outillage n'a pas suivi

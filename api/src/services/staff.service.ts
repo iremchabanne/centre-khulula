@@ -98,13 +98,9 @@ export class StaffService {
         throw new AppError('You cannot deactivate your own account', 409);
       }
 
-      // Counted, not assumed: the centre has two administrators today, and
-      // nothing in the code says it always will.
-      //
-      // `staff.is_active` matters here. Without it, switching off an
-      // administrator who is already switched off answers "the last active
-      // administrator cannot be deactivated" — which is false and confusing,
-      // since that account is not active in the first place.
+      // `staff.is_active` matters: without it, switching off an administrator
+      // who is already switched off answers "the last active administrator
+      // cannot be deactivated", which is false and confusing.
       if (staff.is_admin && staff.is_active) {
         const activeAdmins = await this.prisma.staffMember.count({
           where: { is_admin: true, is_active: true },

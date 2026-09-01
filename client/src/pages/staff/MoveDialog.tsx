@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../../components/Button';
 import FormField from '../../components/FormField';
@@ -23,6 +24,7 @@ export default function MoveDialog({ animalId, speciesId, onClose, onMoved }: Pr
   const [reasonError, setReasonError] = useState('');
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   async function loadFreeEnclosures() {
     const response = await fetch(`/api/enclosures/free?species_id=${speciesId}`);
@@ -61,6 +63,12 @@ export default function MoveDialog({ animalId, speciesId, onClose, onMoved }: Pr
 
       if (response.ok) {
         onMoved();
+        return;
+      }
+
+      // An ended session is not a form error: it gets its own screen.
+      if (response.status === 401) {
+        navigate('/staff/session-expired', { replace: true });
         return;
       }
 

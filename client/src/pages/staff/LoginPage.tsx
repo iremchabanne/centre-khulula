@@ -60,7 +60,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-khulula-surface-alt px-5 py-16">
+    <main className="flex min-h-screen items-center justify-center bg-khulula-surface-alt px-5 py-16">
       <div className="w-full max-w-md rounded-lg border border-khulula-line bg-khulula-surface p-8">
         <h1 className="mb-1 text-center font-heading text-2xl text-khulula-ink">Khulula</h1>
         <p className="mb-7 text-center text-sm text-khulula-muted">Staff area</p>

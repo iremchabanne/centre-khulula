@@ -1,9 +1,8 @@
 // Enclosures — the limited resource the whole centre revolves around.
 //
-// One thing this class deliberately never does: write `status`. That column is
-// derived by the trigger in the migration 20260822102539_enclosure_status_trigger
-// (RG3). The application reads it. If a method here ever sets it, the column
-// starts disagreeing with the stays and every screen becomes a liar.
+// This class never writes `status`. That column is derived by the trigger of
+// migration 20260822102539 (RG3); a method that set it would make the column
+// disagree with the stays, and every screen would become a liar.
 
 import type { PrismaClient } from '@prisma/client';
 import { AppError } from '../errors';
@@ -16,8 +15,7 @@ export class EnclosureService {
     this.prisma = prisma;
   }
 
-  // Every enclosure, and the animal inside it when there is one. This is what
-  // the "Enclos — Overview" screen shows.
+  // Every enclosure, and the animal inside it when there is one — screen 8.
   async findAll() {
     const enclosures = await this.prisma.enclosure.findMany({
       orderBy: { code: 'asc' },
@@ -32,10 +30,9 @@ export class EnclosureService {
       },
     });
 
-    // Prisma hands back a LIST of open stays. The partial unique index of the
-    // migration 20260822100651 guarantees there is at most one, so the list is
-    // flattened into a single `occupant` field here: a screen showing one
-    // animal should not have to reason about an array that can only hold one.
+    // Prisma hands back a list of open stays, but the partial unique index
+    // guarantees at most one, so it becomes a single `occupant` field: a screen
+    // showing one animal should not reason about an array.
     return enclosures.map((enclosure) => {
       const openStay = enclosure.stays[0];
 
@@ -60,17 +57,11 @@ export class EnclosureService {
     });
   }
 
-  // The enclosures an animal could be admitted into right now. The admission
-  // screen builds its list from this.
-  //
-  // No occupant to look up here: `free` already means nobody is inside.
-  //
-  // This is the one cached read of the application — see cache.ts for why this
-  // list and no other, and why a stale answer cannot cause a wrong admission.
+  // The enclosures an animal could be admitted into right now. The one cached
+  // read of the application — cache.ts says why a stale answer is safe here.
   async findFree(speciesId?: number) {
-    // Asked for one species: only the enclosures that suit it (RG17). Not
-    // cached, because the cache holds one list and this one changes with the
-    // species. The query is small and runs when a dialog opens, not on a page.
+    // One species: only the enclosures that suit it (RG17). Not cached — the
+    // cache holds one list and this one changes with the species.
     if (speciesId) {
       const species = await this.prisma.species.findUnique({ where: { id: speciesId } });
 
@@ -102,11 +93,10 @@ export class EnclosureService {
 
   // RG16 — an enclosure goes under maintenance only while it is free.
   //
-  // The rule has to live here and not in the trigger, because the trigger makes
-  // maintenance win over everything: put an occupied enclosure under
-  // maintenance and its status stops saying `occupied`, so the animal inside
-  // disappears from the screens. The database computes the consequence; the
-  // application decides whether the decision is allowed in the first place.
+  // Here and not in the trigger: the trigger makes maintenance win over
+  // everything, so an occupied enclosure would stop saying `occupied` and the
+  // animal inside would vanish from the screens. The database computes the
+  // consequence; the application decides whether the decision is allowed.
   async setMaintenance(id: number, isUnderMaintenance: boolean) {
     const enclosure = await this.prisma.enclosure.findUnique({ where: { id } });
 
@@ -114,15 +104,14 @@ export class EnclosureService {
       throw new AppError(`No enclosure with id ${id}`, 404);
     }
 
-    // Taking an enclosure OUT of maintenance is always allowed — it is free by
-    // definition, since nothing could have been admitted into it.
+    // Coming out of maintenance is always allowed: nothing could have been
+    // admitted into it.
     if (isUnderMaintenance && enclosure.status === 'occupied') {
-      // 409 Conflict, not 400: the request is well formed, it is the current
-      // state of the enclosure that refuses it.
+      // 409, not 400: the request is well formed, the state refuses it.
       throw new AppError('An occupied enclosure cannot be put under maintenance', 409);
     }
 
-    // Note what is NOT in `data`: status. Writing is_under_maintenance fires
+    // Note what is not in `data`: status. Writing is_under_maintenance fires
     // the trigger, and the trigger writes status.
     const updated = await this.prisma.enclosure.update({
       where: { id },
@@ -130,28 +119,24 @@ export class EnclosureService {
       select: { id: true, code: true, is_under_maintenance: true, status: true },
     });
 
-    // The set of free enclosures has just changed, so the cached list is wrong.
-    // Cleared after the write and not before: cleared first, a reader arriving
-    // in between would store the old list again and the cache would be wrong
-    // until it expired.
+    // Cleared after the write, never before: a reader arriving in between would
+    // store the old list again.
     await forgetFreeEnclosures();
 
     return updated;
   }
 
-  // The five numbers of the Enclosures dashboard.
-  //
-  // The last two come from the stored functions of the migration
-  // 20260822103015, not from TypeScript: what counts as a usable enclosure,
-  // and how a stay is measured, belong next to the data.
+  // The five numbers of the dashboard. The last two come from the stored
+  // functions of migration 20260822103015, not from TypeScript: what counts as
+  // a usable enclosure, and how a stay is measured, belong next to the data.
   async getDashboard() {
     const occupied = await this.prisma.enclosure.count({ where: { status: 'occupied' } });
     const free = await this.prisma.enclosure.count({ where: { status: 'free' } });
     const maintenance = await this.prisma.enclosure.count({ where: { status: 'maintenance' } });
 
     // ::float because both functions return NUMERIC, which Prisma hands back as
-    // a string. The average stays null when no stay has ended yet — "no data"
-    // and "zero days" are different facts.
+    // a string. The average stays null when no stay has ended: "no data" and
+    // "zero days" are different facts.
     const rows = await this.prisma.$queryRaw<
       { occupancy_rate: number; average_stay_days: number | null }[]
     >`SELECT occupancy_rate()::float AS occupancy_rate,

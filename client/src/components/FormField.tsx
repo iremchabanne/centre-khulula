@@ -1,8 +1,6 @@
-// One field of a form: the label, the input, and the error under it.
-//
-// It exists so the accessibility wiring is written once instead of once per
-// field: the label tied to the input, aria-invalid, and aria-describedby
-// pointing at the error message.
+// One field of a form: the label, the input, and the error under it. It exists
+// so the accessibility wiring — label, aria-invalid, aria-describedby — is
+// written once instead of once per field.
 type Props = {
   id: string;
   label: string;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../../components/Button';
 import FormField from '../../components/FormField';
@@ -18,6 +19,7 @@ export default function ResetPasswordDialog({ staffId, staffName, onClose, onRes
   const [passwordError, setPasswordError] = useState('');
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   async function submit(formData: FormData) {
     const password = String(formData.get('password') ?? '');
@@ -40,6 +42,12 @@ export default function ResetPasswordDialog({ staffId, staffName, onClose, onRes
 
       if (response.ok) {
         onReset();
+        return;
+      }
+
+      // An ended session is not a form error: it gets its own screen.
+      if (response.status === 401) {
+        navigate('/staff/session-expired', { replace: true });
         return;
       }
 

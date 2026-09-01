@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import IucnPill from './IucnPill';
+import IucnPill from '../../components/IucnPill';
 import Pager from '../../components/Pager';
-import type { IucnStatus } from './speciesLabels';
+import SpeciesPhoto from '../../components/SpeciesPhoto';
+import type { IucnStatus } from '../../speciesLabels';
 
 // Screen 2 of arborescence-ecrans.md. Public: no account, no session.
 type Species = {
@@ -67,13 +68,15 @@ export default function SpeciesListPage() {
             <Link to={`/species/${one.id}`} className="block">
               <SpeciesPhoto url={one.photo_url} />
 
+              {/* The pill sits on top, where the home page puts the status pill
+                  of an animal card. The two pages carry the same kind of card,
+                  so they are read the same way. */}
               <div className="p-4">
-                <p className="font-heading text-lg text-khulula-ink">{one.common_name}</p>
+                <IucnPill status={one.iucn_status} />
+
+                <p className="mt-2 font-heading text-lg text-khulula-ink">{one.common_name}</p>
                 <p className="italic text-khulula-muted">{one.scientific_name}</p>
                 <p className="mt-2 text-sm text-khulula-muted">{one.habitat}</p>
-                <p className="mt-3">
-                  <IucnPill status={one.iucn_status} />
-                </p>
               </div>
             </Link>
           </li>
@@ -81,26 +84,6 @@ export default function SpeciesListPage() {
       </ul>
 
       <Pager page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
-    </div>
-  );
-}
-
-// The photographs are not in the repository yet. Until they are, the sand block
-// shows instead of a broken-image icon; the alt is empty because the name is
-// written right under it and a screen reader would say it twice.
-function SpeciesPhoto({ url }: { url: string }) {
-  return (
-    <div className="h-40 bg-khulula-surface-alt">
-      {/* object-top: the crop keeps the top of the photograph, where the
-          animal's head usually is. */}
-      <img
-        src={url}
-        alt=""
-        className="h-40 w-full object-cover object-top"
-        onError={(event) => {
-          event.currentTarget.style.display = 'none';
-        }}
-      />
     </div>
   );
 }

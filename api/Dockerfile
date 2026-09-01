@@ -14,6 +14,10 @@ COPY . .
 
 # Prisma generates its client from the schema. Done here so the container has
 # the Linux build of it, not the macOS one from the host.
+#
+# dev:docker generates it again at every start, because prisma/ is mounted: a
+# migration written after this image was built would otherwise leave the
+# container with a client that does not know the new column.
 RUN npx prisma generate
 
 CMD ["npm", "run", "dev:docker"]

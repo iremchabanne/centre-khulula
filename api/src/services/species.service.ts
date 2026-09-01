@@ -1,15 +1,9 @@
-// The service layer — where the business rules live.
+// The service layer — where the business rules live, written as classes for
+// CP 3. A constructor and methods, no inheritance and no patterns.
 //
-// Written as a class, which is the CP 3 criterion: "les bonnes pratiques de la
-// programmation orientée objet sont respectées". A constructor and methods,
-// nothing more. No inheritance, no patterns.
-//
-// The class takes the Prisma client as a constructor argument rather than
-// importing it. That is what lets a test create a SpeciesService with a test
-// database without changing a line of this file.
-//
-// Note what this file does NOT know: that HTTP exists. No req, no res, no
-// status codes. It could be called from a command-line script tomorrow.
+// Each class takes the Prisma client as an argument rather than importing it,
+// which is what lets a test build one against a test database. None of them
+// knows that HTTP exists: no req, no res, no status codes.
 
 import type { PrismaClient } from '@prisma/client';
 import { AppError } from '../errors';
@@ -43,9 +37,8 @@ export class SpeciesService {
       throw new AppError(`No species with id ${id}`, 404);
     }
 
-    // The counters are counted, never stored — modele-donnees.md §4. A stored
-    // counter and the animal table drift apart the first time something is
-    // inserted without going through the code that updates it.
+    // Counted, never stored — modele-donnees.md §4. A stored counter drifts
+    // from the animal table the first time a row is inserted around it.
     const treated = await this.prisma.animal.count({
       where: { species_id: id },
     });

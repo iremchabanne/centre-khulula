@@ -38,25 +38,46 @@ export default function SelectField({
         {label} {required && <span aria-hidden="true">*</span>}
       </label>
 
-      <select
-        id={id}
-        name={id}
-        defaultValue={defaultValue}
-        onChange={handleChange}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${id}-error` : undefined}
-        className={
-          error
-            ? 'min-h-11 rounded border border-khulula-error px-3 py-2'
-            : 'min-h-11 rounded border border-khulula-line-strong px-3 py-2'
-        }
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      {/* The browser draws its own arrow hard against the border and ignores
+          padding, so appearance-none hides it and we draw our own. relative and
+          absolute put our arrow inside the field; pointer-events-none lets a
+          click go through to the select underneath. */}
+      <div className="relative">
+        <select
+          id={id}
+          name={id}
+          defaultValue={defaultValue}
+          onChange={handleChange}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className={
+            error
+              ? 'min-h-11 w-full appearance-none rounded border border-khulula-error bg-khulula-surface py-2 pl-3 pr-10'
+              : 'min-h-11 w-full appearance-none rounded border border-khulula-line-strong bg-khulula-surface py-2 pl-3 pr-10'
+          }
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        {/* A chevron drawn by hand rather than a font character, which came out
+            heavy. currentColor means the palette class above still sets it. */}
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 16 16"
+          className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-khulula-muted"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </div>
 
       {error && (
         <p id={`${id}-error`} className="text-sm text-khulula-error">

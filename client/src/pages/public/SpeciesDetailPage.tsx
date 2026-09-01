@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import IucnPill from './IucnPill';
-import { iucnLabel } from './speciesLabels';
-import type { IucnStatus } from './speciesLabels';
+import IucnPill from '../../components/IucnPill';
+import { iucnLabel } from '../../speciesLabels';
+import type { IucnStatus } from '../../speciesLabels';
 
 // Screen 3 of arborescence-ecrans.md.
 type Species = {
@@ -105,8 +105,15 @@ export default function SpeciesDetailPage() {
               : `No ${species.common_name.toLowerCase()} is in our care right now.`}
           </p>
 
-          <p className="mt-2">
-            <Link to="/animals" className="font-medium text-khulula-primary">
+          {/* Accent colour and one step up the type scale, because the link was
+              getting lost in the paragraphs above it. No permanent underline:
+              RGAA 10.6 asks for one on a link sitting inside a text, and this
+              one stands on its own line with an arrow. */}
+          <p className="mt-4">
+            <Link
+              to="/animals"
+              className="type-lede font-medium text-khulula-accent hover:underline"
+            >
               See our rescues <span aria-hidden="true">›</span>
             </Link>
           </p>

@@ -1,5 +1,5 @@
-import { iucnLabel } from './speciesLabels';
-import type { IucnStatus } from './speciesLabels';
+import { iucnLabel } from '../speciesLabels';
+import type { IucnStatus } from '../speciesLabels';
 
 // The conservation status, on the species list and on the species page.
 // The five colours of charte-graphique.md §2.2 go from least to most

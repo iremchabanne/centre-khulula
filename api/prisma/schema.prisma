@@ -1,18 +1,11 @@
-// Database schema for Centre Khulula.
+// Database schema for Centre Khulula — docs/conception/modele-donnees.md in the
+// Prisma language. Read that document first: it explains why the model is this
+// shape. The model name is used in the code (Animal), the @@map is the real
+// table name (animal), snake_case as in the MPD.
 //
-// This file is the translation of docs/conception/modele-donnees.md into the Prisma
-// language. Read that document first: it explains WHY the model looks like this.
-//
-// Naming: the model name is the name used in the code (Animal), the @@map below it is
-// the real table name in the database (animal). Table and column names stay in
-// snake_case, exactly as written in the MPD.
-//
-// What is NOT in this file, on purpose (see modele-donnees.md §5.7). Prisma cannot
-// express these, so they are hand-written SQL in a later migration — step 9:
-//   - the partial unique index that guarantees one open stay per enclosure (RG1)
-//   - the trigger that derives enclosure.status (RG3, RG7)
-//   - the CHECK constraints on donation.amount (RG9) and on stay dates
-//   - the two database accounts and their grants
+// What Prisma cannot express is hand-written SQL in the migrations instead: the
+// partial unique index (RG1), the trigger on enclosure.status (RG3, RG7), the
+// CHECK constraints, and the two database accounts.
 
 generator client {
   provider = "prisma-client-js"
@@ -24,9 +17,8 @@ datasource db {
 }
 
 // ---------------------------------------------------------------------------
-// Enumerations — modele-donnees.md §4.2
-// An enumeration is checked by the database itself: a misspelled value is
-// rejected on write, not stored.
+// Enumerations — modele-donnees.md §4.2. Checked by the database itself: a
+// misspelled value is rejected on write, not stored.
 // ---------------------------------------------------------------------------
 
 enum StaffRole {

@@ -244,8 +244,8 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 - [x] Sidebar filtered by `is_admin`. `role` hides no link: it guards actions, not pages.
 - [x] Error page: one screen, three states (404, 403, session expired).
 
-> **Limit:** nothing navigates to `/staff/denied` or `/staff/session-expired` yet. The staff
-> pages fetch nothing, so they cannot receive a 403 or a 401. Step 21 wires them.
+> **Limit lifted at step 33, 01/09/2026.** Every page and every dialog now answers a 401 with
+> `/staff/session-expired` and a 403 with `/staff/denied`.
 
 ### Step 21 — The staff screens
 
@@ -266,9 +266,17 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 - [x] **Accueil · Nos animaux · Faire un don · Mentions légales** — done 31/08/2026. The nine
       photographers are named on the legal notice page, as CC BY and CC BY-SA require.
 
-### Step 33 — Tidy up  ·  next session
+### Step 33 — Tidy up
 
-- [ ] Move the *New account* button (screen 12) and the *Admit an animal* button (screen 8).
+- [x] **Layout and colour pass, 01/09/2026.** The three staff screens now open the same way:
+      title, then the action row with its one accent button, then the filters. The two content
+      links of the public site are accent with an arrow. Screen 10 became two columns on a wide
+      screen, its identity and stays in one box. `SelectField` draws its own chevron, because a
+      browser puts its own hard against the border and ignores padding.
+- [x] **Session handling completed, 01/09/2026.** The five dialogs answered a 401 with a red line
+      under a field; they now send the user to `/staff/session-expired`, as the pages already did.
+      This closes the limit left open at step 20. `LoginPage` is deliberately untouched: there a
+      401 means a wrong password.
 - [ ] Shorten the code, the comments and the documents across the project. Less to read.
 
 ### Step 22 — Accessibility pass  ·  RGAA, CP 2 and CP 5

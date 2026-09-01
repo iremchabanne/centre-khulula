@@ -4,12 +4,9 @@ import { Navigate, Outlet } from 'react-router-dom';
 import StaffSidebar from './StaffSidebar';
 import type { StaffMember } from '../types';
 
-// The frame shared by the staff pages: the side menu on the left, the page
-// on the right. The login page does not use it — there is no menu before
-// signing in.
-//
-// It is also the gate: every staff page is inside it, so asking the server
-// "who am I?" here protects all of them at once.
+// The frame shared by the staff pages: side menu on the left, page on the
+// right. It is also the gate — every staff page is inside it, so asking the
+// server "who am I?" here protects all of them at once.
 export default function StaffLayout() {
   // null while the answer has not arrived yet — that is not the same as
   // "nobody is signed in", so the two cases need two different values.

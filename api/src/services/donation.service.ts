@@ -15,13 +15,9 @@ export class DonationService {
     this.prisma = prisma;
   }
 
-  // The donation list — screen 11, administrators only.
-  //
-  // The donor's name and email are returned here, and that is not a
-  // contradiction with `record` below: an administrator reading the list is
-  // exactly who those fields were collected for. What protects the donor is
-  // upstream — a donation whose donor did not consent has nothing stored in
-  // those columns at all, so there is nothing here to show.
+  // Screen 11, administrators only. The donor's name and email are returned
+  // here because an administrator is who they were collected for. What protects
+  // the donor is upstream: without consent those columns hold nothing.
   async findAll(query: ListDonationsQuery) {
     const donations = await this.prisma.donation.findMany({
       orderBy: { created_at: 'desc' },
@@ -44,9 +40,8 @@ export class DonationService {
         message: input.message ?? null,
         consent_given: input.consent_given,
       },
-      // Only these three come back. The donor's name and email were sent by
-      // the visitor and there is no reason to echo them: a response is a place
-      // personal data can leak into a log or a browser cache.
+      // Only these three come back: echoing the donor's name and email would
+      // put personal data into a log or a browser cache for nothing.
       select: { id: true, amount: true, created_at: true },
     });
   }

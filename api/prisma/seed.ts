@@ -3,13 +3,12 @@
 // Wipes the tables first, so running it twice gives the same result. Connects
 // as khulula_admin (DATABASE_URL).
 //
-// The size is chosen, not random: 14 animals and 12 donations make two pages of
-// ten, so pagination is visibly needed. All five lifecycle states are present,
-// enclosures are free, occupied and under maintenance, and finished stays have
-// different lengths so the dashboard functions return real numbers.
+// The size is chosen: 14 animals and 12 donations make two pages of ten, all
+// five lifecycle states are present, and finished stays have different lengths
+// so the dashboard functions return real numbers.
 //
-// It never writes enclosure.status — the trigger does. The seed creates stays
-// and the statuses follow, which is a small proof that the trigger works.
+// It never writes enclosure.status — the trigger does, which is a small proof
+// that the trigger works.
 
 import { PrismaClient } from '@prisma/client';
 import type { Sex, AgeClass, AnimalStatus, IucnStatus, EnclosureType } from '@prisma/client';
@@ -243,11 +242,9 @@ const currentAnimals: CurrentAnimalSeed[] = [
   },
 ];
 
-// The eight animals whose care is over. Their stays are closed, which is what
-// gives average_stay_length_days() something to average.
-//
-// moved_to is optional: when it is set, the animal had two successive stays
-// rather than one — RG8. Both are kept.
+// The eight animals whose care is over. Their closed stays are what give
+// average_stay_length_days() something to average. moved_to, when set, means
+// the animal had two successive stays rather than one — RG8.
 type PastAnimalSeed = {
   name: string;
   species: string;

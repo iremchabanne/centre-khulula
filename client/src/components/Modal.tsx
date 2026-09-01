@@ -22,7 +22,7 @@ export default function Modal({ title, onClose, children }: Props) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 grid place-items-center bg-black/40 p-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 p-4">
       <div
         role="dialog"
         aria-modal="true"

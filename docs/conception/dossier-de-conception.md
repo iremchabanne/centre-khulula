@@ -246,3 +246,10 @@ Les exclusions sont documentées en `cahier-des-charges.md` §2.2. Les trois qui
 | **Aucun paiement réel** | Un don enregistre une intention. Aucun champ de carte, aucun prestataire. Évite les exigences PCI-DSS pour un besoin qui ne les appelle pas. |
 | **Aucun écran de gestion des espèces** | Donnée de référence fixée par l'UICN : alimentée par migration versionnée, pour qu'un utilisateur ne puisse pas désynchroniser silencieusement le centre de la classification officielle. |
 | **Aucun téléversement de fichier** | Les photos sont des URL vers des images fournies avec l'application. Supprime une surface d'attaque importante. |
+
+**Évolution identifiée, non retenue pour cette version.** Photographier chaque animal accueilli,
+depuis sa fiche, aurait une vraie valeur pour les pages publiques et pour les dons. Ce serait un
+téléversement complet : validation du type par le contenu, taille limitée, nom de fichier
+aléatoire, stockage hors de la racine applicative, volume Docker dédié. Estimé à deux jours pour
+un besoin qu'aucune compétence du référentiel n'évalue — l'arbitrage a été rendu en faveur du
+dossier professionnel, qui est le livrable noté.
