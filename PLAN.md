@@ -14,21 +14,20 @@ finished piece proves. A step that is finished collapses here to one line — th
 
 ## The order to do the remaining steps in
 
+**The application is finished.** Tracks A to F are done, and nothing is owed to the code. What
+is left is track G — writing the DP — plus four small tasks of Irem's.
+
 | Order | Steps | Why here |
 |---|---|---|
-| 1 | **23**, **24**, **25**, **26**, **27**, **28** | Deliberately **before** the frontend. Each covers a criterion nothing else covers: tests (CP 9), load testing and fuzzing (CP 9, two separate items), code-quality tool (CP 11), CI (CP 11), backup and restore demonstrated (CP 7). None needs the frontend — they run against the API, which already exists. Left at the end, these are the ones that get dropped. |
-| 2 | ~~18, 20, 21, 19~~ · **22** | The frontend, **built**. Only the accessibility pass is left. Inside it: the shell and the login first, then the **admission dialog and its access-conflict state** — the screen that shows CP 8's work to a reader — then the remaining staff screens, then the public pages (RGAA + mentions légales), then the accessibility pass. |
-| 3 | **29** — deployment | CP 10 and CP 11. Blocked on an open decision. |
-| 4 | **30**, **31**, **32** — the DP itself | Written throughout, finished last. |
+| 1 | **30** — the five prep files, and the twelve screenshots chosen while writing them | Everything else is written from them. |
+| 2 | **31** — the three comptes rendus, and field 3 | Short, but it has to be honest. |
+| 3 | **32** — fill, sign and upload the PDF | The only real deadline: 07/10/2026, 23:59. |
 
-Two rules that override the table:
+**The rule from here on: produce only what goes in the file.** Twelve screenshots, not
+thirty-seven; two difficulty rows per page, not every incident. Everything already written stays
+as preparation for the jury's questions, and nothing new is written for `docs/` alone.
 
-- **Step 31 never waits.** The *Difficultés rencontrées* table and the meeting notes are filled
-  the day the problem happens.
 - **One veille entry a week**, throughout. Graded in six CPs, and it cannot be backdated.
-
-> If something has to go, it comes out of order 2. Never out of order 4: the jury reads the DP
-> and never runs Khulula, so a feature that exists but is not written up scores nothing.
 
 ---
 
@@ -266,7 +265,7 @@ machine is rented and no cloud console is opened.
 - [x] **Accueil · Nos animaux · Faire un don · Mentions légales** — done 31/08/2026. The nine
       photographers are named on the legal notice page, as CC BY and CC BY-SA require.
 
-### Step 33 — Tidy up
+### Step 33 — Tidy up  ·  **done 01/09/2026**
 
 - [x] **Layout and colour pass, 01/09/2026.** The three staff screens now open the same way:
       title, then the action row with its one accent button, then the filters. The two content
@@ -277,7 +276,10 @@ machine is rented and no cloud console is opened.
       under a field; they now send the user to `/staff/session-expired`, as the pages already did.
       This closes the limit left open at step 20. `LoginPage` is deliberately untouched: there a
       401 means a wrong password.
-- [ ] Shorten the code, the comments and the documents across the project. Less to read.
+- [x] **Shortening pass, 01/09/2026.** The whole project reread and simplified: 45 files, 161
+      lines fewer. The duplicated `FOR UPDATE` lock became one function, the four identical id
+      schemas one, the species photo one component, and the long comments were cut to the lines
+      that say *why*.
 
 ### Step 22 — Accessibility pass  ·  RGAA, CP 2 and CP 5  ·  **done 01/09/2026**
 
@@ -298,34 +300,90 @@ Deliberately a level that can be explained rather than an exhaustive audit.
 
 ---
 
-## Track G — The DP itself (runs alongside everything above)
+## Track G — The DP, the only thing the jury reads
 
-**This track does not wait for the others.**
+**What the jury receives is `dossier_professionnel.pdf` and nothing else.** The application is
+not run, the repository is not opened, the documents in `docs/` are not read. They are
+preparation for the questions, not deliverables.
 
-### Step 30 — The six prep files
+### What the file actually contains
 
-The DP allows **up to** three examples per activité-type, so the third page of each is left
-blank. What has to be covered is the CPs, not the slots — the mapping is in `docs/decisions.md`.
+Read from the blank on 01/09/2026. Seventeen pages, and only these matter:
 
-- [ ] Generate the five remaining prep files from the validated `AT1-exemple-1.md` template.
-- [ ] After **each validated feature**: note what to screenshot and which CP it proves, in
-      `docs/dp/captures.md` (git-ignored, local only).
+- **Nine identical example pages** — three per activité-type. We fill six and leave the third of
+  each blank, as `docs/decisions.md` decided.
+- **Déclaration sur l'honneur**, page 15 — name, place, date, signature.
+- *Titres et diplômes*, page 14, and *Documents illustrant la pratique*, page 16: both optional,
+  and page 16 is a **list of titles**, not a place for images.
+- *Annexes*, page 17, only *« si le RE le prévoit »* — do not count on it.
 
-### Step 31 — Difficulties and meeting notes — **the same day, never later**
+Every example page has the same five fields:
 
-- [ ] *Difficultés rencontrées* — filled the day the problem happens.
-- [ ] *Comptes rendus de réunion* — **decide the honest approach for a solo project.**
+| Field | What it asks | Where it comes from |
+|---|---|---|
+| 1 | The tasks performed, and the conditions | the prep file's working notes |
+| 2 | The means used — tools, languages, and why | the same |
+| 3 | Who you worked with | **the same answer on all six pages**, see step 31 |
+| 4 | Context: organisation, service, période d'exercice | Centre Khulula (fictif), with real dates |
+| 5 | Optional | **the only place an image goes** |
 
-These are the only parts of the DP that genuinely cannot be reconstructed at the end, and they
-are the evidence for CP 4 and for the transversal *démarche de résolution de problème*.
+### Step 30 — The five remaining prep files
 
-### Step 32 — Fill `DP-Vierge-pre-rempli-CDA.pdf`
+Written from the validated `AT1-exemple-1.md`. Each one is preparation for fields 1 and 2 of its
+page, and nothing more goes in it than the page can hold.
 
-- [ ] Six slots, five fields each, written from the prep files.
-- [ ] Screenshots pasted into field **5. Informations complémentaires** of each page.
-- [ ] Full reread against `docs/dp/00-referentiel-CP.md` — every CP covered by some example.
-- [ ] **Signed**, exported as a PDF named exactly `dossier_professionnel.pdf`, uploaded to the
-      drive before **07/10/2026 23:59**.
+- [ ] `AT1-exemple-2.md` — **already exists as a partial.** Its *Difficultés rencontrées* section
+      is written and must not be overwritten.
+- [ ] `AT2-exemple-1.md`, `AT2-exemple-2.md`, `AT3-exemple-1.md`, `AT3-exemple-2.md`.
+- [ ] While writing each one, **choose that page's two screenshots** and tick them in
+      `docs/dp/captures.md`. The other rows of that file stay as oral-exam preparation.
+
+### The screenshots — two to four per page, chosen by what the CP asks
+
+`docs/dp/captures.md` holds 37 candidates; roughly a dozen go in the file. The rule for choosing:
+an image earns its place when it shows **a result the text cannot state as convincingly** — a
+refusal, a green run, a diagram. Not a screen that merely looks nice.
+
+Two things taken from the filled DPs in `docs/dp/references.md`: an image can sit **inside field
+1**, next to the sentence it proves, and does not have to wait for field 5; and each example page
+**names in its heading the CP it proves**, so the jury is not left looking for it.
+
+| Page | CP | Image 1 | Image 2 |
+|---|---|---|---|
+| AT1 — Ex. 1 | CP 1 + CP 4 | `docker compose ps`: the five services, healthy | a green GitHub Actions run |
+| AT1 — Ex. 2 | CP 2 + CP 3 | the admission dialog, offering only the enclosure types the species needs (RG17) | a `403` returned to a keeper on an admin route, next to the `200` an admin gets |
+| AT2 — Ex. 1 | CP 5 + CP 6 | the screen-flow diagram of `arborescence-ecrans.md` | the four layers, routes → controllers → services → Prisma |
+| AT2 — Ex. 2 | CP 7 + CP 8 | the MPD — seven tables and their relations | the two concurrent admissions: one `201`, one `409` |
+| AT3 — Ex. 1 | CP 9 | `npm test` green, four files, five tests | the recette table of `plan-de-tests.md` §9 |
+| AT3 — Ex. 2 | CP 10 + CP 11 | `docker-compose.prod.yml`: no mount, port 80 only | the deployment procedure, one screen of it |
+
+- [ ] Take the twelve. Nothing else is taken.
+
+### Step 31 — Field 3 and the difficulties
+
+**Field 3 is the same on all six pages, and it is answered honestly: the project was built
+alone.** No formateur, no team, no client. What is real, and what the field is for:
+
+- [ ] **Three review sessions with developers** — friends who went through the running
+      application and reported defects. Their remarks are already recorded in
+      `docs/tests/plan-de-tests.md` §9.2, and two of them were real defects fixed the same day.
+      Written up as *comptes rendus de réunion* in `docs/reunions/`, they satisfy the CP 4
+      criterion *« les comptes rendus de réunion sont structurés »*.
+- [ ] **The maîtrise d'ouvrage is fictional and the DP says so** — Irem played the client's role
+      when writing the 18 besoins and again when accepting them.
+
+The *Difficultés rencontrées* tables go in field 5, and only two rows per page. They are the
+evidence for the transversal *démarche de résolution de problème*, graded in four CPs.
+
+### Step 32 — Fill, sign, upload
+
+- [ ] Six pages, five fields each, written from the prep files.
+- [ ] The twelve images pasted into field 5.
+- [ ] Page 15 — *déclaration sur l'honneur*: name, place, date, **signature**.
+- [ ] Full reread against `docs/dp/00-referentiel-CP.md`: every one of the 11 CPs is covered by
+      at least one page.
+- [ ] Exported as a PDF named exactly `dossier_professionnel.pdf`, on the drive before
+      **07/10/2026 23:59**.
 
 ---
 
@@ -334,10 +392,9 @@ are the evidence for CP 4 and for the transversal *démarche de résolution de p
 | # | Decision | Blocks |
 |---|---|---|
 | 1 | Project-management tool for CP 4 | Track B |
-| 2 | Deployment target | Step 29 |
-| 3 | *Comptes rendus de réunion* on a solo project | Step 31 |
-| 4 | Confirm the English UI with the formateur | — |
-| 5 | Irem's name for the *maître d'œuvre* line | — |
+| 2 | *Comptes rendus de réunion* on a solo project | Step 31 |
+| 3 | Confirm the English UI with the formateur | — |
+| 4 | Irem's name for the *maître d'œuvre* line | — |
 
 ---
 
