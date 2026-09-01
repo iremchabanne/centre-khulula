@@ -16,8 +16,13 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // React hands the form values to this function, so no field needs its own state.
-  async function signIn(formData: FormData) {
+  // The values are read from the form itself, so no field needs its own state.
+  async function signIn(event: React.FormEvent<HTMLFormElement>) {
+    // Not action={signIn}: React 19 empties an uncontrolled form once the action
+    // returns, so a wrong password used to clear the email too.
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
     const email = String(formData.get('email') ?? '').trim();
     const password = String(formData.get('password') ?? '');
 
@@ -66,7 +71,7 @@ export default function LoginPage() {
         <p className="mb-7 text-center text-sm text-khulula-muted">Staff area</p>
 
         {/* noValidate: our own messages are shown instead of the browser bubbles. */}
-        <form action={signIn} noValidate className="flex flex-col gap-5">
+        <form onSubmit={signIn} noValidate className="flex flex-col gap-5">
           <p className="text-sm text-khulula-muted">
             All fields are required.
           </p>

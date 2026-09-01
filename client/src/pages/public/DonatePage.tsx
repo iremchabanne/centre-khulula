@@ -35,7 +35,12 @@ export default function DonatePage() {
     setFormError('');
   }, [location.key]);
 
-  async function submit(formData: FormData) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    // Not action={submit}: React 19 empties an uncontrolled form once the action
+    // returns, so one bad field used to wipe every other one.
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
     const name = String(formData.get('donor_name') ?? '').trim();
     const email = String(formData.get('donor_email') ?? '').trim();
     const message = String(formData.get('message') ?? '').trim();
@@ -109,7 +114,7 @@ export default function DonatePage() {
           <p className="font-semibold text-khulula-ink">Registering an intention.</p>
           <p className="mt-1">
             This form records your intention to give. No card details are collected here and no
-            payment is taken. If you leave your email, the centre will send you transfer details.
+            payment is taken.
           </p>
         </div>
 
@@ -126,7 +131,7 @@ export default function DonatePage() {
         </div>
       </div>
 
-      <form action={submit} noValidate className="flex flex-col gap-4 self-start">
+      <form onSubmit={submit} noValidate className="flex flex-col gap-4 self-start">
         {formError !== '' && (
           <p
             role="status"
@@ -170,14 +175,14 @@ export default function DonatePage() {
           )}
         </div>
 
-        <FormField id="donor_name" label="Your name — optional" required={false} />
-        <FormField id="donor_email" label="Email — optional" type="email" required={false} />
-        <FormField id="message" label="Message — optional" multiline required={false} />
+        <FormField id="donor_name" label="Your name" required={false} />
+        <FormField id="donor_email" label="Email" type="email" required={false} />
+        <FormField id="message" label="Message" multiline required={false} />
 
         <div className="flex gap-3">
           <input id="consent_given" name="consent_given" type="checkbox" className="mt-1" />
           <label htmlFor="consent_given" className="text-sm text-khulula-muted">
-            I agree that Khulula may store my name and email for this donation.{' '}
+            I agree that Khulula may store my email for this donation.{' '}
             <Link to="/legal" className="underline decoration-1 underline-offset-4">
               Privacy policy
             </Link>

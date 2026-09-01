@@ -33,7 +33,8 @@ export default function Button({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`min-h-11 rounded px-3 py-2 font-medium disabled:opacity-60 ${variantClasses}`}
+      // Tailwind resets a button to the default arrow, so the hand is asked for.
+      className={`min-h-11 cursor-pointer rounded px-3 py-2 font-medium disabled:cursor-default disabled:opacity-60 ${variantClasses}`}
     >
       {children}
     </button>

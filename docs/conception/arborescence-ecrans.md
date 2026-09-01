@@ -154,6 +154,11 @@ Toutes les pages publiques partagent le même en-tête et le même pied de page 
 donc accessible depuis n'importe quel écran. Les flèches ne représentent que les parcours
 dominants.
 
+Le lien *Staff login* est dans le pied de page parce que le masquer ne protégerait rien — la route
+existe et son adresse est devinable ; ce qui défend la connexion est ailleurs : limitation du
+nombre de tentatives, argon2, aucune inscription publique et un message d'erreur identique pour un
+identifiant inconnu et un mot de passe faux.
+
 ---
 
 ## 3. Enchaînement — espace personnel
@@ -255,6 +260,7 @@ stateDiagram-v2
     [*] --> admitted : admission<br/>(soigneur)
     admitted --> in_care : mise en traitement<br/>(soigneur)
     in_care --> recovering : amélioration constatée<br/>(soigneur)
+    recovering --> in_care : rechute<br/>(soigneur)
     recovering --> released : décision de sortie<br/>(vétérinaire)
     recovering --> deceased : décès<br/>(vétérinaire)
     in_care --> deceased : décès<br/>(vétérinaire)
@@ -273,8 +279,10 @@ stateDiagram-v2
     end note
 ```
 
-La progression `admitted → in_care → recovering` ne va que vers l'avant. Le décès peut survenir
-depuis n'importe quel état actif. Les deux états terminaux sont définitifs et libèrent l'enclos.
+`admitted` est le moment de l'arrivée : on en sort et on n'y revient pas. Les soins, eux, vont
+dans les deux sens — une rechute ramène un animal de `recovering` à `in_care`. Le décès peut
+survenir depuis n'importe quel état actif, et les deux états terminaux sont définitifs et
+libèrent l'enclos.
 
 ---
 

@@ -285,6 +285,10 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 - [ ] Full keyboard navigation, visible focus, modals closing on Escape.
 - [ ] Contrast at AA — already measured in the charte graphique.
 - [ ] Alt text everywhere; labels and error messages tied to their fields.
+- [ ] **Required fields, owed since 01/09/2026.** The asterisk in `FormField` is `aria-hidden`
+      and no input carries `aria-required`, so a screen reader announces nothing. Add it, and a
+      line saying what the asterisk means. The "— optional" labels of the donation form were
+      removed that day, so this is now the only indication left to write.
 
 ---
 

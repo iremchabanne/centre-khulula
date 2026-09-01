@@ -26,7 +26,12 @@ export default function CreateStaffDialog({ onClose, onCreated }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  async function submit(formData: FormData) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    // Not action={submit}: React 19 empties an uncontrolled form once the action
+    // returns, so one bad field used to wipe every other one.
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
     const fullName = String(formData.get('full_name') ?? '').trim();
     const email = String(formData.get('email') ?? '').trim();
     const password = String(formData.get('password') ?? '');
@@ -85,7 +90,7 @@ export default function CreateStaffDialog({ onClose, onCreated }: Props) {
 
   return (
     <Modal title="New staff account" onClose={onClose}>
-      <form action={submit} noValidate className="flex flex-col gap-4">
+      <form onSubmit={submit} noValidate className="flex flex-col gap-4">
         {formError !== '' && (
           <p
             role="status"

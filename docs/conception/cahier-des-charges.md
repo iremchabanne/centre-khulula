@@ -230,7 +230,7 @@ Besoins portés par les deux comptes administrateurs (§3.2), quel que soit leur
 | **RG1** | Un enclos ne peut héberger qu'**un seul animal à la fois**. |
 | **RG2** | L'admission est **impossible** s'il n'existe aucun enclos libre. |
 | **RG3** | Le statut d'un enclos (`free`, `occupied`, `maintenance`) est **déduit automatiquement** des séjours en cours. Il n'est jamais saisi à la main. |
-| **RG4** | Le cycle de vie d'un animal suit l'ordre : `admitted` → `in_care` → `recovering` → `released` ou `deceased`. |
+| **RG4** | Un animal entre en `admitted` et n'y revient jamais. Les deux états de soin, `in_care` et `recovering`, se parcourent dans les deux sens : un animal qui récupère peut rechuter. Les états terminaux sont `released` et `deceased`. |
 | **RG5** | `released` et `deceased` sont **terminaux**. Un animal sorti ne revient pas à un statut antérieur. |
 | **RG6** | Le passage à `released` ou `deceased` est réservé au **vétérinaire**. |
 | **RG7** | La sortie d'un animal **libère automatiquement** son enclos. |

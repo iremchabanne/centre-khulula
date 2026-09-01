@@ -229,11 +229,7 @@ export default function AnimalDetailPage() {
                 id="status_after"
                 label="Change the status"
                 required={false}
-                options={[
-                  { value: '', label: 'Leave it unchanged' },
-                  { value: 'in_care', label: 'In care' },
-                  { value: 'recovering', label: 'Recovering' },
-                ]}
+                options={statusChoices(animal.status)}
               />
 
               <div>
@@ -294,6 +290,22 @@ export default function AnimalDetailPage() {
       )}
     </div>
   );
+}
+
+// RG4 — the two states of care, minus the one the animal is already in. Care
+// goes both ways: an animal that is recovering can relapse and go back in care.
+function statusChoices(status: Animal['status']) {
+  const choices = [{ value: '', label: 'Leave it unchanged' }];
+
+  if (status !== 'in_care') {
+    choices.push({ value: 'in_care', label: 'In care' });
+  }
+
+  if (status !== 'recovering') {
+    choices.push({ value: 'recovering', label: 'Recovering' });
+  }
+
+  return choices;
 }
 
 // One <dl> row. It returns the two tags loose, with no wrapper, because a <dl>

@@ -96,27 +96,28 @@ export default function SpeciesDetailPage() {
 
           <p className="mt-5">{species.description}</p>
 
-          {/* A sentence, not cards: naming the animals in a line of text says
-              the same thing without looking like something to click. There is
-              no public animal page — RG11. */}
-          <p className="mt-5">
-            {inCareNames.length > 0
-              ? `Right now we are caring for ${nameList(inCareNames)}.`
-              : `No ${species.common_name.toLowerCase()} is in our care right now.`}
-          </p>
+          {/* Who is here today and the way to the full list, in a block of
+              their own: read against the description above they were skipped.
+              A sentence and not cards, because there is no public animal page
+              and nothing here should look clickable — RG11. */}
+          <div className="mt-8 rounded-lg bg-khulula-surface-alt p-5">
+            <p>
+              {inCareNames.length > 0
+                ? `Right now we are caring for ${nameList(inCareNames)}.`
+                : `No ${species.common_name.toLowerCase()} is in our care right now.`}
+            </p>
 
-          {/* Accent colour and one step up the type scale, because the link was
-              getting lost in the paragraphs above it. No permanent underline:
-              RGAA 10.6 asks for one on a link sitting inside a text, and this
-              one stands on its own line with an arrow. */}
-          <p className="mt-4">
-            <Link
-              to="/animals"
-              className="type-lede font-medium text-khulula-accent hover:underline"
-            >
-              See our rescues <span aria-hidden="true">›</span>
-            </Link>
-          </p>
+            {/* No permanent underline: RGAA 10.6 asks for one on a link inside
+                a text, and this one stands on its own line with an arrow. */}
+            <p className="mt-2">
+              <Link
+                to="/animals"
+                className="type-lede font-medium text-khulula-accent hover:underline"
+              >
+                See all our rescues <span aria-hidden="true">›</span>
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
 

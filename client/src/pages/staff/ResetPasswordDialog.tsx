@@ -21,7 +21,10 @@ export default function ResetPasswordDialog({ staffId, staffName, onClose, onRes
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  async function submit(formData: FormData) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
     const password = String(formData.get('password') ?? '');
 
     // Comfort check only: the server revalidates in api/src/schemas.ts.
@@ -62,7 +65,7 @@ export default function ResetPasswordDialog({ staffId, staffName, onClose, onRes
 
   return (
     <Modal title={`Reset the password of ${staffName}`} onClose={onClose}>
-      <form action={submit} noValidate className="flex flex-col gap-4">
+      <form onSubmit={submit} noValidate className="flex flex-col gap-4">
         {formError !== '' && (
           <p
             role="status"

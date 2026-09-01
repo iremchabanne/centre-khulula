@@ -181,7 +181,7 @@ function daysInCare(animal: Animal) {
 
 function tabClasses(isActive: boolean) {
   if (isActive) {
-    return 'rounded border border-khulula-primary px-3 py-2 text-sm font-medium text-khulula-primary';
+    return 'cursor-pointer rounded border border-khulula-primary px-3 py-2 text-sm font-medium text-khulula-primary';
   }
-  return 'rounded border border-khulula-line px-3 py-2 text-sm text-khulula-muted';
+  return 'cursor-pointer rounded border border-khulula-line px-3 py-2 text-sm text-khulula-muted';
 }

@@ -211,14 +211,11 @@ export class AnimalService {
           throw new AppError(`This animal is already ${animal.status}`, 409);
         }
 
-        // RG4 — the lifecycle only runs forwards.
-        const order = ['admitted', 'in_care', 'recovering'];
-
-        if (order.indexOf(input.status_after) <= order.indexOf(animal.status)) {
-          throw new AppError(
-            `An animal that is ${animal.status} cannot go back to ${input.status_after}`,
-            409,
-          );
+        // RG4 — an animal never returns to `admitted`, which is the moment it
+        // arrived. Care itself goes both ways: one that is recovering can
+        // relapse and be put back in care.
+        if (input.status_after === animal.status) {
+          throw new AppError(`This animal is already ${animal.status}`, 409);
         }
 
         await tx.animal.update({
