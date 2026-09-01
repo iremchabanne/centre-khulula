@@ -38,7 +38,18 @@ export default function LegalPage() {
       </Section>
 
       <Section title="Accessibility">
-        This site aims to meet RGAA level AA. Current status: partially compliant.
+        <p>
+          This site aims to meet RGAA level AA. Current status: partially compliant. The colour
+          contrasts were measured, every image carries an alt attribute, the forms name their
+          required fields and report their errors next to them, and the whole site can be used
+          with a keyboard.
+        </p>
+        <p className="mt-2">Three limits are known and not yet fixed:</p>
+        <ul className="mt-2 list-disc pl-5">
+          <li>The browser tab shows the same title on every page.</li>
+          <li>A dialog can be left with the Tab key while it is still open.</li>
+          <li>No audit has been run with a screen reader.</li>
+        </ul>
       </Section>
 
       <Section title="Photographs">

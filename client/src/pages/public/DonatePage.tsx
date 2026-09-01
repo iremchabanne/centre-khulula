@@ -180,7 +180,14 @@ export default function DonatePage() {
         <FormField id="message" label="Message" multiline required={false} />
 
         <div className="flex gap-3">
-          <input id="consent_given" name="consent_given" type="checkbox" className="mt-1" />
+          <input
+            id="consent_given"
+            name="consent_given"
+            type="checkbox"
+            className="mt-1 cursor-pointer"
+            aria-invalid={fieldErrors.consent ? true : undefined}
+            aria-describedby={fieldErrors.consent ? 'consent-error' : undefined}
+          />
           <label htmlFor="consent_given" className="text-sm text-khulula-muted">
             I agree that Khulula may store my email for this donation.{' '}
             <Link to="/legal" className="underline decoration-1 underline-offset-4">
@@ -190,7 +197,9 @@ export default function DonatePage() {
         </div>
 
         {fieldErrors.consent && (
-          <p className="text-sm text-khulula-error">{fieldErrors.consent}</p>
+          <p id="consent-error" className="text-sm text-khulula-error">
+            {fieldErrors.consent}
+          </p>
         )}
 
         <Button type="submit" variant="accent" disabled={submitting}>

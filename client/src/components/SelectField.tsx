@@ -48,6 +48,7 @@ export default function SelectField({
           name={id}
           defaultValue={defaultValue}
           onChange={handleChange}
+          aria-required={required || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className={

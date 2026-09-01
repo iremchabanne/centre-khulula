@@ -44,9 +44,17 @@ export default function StaffLayout() {
 
   return (
     <div className="flex min-h-screen bg-khulula-bg text-khulula-body">
+      {/* Hidden until focused: the first Tab jumps over the side menu. */}
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:absolute focus:m-3 focus:rounded focus:bg-khulula-primary focus:px-3 focus:py-2 focus:text-white"
+      >
+        Skip to content
+      </a>
+
       <StaffSidebar staff={staff} />
 
-      <main className="flex-1 p-8">
+      <main id="content" className="flex-1 p-8">
         {/* context hands the account down to whichever page is shown. */}
         <Outlet context={staff} />
       </main>

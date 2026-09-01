@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 
 type Props = {
@@ -8,6 +8,15 @@ type Props = {
 };
 
 export default function Modal({ title, onClose, children }: Props) {
+  const dialog = useRef<HTMLDivElement>(null);
+
+  // The keyboard is left behind the dialog otherwise: focus stays on the button
+  // that opened it, and Tab walks the page underneath. tabIndex={-1} is what
+  // lets a div receive focus without becoming a Tab stop of its own.
+  useEffect(() => {
+    dialog.current?.focus();
+  }, []);
+
   // Escape closes the dialog — RGAA 12.x, and it is what a user expects.
   // The returned function removes the listener when the dialog disappears.
   useEffect(() => {
@@ -24,6 +33,8 @@ export default function Modal({ title, onClose, children }: Props) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 p-4">
       <div
+        ref={dialog}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -33,7 +44,7 @@ export default function Modal({ title, onClose, children }: Props) {
           <h2 id="modal-title" className="font-heading text-xl text-khulula-ink">
             {title}
           </h2>
-          <button type="button" onClick={onClose} aria-label="Close">
+          <button type="button" onClick={onClose} aria-label="Close" className="cursor-pointer">
             ✕
           </button>
         </div>

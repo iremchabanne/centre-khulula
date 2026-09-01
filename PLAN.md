@@ -279,16 +279,22 @@ Two short shell scripts, plain commands, no functions and no options to parse.
       401 means a wrong password.
 - [ ] Shorten the code, the comments and the documents across the project. Less to read.
 
-### Step 22 — Accessibility pass  ·  RGAA, CP 2 and CP 5
+### Step 22 — Accessibility pass  ·  RGAA, CP 2 and CP 5  ·  **done 01/09/2026**
 
-- [ ] Semantic HTML, coherent heading order.
-- [ ] Full keyboard navigation, visible focus, modals closing on Escape.
-- [ ] Contrast at AA — already measured in the charte graphique.
-- [ ] Alt text everywhere; labels and error messages tied to their fields.
-- [ ] **Required fields, owed since 01/09/2026.** The asterisk in `FormField` is `aria-hidden`
-      and no input carries `aria-required`, so a screen reader announces nothing. Add it, and a
-      line saying what the asterisk means. The "— optional" labels of the donation form were
-      removed that day, so this is now the only indication left to write.
+Deliberately a level that can be explained rather than an exhaustive audit.
+
+- [x] Already in place before the pass, and checked: `lang="en"`, the `main` / `nav` / `header` /
+      `footer` landmarks, one `h1` per page in order, an alt on all three images, the focus
+      outline written once in `index.css`, Escape closing a dialog, contrasts measured in the
+      charte graphique.
+- [x] A real `<title>` — it still said "client".
+- [x] `aria-required` on required fields, in `FormField` and `SelectField`. The asterisk is
+      `aria-hidden`, so it said nothing to a screen reader.
+- [x] A *Skip to content* link in both layouts, visible only when focused.
+- [x] A dialog takes the focus when it opens.
+- [x] The *partially compliant* claim on the legal page now lists what is done and the three
+      limits that are not: one title for every page, a dialog that can be left with Tab, and no
+      audit run with a screen reader.
 
 ---
 

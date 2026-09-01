@@ -16,7 +16,7 @@ export default function Pager({ page, totalPages, total, onPageChange }: Props) 
 
       <button
         type="button"
-        className="rounded border border-khulula-line-strong px-3 py-1 disabled:opacity-40"
+        className="cursor-pointer rounded border border-khulula-line-strong px-3 py-1 disabled:cursor-default disabled:opacity-40"
         disabled={page <= 1}
         onClick={() => onPageChange(page - 1)}
       >
@@ -25,7 +25,7 @@ export default function Pager({ page, totalPages, total, onPageChange }: Props) 
 
       <button
         type="button"
-        className="rounded border border-khulula-line-strong px-3 py-1 disabled:opacity-40"
+        className="cursor-pointer rounded border border-khulula-line-strong px-3 py-1 disabled:cursor-default disabled:opacity-40"
         disabled={page >= totalPages}
         onClick={() => onPageChange(page + 1)}
       >

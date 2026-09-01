@@ -8,7 +8,8 @@ type Props = {
   error?: string;
   defaultValue?: string;
   autoComplete?: string;
-  // Most fields are required, so the asterisk is the default.
+  // Most fields are required, so the asterisk is the default. aria-required
+  // says the same thing to a screen reader, which cannot see the asterisk.
   required?: boolean;
   // A textarea instead of a one-line input, for long text.
   multiline?: boolean;
@@ -41,6 +42,7 @@ export default function FormField({
           name={id}
           rows={3}
           defaultValue={defaultValue}
+          aria-required={required || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className={boxClasses}
@@ -52,6 +54,7 @@ export default function FormField({
           type={type}
           defaultValue={defaultValue}
           autoComplete={autoComplete}
+          aria-required={required || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className={boxClasses}
