@@ -115,16 +115,13 @@ step.
 - [x] *Plan de tests* **and** *compte rendu d'exécution* — `docs/tests/plan-de-tests.md` v1.0,
       one document, because the two share the same table. Covers the backend only; the frontend
       gets a v2.0.
-- [ ] **Acceptance tests — after the frontend.** Decided 27/08/2026: Irem walks through the 18
-      *besoins* of the cahier des charges in the finished application, one by one, and records
-      the result in a dated table. The DP says plainly that she played the client's role herself —
-      the maîtrise d'ouvrage is fictional, and a jury reads an honest limit better than a
-      pretence. An acceptance test is done on screens, so it cannot happen before they exist.
-      *If a formateur or a classmate can be sat down for twenty minutes, that observation is
-      added on top. Better, but it depends on someone else's diary.*
-- [ ] **The same pass doubles as the end-of-build review** — Irem's point, 27/08: while going
-      through the 18 besoins, look for dead code, missing pieces, and anything that does not
-      behave as expected. One walk through the application, two purposes.
+- [x] **Acceptance tests — done 01/09/2026.** The 18 *besoins* walked one by one in the running
+      application, results in `docs/tests/plan-de-tests.md` v2.0 §9: **18 conformes, no open
+      anomaly.** Every write was checked in the database rather than on the screen. The DP says
+      plainly that Irem played the client's role — the maîtrise d'ouvrage is fictional.
+- [x] **The same pass doubled as the end-of-build review.** Three developers also went through
+      the site; their remarks are recorded in §9.2 and were acted on the same day, including two
+      real defects — forms emptying on a single field error, and RG4 forbidding a relapse.
 
 ### Step 25 — Load testing and fuzzing  ·  CP 9
 
