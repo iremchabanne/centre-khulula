@@ -1,0 +1,19 @@
+# Production image for the API. The development one watches the mounted source;
+# this one copies the code in and starts it once.
+
+FROM node:24-alpine
+
+WORKDIR /app
+
+# npm ci installs the exact versions of package-lock.json; --omit=dev leaves
+# out ESLint and Vitest.
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+COPY . .
+
+RUN npx prisma generate
+
+# migrate deploy applies the migrations already written and never creates one,
+# unlike migrate dev.
+CMD ["sh", "-c", "npx prisma migrate deploy && npx tsx src/server.ts"]

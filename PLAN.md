@@ -190,13 +190,16 @@ Two short shell scripts, plain commands, no functions and no options to parse.
 
 **Done on 27/08/2026.**
 
-### Step 29 — Deployment  ·  CP 10, CP 11
+### Step 29 — Deployment  ·  CP 10, CP 11  ·  **done 01/09/2026**
 
-- [ ] **Decision open** — the deployment target. Keep it beginner-level: the stack is already
-      `docker compose up`, so the simplest honest answer is one machine running the same Compose
-      file with a production `.env`. Anything with a cloud console, a managed database or a
-      Kubernetes manifest is out of scope for this project.
-- [ ] A written deployment procedure someone else could follow, plus the production Compose file.
+CP 10 asks for a **written** procedure and documented scripts, not for a live server, so no
+machine is rented and no cloud console is opened.
+
+- [x] `docker-compose.prod.yml` — nothing mounted, port 80 the only one published, no adminer.
+- [x] `api/Dockerfile.prod` and `client/Dockerfile.prod`. The client is built in two stages and
+      served by nginx, which also forwards `/api` so there is still one origin and no CORS.
+- [x] `docs/deploiement.md` — the two environments, deploy, update, and where each test runs.
+- [x] **Both images were actually built**, not merely written.
 
 ---
 
