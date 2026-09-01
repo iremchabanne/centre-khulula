@@ -15,5 +15,6 @@ COPY . .
 RUN npx prisma generate
 
 # migrate deploy applies the migrations already written and never creates one,
-# unlike migrate dev.
-CMD ["sh", "-c", "npx prisma migrate deploy && npx tsx src/server.ts"]
+# unlike migrate dev. The seed runs too: this deployment is a demonstration, so
+# it starts from the same sample data every time.
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && npx tsx src/server.ts"]

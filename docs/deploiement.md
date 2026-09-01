@@ -26,11 +26,22 @@ openssl rand -base64 32          # un mot de passe et un SESSION_SECRET neufs
 
 docker compose -f docker-compose.prod.yml up -d --build
 
+# Donner son mot de passe au compte applicatif. La migration crée le rôle
+# khulula_app SANS mot de passe, parce qu'un secret n'entre pas dans un fichier
+# versionné : sans cette commande l'API répond 500 sur toute lecture.
+source .env
+docker compose -f docker-compose.prod.yml exec -T postgres \
+  psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+  -c "ALTER ROLE khulula_app PASSWORD '$APP_DB_PASSWORD';"
+
+docker compose -f docker-compose.prod.yml restart api
+
 curl -s http://localhost/api/health     # attendu : {"status":"ok"}
 ```
 
-Les migrations s'appliquent au démarrage de l'API. **Le seed n'est jamais lancé en production :
-il vide les tables.** Les deux comptes administrateurs sont créés à la main, une fois.
+Au démarrage, l'API applique les migrations puis lance le seed. Ce déploiement est une
+démonstration : il repart donc du même jeu de données à chaque redémarrage, et tout ce qui a été
+saisi entre-temps est effacé. Les comptes se connectent avec `khulula-dev-password`.
 
 ## 3. Mettre à jour
 

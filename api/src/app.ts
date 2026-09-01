@@ -13,6 +13,11 @@ import { sessionMiddleware } from './session';
 export function createApp() {
   const app = express();
 
+  // One proxy stands in front (nginx in production, Vite in development), so
+  // req.ip must read the address it forwards, not the proxy's own. Without
+  // this the rate limiter counts every visitor as the same person.
+  app.set('trust proxy', 1);
+
   // Reads a JSON request body into req.body.
   app.use(express.json());
 

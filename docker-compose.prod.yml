@@ -25,6 +25,10 @@ services:
     container_name: khulula-redis
     restart: unless-stopped
     command: ['redis-server', '--requirepass', '${REDIS_PASSWORD}']
+    # The healthcheck below runs inside the container, so it needs the password
+    # there too, not only in the command above.
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     volumes:
       - redis-data:/data
     healthcheck:
