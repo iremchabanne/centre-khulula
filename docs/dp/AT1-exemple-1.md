@@ -151,5 +151,8 @@ quatre autres pages)*
 
 ## Images de la page
 
-1. `docker compose ps` — les cinq services démarrés et *healthy*
+1. `docker compose ps` — les cinq services démarrés. Les trois qui portent un healthcheck le
+   déclarent : `postgres`, `redis` et `api`. `adminer` et `client` n'en ont pas, et n'en ont pas
+   besoin — un outil d'inspection et un serveur de développement ne conditionnent le démarrage de
+   rien.
 2. Une exécution verte de GitHub Actions
