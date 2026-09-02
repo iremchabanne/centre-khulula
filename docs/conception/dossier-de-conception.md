@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| **Version** | 1.0 — 20 août 2026 |
-| **Couvre** | CP 5 — *analyser les besoins et maquetter une application* |
+| **Version** | 1.1 — 2 septembre 2026 |
+| **Couvre** | CP 5 — *analyser les besoins et maquetter une application*<br/>CP 6 — *définir l'architecture logicielle d'une application* |
 | **Entrée** | `cahier-des-charges.md` v1.5, émis par la maîtrise d'ouvrage |
 
 Ce dossier est la **réponse de la maîtrise d'œuvre** au cahier des charges. Il ne le recopie pas :
@@ -102,7 +102,7 @@ par un écran de saisie.
 
 ### 2.4 Règles de gestion
 
-16 règles, RG1 à RG16, énoncées en `cahier-des-charges.md` §5. Chacune est portée par un élément
+17 règles, RG1 à RG17, énoncées en `cahier-des-charges.md` §5. Chacune est portée par un élément
 précis du modèle ou du code : la table de correspondance est en `modele-donnees.md` §6.
 
 Les trois qui structurent l'application :
@@ -201,7 +201,68 @@ données saisies restent en place, et rien n'a été écrit en base.
 
 ---
 
-## 5. Modèle de données
+## 5. Architecture logicielle
+
+Architecture multicouche répartie : un client React, un serveur Express, deux moteurs de données.
+Le client ne parle au serveur que par l'API REST, et n'atteint jamais une base directement.
+
+```mermaid
+flowchart TD
+    UI["Client React<br/>écrans, formulaires, appels fetch"]
+    R["Routes Express<br/>adresses, chaîne d'intergiciels"]
+    C["Contrôleurs<br/>lire la requête, écrire la réponse"]
+    S["Services (classes)<br/>règles de gestion RG1 à RG17"]
+    P["Prisma<br/>accès aux données"]
+    DB[("PostgreSQL<br/>contraintes, trigger, fonctions")]
+    RD[("Redis<br/>sessions, cache, rate limiting")]
+
+    UI -->|HTTP JSON| R
+    R --> C
+    C --> S
+    S --> P
+    P --> DB
+    R -.-> RD
+    S -.-> RD
+```
+
+### 5.1 Le rôle de chaque couche, et ce qu'elle porte de la sécurité
+
+| Couche | Rôle | Part de la stratégie de sécurité |
+|---|---|---|
+| Client React | Afficher, saisir, appeler l'API | Aucune. Masquer un lien est un confort : **tout refus vient du serveur.** |
+| Routes | Déclarer les adresses, enchaîner les intergiciels | Point unique où s'appliquent la limitation de débit, l'authentification, le contrôle d'accès et la validation Zod — **avant** tout accès aux données. |
+| Contrôleurs | Lire la requête, écrire la réponse | Aucune règle métier. Les erreurs remontent au gestionnaire central, pour qu'aucun détail technique n'atteigne le client. |
+| Services | Porter les règles de gestion | Règles refusées côté serveur, transactions et verrouillage de ligne pour l'intégrité sous accès concurrent. |
+| Prisma | Accéder aux données | Requêtes paramétrées, donc pas d'injection SQL. Se connecte avec le compte restreint `khulula_app`. |
+| PostgreSQL | Conserver les données | Garanties de dernier recours : index unique partiel, trigger, droits par compte. `observation` est *append-only* par les droits. |
+| Redis | Sessions, cache, limitation de débit | Une session ne porte aucun droit : le compte est **relu en base** à chaque requête protégée. |
+
+**Le principe qui tient l'ensemble : une règle est vérifiée une seule fois, à l'endroit où elle
+peut l'être pour de bon.** La validation de forme en entrée de route, la règle métier dans le
+service, l'invariant dans la base. Rien n'est vérifié deux fois par précaution, et rien
+d'important n'est vérifié seulement dans le navigateur.
+
+### 5.2 Choix de framework et d'ORM
+
+Express et Prisma sont fonctionnels : rien n'est objet si on ne le décide pas. La couche service
+est donc écrite en **classes** — une par ressource, chacune recevant le client Prisma dans son
+constructeur. Ni héritage, ni classe abstraite, ni patron de conception : la contrainte tenue est
+qu'il faut pouvoir expliquer chaque ligne.
+
+Prisma couvre le CRUD, les relations et les migrations. Le trigger, les fonctions stockées et le
+verrouillage `SELECT … FOR UPDATE` sont écrits à la main en SQL, dans des migrations Prisma —
+l'ORM pour les 80 % de routine, le SQL là où l'ORM n'est pas le bon outil.
+
+### 5.3 Éco-conception
+
+Les besoins sont identifiés en `cahier-des-charges.md` §6.4 : pagination systématique côté serveur
+sur toute liste qui s'allonge avec le temps, mise en cache des données peu variables, images
+compressées et dimensionnées pour leur usage réel, nombre de dépendances volontairement réduit et
+aucune animation lourde.
+
+---
+
+## 6. Modèle de données
 
 Détail complet — MCD, MLD, MPD, types, contraintes et index — en `modele-donnees.md`.
 
@@ -225,19 +286,19 @@ l'occupation des enclos, la durée de séjour et le taux d'occupation.
 
 ---
 
-## 6. Traçabilité
+## 7. Traçabilité
 
 Chaque besoin est servi par un écran, chaque règle par un élément du modèle.
 
 | Chaîne | Où elle est vérifiée |
 |---|---|
 | Besoin → écran | `arborescence-ecrans.md` §7 — les 18 besoins couverts par 13 écrans |
-| Règle → modèle | `modele-donnees.md` §6 — RG1 à RG16 |
+| Règle → modèle | `modele-donnees.md` §6 — RG1 à RG17 |
 | Écran → charte | `charte-graphique.md` — aucune valeur graphique hors de ce document |
 
 ---
 
-## 7. Ce que la conception a délibérément exclu
+## 8. Ce que la conception a délibérément exclu
 
 Les exclusions sont documentées en `cahier-des-charges.md` §2.2. Les trois qui seront discutées :
 
