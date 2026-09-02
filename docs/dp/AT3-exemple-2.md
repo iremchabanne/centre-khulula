@@ -100,9 +100,17 @@ modification après le changement. La décision est écrite dans le journal de v
 
 ### 3. Avec qui avez-vous travaillé ?
 
-> Réponse commune aux six pages, écrite à l'étape 31 du `PLAN.md` et recopiée telle quelle.
+J'ai mené ce projet seule, de bout en bout. C'est un projet personnel, réalisé en dehors de tout
+cadre d'entreprise : ni équipe, ni client, ni encadrement technique. La maîtrise d'ouvrage étant
+fictive, j'ai tenu moi-même son rôle — j'ai écrit les dix-huit besoins du cahier des charges, puis
+je les ai acceptés un par un lors de la recette fonctionnelle. Le dossier le dit explicitement
+plutôt que de le laisser deviner.
 
-*(à recopier depuis l'étape 31)*
+Trois développeurs de mon entourage ont néanmoins parcouru l'application en fonctionnement et
+m'ont signalé ce qui les gênait. Leurs remarques sont consignées dans le plan de tests, et **deux
+étaient de vrais défauts**, corrigés le jour même : un formulaire qui se vidait entièrement
+lorsqu'un seul champ était refusé, et une règle de gestion qui interdisait à tort à un animal en
+convalescence de rechuter.
 
 ---
 

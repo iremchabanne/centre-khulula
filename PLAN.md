@@ -388,19 +388,25 @@ Two things taken from the filled DPs in `docs/dp/references.md`: an image can si
 
 ### Step 31 — Field 3 and the difficulties
 
-**Field 3 is the same on all six pages, and it is answered honestly: the project was built
-alone.** No formateur, no team, no client. What is real, and what the field is for:
+- [x] **Field 3, written 02/09/2026 and identical on all six pages.** The project was built alone:
+      no team, no client, no technical supervision. Irem played the client's role when writing the
+      18 besoins and again when accepting them, and the field says so rather than leaving it to be
+      guessed. Three developers did walk the running application and report defects, two of them
+      real and fixed the same day; the field names that, and the remarks stay recorded in
+      `docs/tests/plan-de-tests.md` §9.2.
+- [x] **No `docs/reunions/` folder — decided 02/09/2026.** The DP has no section for meeting
+      reports; it was our invention, not the form's request. On a project with no client and no
+      team there were no meetings, and inventing three would be fabricated evidence in an exam
+      dossier. Field 3 carries the account instead — who, when, what came out, what was fixed.
+      The cost is stated plainly: the CP 4 criterion *« les comptes rendus de réunion sont
+      structurés »* rests on that paragraph and on nothing else.
 
-- [ ] **Three review sessions with developers** — friends who went through the running
-      application and reported defects. Their remarks are already recorded in
-      `docs/tests/plan-de-tests.md` §9.2, and two of them were real defects fixed the same day.
-      Written up as *comptes rendus de réunion* in `docs/reunions/`, they satisfy the CP 4
-      criterion *« les comptes rendus de réunion sont structurés »*.
-- [ ] **The maîtrise d'ouvrage is fictional and the DP says so** — Irem played the client's role
-      when writing the 18 besoins and again when accepting them.
-
-The *Difficultés rencontrées* tables go in field 5, and only two rows per page. They are the
-evidence for the transversal *démarche de résolution de problème*, graded in four CPs.
+- [x] **Four *Difficultés rencontrées* rows in the whole file, not twelve** — decided 02/09/2026.
+      RG12 on AT1 — Ex. 2, the lock that was not what made the test pass on AT2 — Ex. 2, the
+      fuzzing `500` on AT3 — Ex. 1, and the first CI run on AT3 — Ex. 2. They were chosen against
+      the transversal *démarche de résolution de problème*, which is graded in CP 2, 3, 8 and 11 —
+      one row per CP that grades it, plus fuzzing for CP 9. The eight incidents dropped are kept
+      in their prep files as short oral-preparation notes, not deleted.
 
 ### Step 32 — Fill, sign, upload
 

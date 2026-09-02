@@ -205,4 +205,4 @@ traitées le jour même (§9.2).
 
 | Date | Relecteur | Remarques retenues |
 |---|---|---|
-| 01/09/2026 | Un développeur | Lien *Staff login* du pied de page justifié et documenté ; deux défauts réels corrigés : les formulaires se vidaient entièrement sur une seule erreur de champ, et RG4 interdisait la rechute d'un animal en convalescence. |
+| 01/09/2026 | Trois développeurs | Lien *Staff login* du pied de page justifié et documenté ; deux défauts réels corrigés : les formulaires se vidaient entièrement sur une seule erreur de champ, et RG4 interdisait la rechute d'un animal en convalescence. |
