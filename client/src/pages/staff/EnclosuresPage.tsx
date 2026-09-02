@@ -95,8 +95,9 @@ export default function EnclosuresPage() {
     <div>
       <div className="mb-6">
         <h1 className="mb-2 font-heading text-2xl text-khulula-ink">Enclosures</h1>
+        {/* No rule number in the sentence: RG3 means nothing to a keeper. */}
         <p className="text-sm text-khulula-muted">
-          Live occupancy. Status is derived automatically from current stays (RG3).
+          Live occupancy. Status is derived automatically from current stays.
         </p>
         {centreIsFull && (
           <p role="status" className="mt-2 text-sm text-khulula-error">

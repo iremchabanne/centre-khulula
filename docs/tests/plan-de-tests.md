@@ -1,6 +1,6 @@
 # Plan de tests et compte rendu d'exécution — Centre Khulula
 
-**Version 2.0 — 01/09/2026**
+**Version 2.1 — 02/09/2026**
 
 Un seul document plutôt que deux : le plan et le compte rendu partagent le même tableau, à une
 colonne près. Séparés, ils divergent.
@@ -166,40 +166,39 @@ professionnel :
 
 ## 9. Recette fonctionnelle  ·  les 18 besoins
 
-Ajoutée en version 2.0, une fois les 13 écrans construits. Chaque besoin du §4 du cahier des
-charges est parcouru **dans l'application**, à la main, et le résultat est consigné.
+Chaque besoin du §4 du cahier des charges parcouru **dans l'application**, à la main, le
+**01/09/2026**. Toute écriture a été vérifiée en base, jamais à l'écran.
 
-**La maîtrise d'ouvrage est fictive et le projet est mené seul : c'est Irem qui tient le rôle du
-client.** Le dossier professionnel le dit tel quel — un jury lit mieux une limite assumée qu'une
-mise en scène. Trois développeurs ont en revanche parcouru le site et leurs remarques ont été
-traitées le jour même (§9.2).
+**La maîtrise d'ouvrage est fictive : c'est Irem qui tient le rôle du client**, et le dossier
+professionnel le dit tel quel — un jury lit mieux une limite assumée qu'une mise en scène. Trois
+développeurs ont parcouru le site le même jour ; leurs remarques sont en §9.2.
 
 **Pré-requis :** `docker compose up -d`, puis `npm run seed` depuis `api/`. Comptes :
-`thandiwe.mokoena@khulula.org` (vétérinaire et administratrice),
-`lerato.dlamini@khulula.org` (soigneuse), mot de passe `khulula-dev-password`.
+`thandiwe.mokoena@khulula.org` (vétérinaire et administratrice), `lerato.dlamini@khulula.org`
+(soigneuse), mot de passe `khulula-dev-password`.
 
 ### 9.1 Tableau de recette
 
-| Réf. | Ce qui est fait | Résultat attendu | Résultat | Date |
-|---|---|---|---|---|
-| **V1** | Ouvrir `/` | La mission, la bannière et les trois chiffres s'affichent | Conforme | 01/09/2026 |
-| **V2** | Ouvrir `/species` | Les neuf espèces, avec photo et statut UICN | Conforme | 01/09/2026 |
-| **V3** | `/animals`, onglet *In our care* | Seuls les animaux en soins, jamais un `deceased` | Conforme — aucun animal décédé dans la liste | 01/09/2026 |
-| **V4** | `/animals`, onglet *Released* | Seuls les animaux relâchés | Conforme | 01/09/2026 |
-| **V5** | Envoyer le formulaire de don avec un montant seul | Remerciement affiché, don visible en base | Conforme — R 500 enregistré, `donor_name` et `donor_email` à NULL, `consent_given` à false | 01/09/2026 |
-| **V6** | Ouvrir `/legal` | Mentions légales, RGPD, crédits photo, accessibilité | Conforme — six sections : éditeur, données collectées, finalité et durée, droits, accessibilité, crédits photo | 01/09/2026 |
-| **S1** | Se connecter puis se déconnecter | Accès à l'espace personnel, puis retour à la connexion | Conforme | 01/09/2026 |
-| **S2** | Ouvrir `/staff/enclosures` | Les cinq chiffres et l'état réel de chaque enclos | Conforme — 3 libres / 6 occupés / 1 en maintenance, statuts dérivés par le trigger | 01/09/2026 |
-| **S3** | Admettre un animal | L'animal est créé, l'enclos passe `occupied` sans être écrit à la main | Conforme — tortue léopard admise en E-09, un enclos `reptile` : espèce et type concordent (RG17), statut `admitted` (RG4), enclos passé `occupied` par le trigger (RG3) | 01/09/2026 |
-| **S4** | Ouvrir l'admission dans deux onglets, valider les deux sur le même enclos | Le second reçoit « no longer free », un seul séjour existe | Conforme — E-08 : le second onglet reçoit « Enclosure E-08 is no longer free », la boîte de dialogue reste ouverte. Un seul séjour ouvert sur E-08, et aucun animal sans séjour en base : la transaction refusée n'a rien laissé (RG2) | 01/09/2026 |
-| **S5** | Ajouter une observation avec changement de statut | L'observation apparaît, le statut suit | Conforme — l'animal passe `in_care`, l'observation porte le même `status_after` et l'auteur lu dans la session, le tout dans une seule transaction | 01/09/2026 |
-| **S6** | Déplacer un animal vers un enclos libre du bon type | Ancien enclos libéré, nouveau occupé, séjour précédent clos | Conforme — E-09 → E-10, deux enclos `reptile` : le premier séjour est clos et son enclos repasse `free`, le second s'ouvre avec son motif et son enclos passe `occupied`. Les deux statuts sont écrits par le trigger (RG8) | 01/09/2026 |
-| **S7** | Ouvrir une fiche animal | Identité, séjours successifs et observations, du plus récent au plus ancien | Conforme — identité, les deux séjours successifs et les observations datées et signées, la plus récente en tête | 01/09/2026 |
-| **T1** | En vétérinaire, prononcer une sortie | Statut terminal, enclos libéré, fiche close à toute écriture | Conforme — statut `released`, date et vétérinaire enregistrés, séjour clos et E-10 repassé `free` par le trigger (RG7). La fiche n'offre plus ni déplacement ni observation (RG5) | 01/09/2026 |
-| **T4** | Lire le tableau de bord | Taux d'occupation et durée moyenne, calculés par les fonctions stockées | Conforme — les deux indicateurs s'affichent, renvoyés par `occupancy_rate()` et `average_stay_length_days()` | 01/09/2026 |
-| **A1** | Créer un compte, le désactiver, réinitialiser son mot de passe | Les trois opérations aboutissent, aucun e-mail n'est envoyé | Conforme — compte créé en `keeper` et `is_admin` à false (RG13), désactivé, mot de passe réinitialisé sans e-mail (RG15). Connexion ensuite refusée par « This account has been deactivated », message donné seulement après vérification du mot de passe : un identifiant inconnu et un mot de passe faux répondent la même chose, pour ne pas révéler qu'un compte existe | 01/09/2026 |
-| **A2** | Onglet *Maintenance*, basculer un enclos libre puis un enclos occupé | Le premier passe en maintenance, le second est refusé (RG16) | Conforme — E-10 sorti de maintenance repasse `free`, statut écrit par le trigger. Sur un enclos occupé le bouton est désactivé ; la route appelée directement au curl répond « An occupied enclosure cannot be put under maintenance ». RG16 tient donc à l'écran et sur le serveur | 01/09/2026 |
-| **A3** | En administratrice, ouvrir `/staff/donations` | La liste des dons ; un compte non administrateur est refusé | Conforme — la liste s'affiche, don de recette V5 compris. Refus d'un compte non administrateur vérifié au curl le même jour : 403 | 01/09/2026 |
+| Réf. | Ce qui est fait | Attendu | Résultat |
+|---|---|---|---|
+| **V1** | Ouvrir `/` | Mission, bannière et trois chiffres | Conforme |
+| **V2** | Ouvrir `/species` | Neuf espèces, photo et statut UICN | Conforme |
+| **V3** | `/animals`, onglet *In our care* | Aucun animal `deceased` | Conforme |
+| **V4** | `/animals`, onglet *Released* | Seuls les animaux relâchés | Conforme |
+| **V5** | Don avec un montant seul | Remerciement, don en base | Conforme — R 500 enregistré, `donor_name` et `donor_email` à NULL, `consent_given` à false |
+| **V6** | Ouvrir `/legal` | Mentions légales, RGPD, crédits, accessibilité | Conforme — six sections, dont données collectées, durée de conservation et droits |
+| **S1** | Se connecter, se déconnecter | Accès puis retour à la connexion | Conforme |
+| **S2** | Ouvrir `/staff/enclosures` | L'état réel de chaque enclos | Conforme — 3 libres / 6 occupés / 1 en maintenance, statuts dérivés par le trigger |
+| **S3** | Admettre un animal | Animal créé, enclos `occupied` sans écriture manuelle | Conforme — tortue léopard en E-09, type `reptile` concordant (RG17), statut `admitted` (RG4), enclos passé `occupied` par le trigger (RG3) |
+| **S4** | Deux onglets, même enclos, valider les deux | Le second refusé, un seul séjour | Conforme — le second reçoit « Enclosure E-08 is no longer free », la boîte reste ouverte. Un seul séjour ouvert, et aucun animal sans séjour (RG2) |
+| **S5** | Observation avec changement de statut | Observation visible, statut suivi | Conforme — statut `in_care`, observation portant le même `status_after` et l'auteur lu dans la session, en une transaction |
+| **S6** | Déplacer vers un enclos libre du bon type | Ancien libéré, nouveau occupé, séjour clos | Conforme — E-09 → E-10 : premier séjour clos et enclos repassé `free`, second ouvert et enclos `occupied`, les deux par le trigger (RG8) |
+| **S7** | Ouvrir une fiche animal | Identité, séjours, observations | Conforme — les deux séjours successifs et les observations datées et signées, la plus récente en tête |
+| **T1** | En vétérinaire, prononcer une sortie | Statut terminal, enclos libéré, fiche close | Conforme — `released`, date et vétérinaire enregistrés, E-10 repassé `free` par le trigger (RG7). Ni déplacement ni observation ensuite (RG5) |
+| **T4** | Lire le tableau de bord | Deux indicateurs, calculés par les fonctions stockées | Conforme — renvoyés par `occupancy_rate()` et `average_stay_length_days()` |
+| **A1** | Créer, désactiver, réinitialiser un compte | Les trois aboutissent, aucun e-mail | Conforme — créé en `keeper`, `is_admin` à false (RG13), désactivé, mot de passe réinitialisé sans e-mail (RG15). Connexion ensuite refusée, après vérification du mot de passe : un identifiant inconnu répond la même chose |
+| **A2** | Basculer un enclos libre, puis un occupé | Le premier passe, le second est refusé | Conforme — E-10 repasse `free` à la sortie de maintenance. Sur un enclos occupé le bouton est désactivé, et la route appelée au curl refuse (RG16) |
+| **A3** | En administratrice, ouvrir `/staff/donations` | La liste ; un non-administrateur refusé | Conforme — liste affichée, don V5 compris. Compte non administrateur : 403 |
 
 ### 9.2 Relecture par des tiers
 

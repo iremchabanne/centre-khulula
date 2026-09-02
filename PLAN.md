@@ -380,7 +380,7 @@ Two things taken from the filled DPs in `docs/dp/references.md`: an image can si
 | AT1 — Ex. 1 | CP 1 + CP 4 | `docker compose ps`: the five services, healthy | a green GitHub Actions run |
 | AT1 — Ex. 2 | CP 2 + CP 3 | the admission dialog, offering only the enclosure types the species needs (RG17) | a `403` returned to a keeper on an admin route, next to the `200` an admin gets |
 | AT2 — Ex. 1 | CP 5 + CP 6 | the screen-flow diagram of `arborescence-ecrans.md` | the four layers, routes → controllers → services → Prisma |
-| AT2 — Ex. 2 | CP 7 + CP 8 | the MPD — seven tables and their relations | the two concurrent admissions: one `201`, one `409` |
+| AT2 — Ex. 2 | CP 7 + CP 8 | the MCD — seven entities and their relations | the two concurrent admissions: one `201`, one `409` |
 | AT3 — Ex. 1 | CP 9 | `npm test` green, four files, five tests | the recette table of `plan-de-tests.md` §9 |
 | AT3 — Ex. 2 | CP 10 + CP 11 | `docker-compose.prod.yml`: no mount, port 80 only | the deployment procedure, one screen of it |
 

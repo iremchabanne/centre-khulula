@@ -161,5 +161,5 @@ convalescence de rechuter.
 
 ## Images de la page
 
-1. Le modèle physique des données — sept tables et leurs relations
+1. Le modèle conceptuel des données — sept entités et leurs relations (§2 de `modele-donnees.md`)
 2. Les deux admissions concurrentes : un `201` et un `409`, sur le dernier enclos libre
