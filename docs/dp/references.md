@@ -1,20 +1,25 @@
 # Filled DPs looked at as models
 
-Found on 01/09/2026. Two real dossiers, both from candidates who passed, at opposite ends of the
-length scale. **Neither is a rule** — they show the range that is accepted.
+Three dossiers, all read. **None is a rule** — together they show what the form actually holds.
+The files themselves are git-ignored: two belong to other people, and Irem's own carries her
+home address.
 
 | Source | Titre | What it shows |
 |---|---|---|
-| [ElBernie, GitHub](https://github.com/ElBernie/dossiers-titre-professionnel-DWWM) | DWWM, niveau 5 | 55 pages. Field 1 holds numbered subsections, annotated wireframes and numbered code extracts, each followed by two or three lines saying why. Every example page names the CP it proves in its heading. |
-| [pdfcoffee](https://pdfcoffee.com/ossier-rofessionnel-titre-professionnel-vise-pdf-free.html) | **CDA**, the one we are sitting | A few pages. One sentence per field. Field 3 reads *« J'ai travaillé seule durant mon stage. »* — a solo project stated plainly, and it passed. |
+| `references/dp-cda-meziane.txt` | **CDA**, older millésime | A few pages. One numbered list per field, no images at all. Field 3 reads *« J'ai travaillé seule durant mon stage. »* — a solo project stated plainly, and it passed. |
+| `example.dossier-prof.pdf` | **Irem's own DWWM**, passed | 27 pages, 4 examples filled and the third of each activité-type left blank. Field 1 is long and carries the images; fields 2, 3 and 5 are one to three lines. |
+| [ElBernie, GitHub](https://github.com/ElBernie/dossiers-titre-professionnel-DWWM) | DWWM | 55 pages. Numbered subsections inside field 1, and each example page names its CP in the heading. |
 
-The template is the same for every titre professionnel, so the DWWM file is usable as a model of
-form even though its activités are different.
+## What we take from them
 
-**What we take from them:** the CP named in the heading of each example page, first person
-throughout, and answers kept short — with an image or a code extract only where it proves
-something the sentence cannot.
+- **Field 1 holds everything** — the description and the images, numbered. Fields 2 and 3 are a
+  few lines; field 5 was empty in all three, so the *Difficultés rencontrées* table there is a
+  bonus, not an expectation.
+- **The images are code extracts, a data model, and terminal output.** Not screens.
+- **One maquette in 27 pages**, in Irem's own DWWM, and a rough wireframe rather than a finished
+  design. This is why step 4 asks for four Figma screens and not thirteen.
+- **Each example page names the CP it proves in its heading**, so the jury is not left looking.
+- First person throughout, and short.
 
-Paid models exist ([je-passe-mon-titre-pro](https://je-passe-mon-titre-pro.fr/dossier-professionnel-exemple/dossier-professionnel-concepteur-developpeur-applications),
-[ideadvice](https://ideadvice.fr/shop/produit/dossier-professionnel-concepteur-developpeur-dapplications/)).
-Not bought, and nothing suggests they are needed.
+**One caution.** DWWM is niveau 5 and never asks for a maquetting tool; CDA's CP 5 does. So the
+Figma screens have to exist — they simply do not have to go into the file.

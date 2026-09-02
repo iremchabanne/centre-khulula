@@ -38,9 +38,12 @@ as preparation for the jury's questions, and nothing new is written for `docs/` 
 - [x] **Step 1** — mockup decisions closed. 20 → 13 screens (6 public, 7 staff).
 - [x] **Step 2** — MCD / MLD / MPD, `docs/conception/modele-donnees.md`.
 - [x] **Step 3** — dossier de conception.
-- [ ] **Step 4 — redraw the maquettes in Figma. Irem's task.** CP 5 asks explicitly for an
-      *outil de maquettage*; the HTML prototype may not count on its own. Rebuild the 13 screens
-      from `docs/conception/maquettes/prototype.html` and export them for the dossier.
+- [ ] **Step 4 — four screens in Figma. Irem's task.** CP 5 asks explicitly for an *outil de
+      maquettage*; the HTML prototype may not count on its own. **Four screens, not thirteen** —
+      decided 02/09/2026 after reading the three filled DPs in `references.md`: no maquette goes
+      into the file, so the Figma work only has to survive an oral question. Home page, the
+      enclosure screen with its admission dialog, the animal list, and the donation form. The
+      other nine stay in `prototype.html`, and that is what the DP says.
 - [x] **Step 5** — veille technologique set up, first three entries written.
       **Ongoing, and it cannot be backdated:** one entry a week in `docs/veille/journal.md`.
 
