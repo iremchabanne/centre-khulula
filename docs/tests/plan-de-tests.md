@@ -166,18 +166,11 @@ professionnel :
 
 ## 9. Recette fonctionnelle  ·  les 18 besoins
 
-Chaque besoin du §4 du cahier des charges parcouru **dans l'application**, à la main, le
-**01/09/2026**. Toute écriture a été vérifiée en base, jamais à l'écran.
-
-**La maîtrise d'ouvrage est fictive : c'est Irem qui tient le rôle du client**, et le dossier
-professionnel le dit tel quel — un jury lit mieux une limite assumée qu'une mise en scène. Trois
-développeurs ont parcouru le site le même jour ; leurs remarques sont en §9.2.
-
 **Pré-requis :** `docker compose up -d`, puis `npm run seed` depuis `api/`. Comptes :
 `thandiwe.mokoena@khulula.org` (vétérinaire et administratrice), `lerato.dlamini@khulula.org`
 (soigneuse), mot de passe `khulula-dev-password`.
 
-### 9.1 Tableau de recette
+### 9.1 Tableau de recette — exécutée le 01/09/2026
 
 | Réf. | Ce qui est fait | Attendu | Résultat |
 |---|---|---|---|
